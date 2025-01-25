@@ -4,3 +4,25 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+# server
+tokio = { version = "1", features = ["full"] }
+rocket = "0.5.1"
+
+# static
+lazy_static = "1.5.0"
+
+# log
+log = "0.4.25"
+env_logger = "0.11.6"
+
+# db
+mysql = "*"
+r2d2 = "0.8.10"
+r2d2_mysql = "25.0.0"
+
+# env
+dotenv = "0.15"
+
+# API
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
