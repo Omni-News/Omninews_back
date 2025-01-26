@@ -26,3 +26,8 @@ dotenv = "0.15"
 # API
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+
+# morpheme, mecab
+libc = "0.2.169"
+[build-dependencies]
+bindgen = "0.71.1"
