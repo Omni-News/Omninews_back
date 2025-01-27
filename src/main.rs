@@ -4,17 +4,20 @@ extern crate rocket;
 mod bindings;
 mod config;
 mod db;
+mod handler;
+mod model;
 mod morpheme;
-mod routes;
+mod repository;
+mod service;
 
+use handler::user_handler::*;
 use rocket::routes;
 
 #[launch]
 fn rocket() -> _ {
-    use routes::*;
-    morpheme::mecab_test();
+    //morpheme::analyze::analyze_morpheme();
     config::load_env();
     rocket::build()
         .manage(db::create_pool())
-        .mount("/", routes![get_users])
+        .mount("/", routes![create_user, get_users])
 }

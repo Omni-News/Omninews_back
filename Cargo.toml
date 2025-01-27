@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 # server
 tokio = { version = "1", features = ["full"] }
-rocket = "0.5.1"
+rocket = { version = "0.5.1", features = ["json"] }
 
 # static
 lazy_static = "1.5.0"

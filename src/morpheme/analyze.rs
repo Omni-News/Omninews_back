@@ -1,6 +1,6 @@
 use crate::bindings::{mecab_destroy, mecab_new2, mecab_sparse_tostr};
 
-pub fn mecab_test() {
+pub fn analyze_morpheme() {
     unsafe {
         let mecab = mecab_new2(b"\0".as_ptr() as *const i8);
         if mecab.is_null() {
