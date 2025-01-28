@@ -1,1 +1,1 @@
-pub mod user_service;
+pub mod rss_service;

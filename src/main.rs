@@ -9,15 +9,15 @@ mod model;
 mod morpheme;
 mod repository;
 mod service;
+use handler::rss_handler::*;
 
-use handler::user_handler::*;
 use rocket::routes;
 
 #[launch]
-fn rocket() -> _ {
+async fn rocket() -> _ {
     //morpheme::analyze::analyze_morpheme();
     config::load_env();
     rocket::build()
-        .manage(db::create_pool())
-        .mount("/", routes![create_user, get_users])
+        .manage(db::create_pool().await)
+        .mount("/", routes![create_rss])
 }
