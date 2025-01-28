@@ -15,7 +15,6 @@ use rocket::routes;
 
 #[launch]
 async fn rocket() -> _ {
-    //morpheme::analyze::analyze_morpheme();
     config::load_env();
     rocket::build()
         .manage(db::create_pool().await)

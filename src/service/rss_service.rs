@@ -8,7 +8,9 @@ use crate::{
     repository::rss_repository,
 };
 
-pub async fn create_rss(pool: &State<MySqlPool>, rss_link: RssLink) -> Result<(), ()> {
+use super::morpheme_service::{create_morpheme_for_channel, create_morpheme_for_rss};
+
+pub async fn create_rss(pool: &State<MySqlPool>, rss_link: RssLink) -> Result<u64, ()> {
     let link = rss_link.link;
 
     let response = reqwest::get(&link).await.unwrap();
@@ -24,10 +26,10 @@ pub async fn create_rss(pool: &State<MySqlPool>, rss_link: RssLink) -> Result<()
         channel_language: channel.language().unwrap_or("None").to_string(),
         rss_generator: channel.generator().unwrap_or("None").to_string(),
     };
-    let rss_channel_id = create_rss_channel(pool, rss_channel).await.unwrap();
-    let mut rss_item: Vec<RssItem> = Vec::new();
+    let rss_channel_id = create_rss_channel(pool, rss_channel.clone()).await.unwrap();
+    let mut rss_items: Vec<RssItem> = Vec::new();
     for item in channel.items() {
-        rss_item.push(RssItem {
+        rss_items.push(RssItem {
             channel_id: rss_channel_id,
             rss_title: item.title().unwrap_or("None").to_string(),
             rss_description: item.description().unwrap_or("None").to_string(),
@@ -41,27 +43,33 @@ pub async fn create_rss(pool: &State<MySqlPool>, rss_link: RssLink) -> Result<()
                 .collect(),
         });
     }
-    create_rss_item(pool, rss_item).await.unwrap();
+    create_rss_items(pool, rss_items.clone()).await;
 
-    Ok(())
+    Ok(rss_channel_id)
 }
 
-pub async fn create_rss_item(pool: &State<MySqlPool>, rss_item: Vec<RssItem>) -> Result<(), ()> {
+async fn create_rss_items(pool: &State<MySqlPool>, rss_item: Vec<RssItem>) {
     for item in rss_item {
-        rss_repository::create_rss_item(pool, item).await.unwrap();
+        let rss_id = rss_repository::insert_rss_item(pool, item.clone())
+            .await
+            .unwrap();
+        create_morpheme_for_rss(pool, item, rss_id).await;
     }
-
-    Ok(())
 }
 
-pub async fn create_rss_channel(
+async fn create_rss_channel(
     pool: &State<MySqlPool>,
     rss_channel: RssChannel,
 ) -> Result<u64, sqlx::Error> {
-    rss_repository::create_rss_channel(pool, rss_channel).await
+    let channel_id = rss_repository::insert_rss_channel(pool, rss_channel.clone())
+        .await
+        .unwrap();
+
+    create_morpheme_for_channel(pool, rss_channel, channel_id).await;
+    Ok(channel_id)
 }
 
-pub fn parse_pub_date(pub_date_str: Option<&str>) -> DateTime<Utc> {
+fn parse_pub_date(pub_date_str: Option<&str>) -> DateTime<Utc> {
     pub_date_str
         .and_then(|date_str| DateTime::parse_from_rfc3339(date_str).ok())
         .map(|dt| dt.with_timezone(&Utc))

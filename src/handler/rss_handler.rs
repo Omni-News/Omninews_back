@@ -9,9 +9,9 @@ use crate::service::rss_service;
 pub async fn create_rss(
     pool: &State<MySqlPool>,
     rss_link: Json<RssLink>,
-) -> Result<Status, Status> {
+) -> Result<Json<u64>, Status> {
     match rss_service::create_rss(pool, rss_link.into_inner()).await {
-        Ok(_) => Ok(Status::Ok),
+        Ok(rss_channel_id) => Ok(Json(rss_channel_id)),
         Err(_) => Err(Status::InternalServerError),
     }
 }

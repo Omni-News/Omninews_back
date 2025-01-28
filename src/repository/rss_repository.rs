@@ -4,7 +4,7 @@ use sqlx::{query, MySqlPool};
 use crate::db::get_db;
 use crate::model::{RssChannel, RssItem};
 
-pub async fn create_rss_channel(
+pub async fn insert_rss_channel(
     pool: &State<MySqlPool>,
     rss_channel: RssChannel,
 ) -> Result<u64, sqlx::Error> {
@@ -32,7 +32,7 @@ pub async fn create_rss_channel(
     }
 }
 
-pub async fn create_rss_item(
+pub async fn insert_rss_item(
     pool: &State<MySqlPool>,
     rss_item: RssItem,
 ) -> Result<u64, sqlx::Error> {
