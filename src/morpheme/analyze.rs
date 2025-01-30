@@ -7,14 +7,17 @@ pub enum MorphemeError {
     KeywordsExtraction,
 }
 
-pub fn analyze_morpheme(passage: String) -> Result<Vec<String>, MorphemeError> {
+///
+/// 주어진paragraph의 NNG(일반 명사), NNP(고유 명사), ENG를 추출해 배열로 반환함.
+///
+pub fn analyze_morpheme(paragraph: String) -> Result<Vec<String>, MorphemeError> {
     unsafe {
         let mecab = mecab_new2(b"\0".as_ptr() as *const i8);
         if mecab.is_null() {
             return Err(MorphemeError::MecabInitialization);
         }
 
-        let result = mecab_sparse_tostr(mecab, passage.as_ptr() as *const i8);
+        let result = mecab_sparse_tostr(mecab, paragraph.as_ptr() as *const i8);
         let result_str = match std::ffi::CStr::from_ptr(result).to_str() {
             Ok(str) => str,
             Err(err) => {
@@ -23,7 +26,7 @@ pub fn analyze_morpheme(passage: String) -> Result<Vec<String>, MorphemeError> {
             }
         };
 
-        // Extract NNG, NNP Tag, NNG -> 일반 명사, NNP -> 고유 명사
+        // Extract NNG, NNP Tag with ENG , NNG -> 일반 명사, NNP -> 고유 명사
         let nng_keywords = extract_nngp_keywords(result_str);
         if nng_keywords.is_empty() {
             return Err(MorphemeError::KeywordsExtraction);

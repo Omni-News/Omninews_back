@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, NaiveDateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
@@ -9,32 +9,63 @@ pub struct RssLink {
 }
 
 #[derive(Serialize, Deserialize, Clone, FromRow)]
+pub struct NewRssChannel {
+    pub channel_title: Option<String>,
+    pub channel_link: Option<String>,
+    pub channel_description: Option<String>,
+    pub channel_image_url: Option<String>,
+    pub channel_language: Option<String>,
+    pub rss_generator: Option<String>,
+    pub channel_rank: Option<i32>,
+}
+
+#[derive(Serialize, Deserialize, Clone, FromRow)]
 pub struct RssChannel {
-    pub channel_title: String,
-    pub channel_link: String,
-    pub channel_description: String,
-    pub channel_image_url: String,
-    pub channel_language: String,
-    pub rss_generator: String,
+    pub channel_id: Option<i32>,
+    pub channel_title: Option<String>,
+    pub channel_link: Option<String>,
+    pub channel_description: Option<String>,
+    pub channel_image_url: Option<String>,
+    pub channel_language: Option<String>,
+    pub rss_generator: Option<String>,
+    pub channel_rank: Option<i32>,
+}
+
+#[derive(Serialize, Deserialize, Clone, FromRow)]
+pub struct NewRssItem {
+    pub channel_id: Option<i32>,
+    pub rss_title: Option<String>,
+    pub rss_description: Option<String>,
+    pub rss_link: Option<String>,
+    pub rss_author: Option<String>,
+    pub rss_pub_date: Option<NaiveDateTime>,
+    pub rss_rank: Option<i32>,
 }
 
 #[derive(Serialize, Deserialize, Clone, FromRow)]
 pub struct RssItem {
-    pub channel_id: u64,
-    pub rss_title: String,
-    pub rss_description: String,
-    pub rss_link: String,
-    pub rss_creator: String,
-    #[serde(with = "chrono::serde::ts_seconds")]
-    pub rss_pub_date: DateTime<Utc>,
-    pub rss_categories: Vec<String>,
+    pub rss_id: Option<i32>,
+    pub channel_id: Option<i32>,
+    pub rss_title: Option<String>,
+    pub rss_description: Option<String>,
+    pub rss_link: Option<String>,
+    pub rss_author: Option<String>,
+    pub rss_pub_date: Option<NaiveDateTime>,
+    pub rss_rank: Option<i32>,
+}
+// Morpheme
+
+#[derive(Deserialize, Clone, FromRow)]
+pub struct NewMorpheme {
+    pub morpheme_word: Option<String>,
+    pub morpheme_rank: Option<i32>,
 }
 
-// Morpheme
 #[derive(Deserialize, Clone, FromRow)]
 pub struct Morpheme {
-    pub morpheme_word: String,
-    pub morpheme_rank: u64,
+    pub morpheme_id: Option<i32>,
+    pub morpheme_word: Option<String>,
+    pub morpheme_rank: Option<i32>,
 }
 
 // Newticle

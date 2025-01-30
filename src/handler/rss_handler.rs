@@ -10,7 +10,7 @@ pub async fn create_rss(
     pool: &State<MySqlPool>,
     rss_link: Json<RssLink>,
 ) -> Result<Json<u64>, Status> {
-    match rss_service::create_rss(pool, rss_link.into_inner()).await {
+    match rss_service::create_rss_and_morpheme(pool, rss_link.into_inner()).await {
         Ok(rss_channel_id) => Ok(Json(rss_channel_id)),
         Err(_) => Err(Status::InternalServerError),
     }
