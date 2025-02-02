@@ -42,15 +42,14 @@ pub fn extract_nngp_keywords(text: &str) -> Vec<String> {
 
     for word in text.split_whitespace() {
         let parts: Vec<&str> = word.split('/').collect();
-        if parts.len() != 1 {
-            continue;
-        }
         let part = parts[0];
 
         if part.contains("NNG") || part.contains("NNP") {
             let part: Vec<&str> = part.split(",").collect();
-            keywords.push(part[3].to_string());
-        } else {
+            if part.len() != 1 {
+                keywords.push(part[3].to_string());
+            }
+        } else if !part.is_empty() {
             let part: Vec<&str> = part.split(",").collect();
 
             if part.len() == 1 && part[0].as_bytes()[0].is_ascii_alphabetic() && part[0] != "EOS" {

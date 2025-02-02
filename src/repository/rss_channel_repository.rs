@@ -66,6 +66,67 @@ pub async fn select_rss_channel_by_link(
         }
     }
 }
+
+pub async fn select_rss_channels_by_morpheme_id_order_by_source_rank(
+    pool: &State<MySqlPool>,
+    morpheme_id: u64,
+) -> Result<Vec<RssChannel>, sqlx::Error> {
+    let mut conn = get_db(pool).await;
+    let result = query_as!(
+        RssChannel,
+        "SELECT r.* 
+        FROM rss_channel r 
+        JOIN morpheme_to_source_link m 
+        ON r.channel_id = m.channel_id
+        WHERE m.morpheme_id=?
+        ORDER BY m.source_rank DESC;",
+        morpheme_id as i32,
+    )
+    .fetch_all(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            eprintln!(
+                "Error selecting rss channels by morpheme id order by source rank : {}",
+                e
+            );
+            Err(e)
+        }
+    }
+}
+
+pub async fn select_rss_channels_by_morpheme_id_order_by_channel_rank(
+    pool: &State<MySqlPool>,
+    morpheme_id: u64,
+) -> Result<Vec<RssChannel>, sqlx::Error> {
+    let mut conn = get_db(pool).await;
+    let result = query_as!(
+        RssChannel,
+        "SELECT r.* 
+        FROM rss_channel r 
+        JOIN morpheme_to_source_link m 
+        ON r.channel_id = m.channel_id
+        WHERE m.morpheme_id=?
+        ORDER BY r.channel_rank DESC;",
+        morpheme_id as i32,
+    )
+    .fetch_all(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            eprintln!(
+                "Error selecting rss channels by morpheme id order by channel rank: {}",
+                e
+            );
+            Err(e)
+        }
+    }
+}
+
 pub async fn insert_rss_channel(
     pool: &State<MySqlPool>,
     rss_channel: NewRssChannel,

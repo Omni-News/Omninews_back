@@ -6,6 +6,27 @@ use crate::{
     model::{NewRssItem, RssItem},
 };
 
+pub async fn select_rss_item_by_id(
+    pool: &State<MySqlPool>,
+    rss_id: u64,
+) -> Result<RssItem, sqlx::Error> {
+    let mut conn = get_db(pool).await;
+    let result = query_as!(
+        RssItem,
+        "SELECT * FROM rss_item WHERE rss_id=? ORDER BY rss_id DESC;",
+        rss_id,
+    )
+    .fetch_one(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            eprintln!("Error selecting rss item by id: {}", e);
+            Err(e)
+        }
+    }
+}
 pub async fn select_rss_item_by_link(
     pool: &State<MySqlPool>,
     rss_link: String,
@@ -28,6 +49,95 @@ pub async fn select_rss_item_by_link(
     }
 }
 
+pub async fn select_rss_items_by_morpheme_id_order_by_source_rank(
+    pool: &State<MySqlPool>,
+    morpheme_id: u64,
+) -> Result<Vec<RssItem>, sqlx::Error> {
+    let mut conn = get_db(pool).await;
+    let result = query_as!(
+        RssItem,
+        "SELECT r.* 
+        FROM rss_item r 
+        JOIN morpheme_to_source_link m 
+        ON r.rss_id = m.rss_id
+        WHERE m.morpheme_id=?
+        ORDER BY m.source_rank DESC;",
+        morpheme_id as i32,
+    )
+    .fetch_all(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            eprintln!(
+                "Error selecting rss items by morpheme id order by source rank  : {}",
+                e
+            );
+            Err(e)
+        }
+    }
+}
+
+pub async fn select_rss_items_by_morpheme_id_order_by_rss_rank(
+    pool: &State<MySqlPool>,
+    morpheme_id: u64,
+) -> Result<Vec<RssItem>, sqlx::Error> {
+    let mut conn = get_db(pool).await;
+    let result = query_as!(
+        RssItem,
+        "SELECT r.* 
+        FROM rss_item r 
+        JOIN morpheme_to_source_link m 
+        ON r.rss_id = m.rss_id
+        WHERE m.morpheme_id=?
+        ORDER BY r.rss_rank DESC;",
+        morpheme_id as i32,
+    )
+    .fetch_all(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            eprintln!(
+                "Error selecting rss items by morpheme id order by rss rank: {}",
+                e
+            );
+            Err(e)
+        }
+    }
+}
+
+pub async fn select_rss_items_by_morpheme_id_order_by_pub_date(
+    pool: &State<MySqlPool>,
+    morpheme_id: u64,
+) -> Result<Vec<RssItem>, sqlx::Error> {
+    let mut conn = get_db(pool).await;
+    let result = query_as!(
+        RssItem,
+        "SELECT r.* 
+        FROM rss_item r 
+        JOIN morpheme_to_source_link m 
+        ON r.rss_id = m.rss_id
+        WHERE m.morpheme_id=?
+        ORDER BY r.rss_pub_date DESC;",
+        morpheme_id as i32,
+    )
+    .fetch_all(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            eprintln!(
+                "Error selecting rss items by morpheme id order by pub date: {}",
+                e
+            );
+            Err(e)
+        }
+    }
+}
 pub async fn insert_rss_item(
     pool: &State<MySqlPool>,
     rss_item: NewRssItem,
@@ -35,8 +145,8 @@ pub async fn insert_rss_item(
     let mut conn = get_db(pool).await;
     let result = query!(
         "INSERT INTO rss_item 
-            (channel_id, rss_title, rss_description, rss_link, rss_author, rss_pub_date, rss_rank)
-            VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (channel_id, rss_title, rss_description, rss_link, rss_author, rss_pub_date, rss_rank, rss_image_link)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
         rss_item.channel_id,
         rss_item.rss_title,
         rss_item.rss_description,
@@ -44,6 +154,7 @@ pub async fn insert_rss_item(
         rss_item.rss_author,
         rss_item.rss_pub_date,
         rss_item.rss_rank,
+        rss_item.rss_image_link,
     )
     .execute(&mut *conn)
     .await;

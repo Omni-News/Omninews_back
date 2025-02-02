@@ -87,13 +87,18 @@ pub async fn create_morpheme_and_source_link(
                         .await
                         .unwrap()
                 }
-                Err(_) => morpheme_repository::insert_morpheme(pool, morpheme)
+                Err(_) => morpheme_repository::insert_morpheme(pool, morpheme.clone())
                     .await
                     .unwrap(),
             };
 
-        let morpheme_to_source_link =
-            MorphemeToSourceLink::new(newticle_type, newticle_id, morpheme_id, link);
+        let morpheme_to_source_link = MorphemeToSourceLink::new(
+            newticle_type,
+            Some(newticle_id as i32),
+            Some(morpheme_id as i32),
+            Some(link.to_string()),
+            morpheme.morpheme_rank,
+        );
 
         morpheme_to_source_link_repository::insert_morpheme_to_source_link(
             pool,
@@ -102,4 +107,28 @@ pub async fn create_morpheme_and_source_link(
         .await
         .unwrap();
     }
+}
+
+pub async fn get_morphemes_sources_from_prompt(
+    pool: &State<MySqlPool>,
+    prompt_morphemes: Vec<String>,
+) -> Result<Vec<MorphemeToSourceLink>, ()> {
+    let mut result: Vec<MorphemeToSourceLink> = Vec::new();
+    for prompt_morpheme in prompt_morphemes {
+        let morphemes = morpheme_repository::select_morphemes_by_morpheme(pool, prompt_morpheme)
+            .await
+            .unwrap();
+        for morpheme in morphemes {
+            result.append(
+                &mut morpheme_to_source_link_repository::select_morphemes_link_by_morpheme_id(
+                    pool,
+                    morpheme.morpheme_id.unwrap(),
+                )
+                .await
+                .unwrap(),
+            );
+        }
+    }
+
+    Ok(result)
 }

@@ -44,11 +44,38 @@ pub async fn select_morpheme_by_word(
     match result {
         Ok(res) => Ok(res),
         Err(e) => {
-            eprintln!("Error selecting morpheme by word: {}", e);
+            eprintln!(
+                "Error selecting morpheme by word: {}, word: {}",
+                e, morpheme_word
+            );
             Err(e)
         }
     }
 }
+
+pub async fn select_morphemes_by_morpheme(
+    pool: &State<MySqlPool>,
+    morpheme: String,
+) -> Result<Vec<Morpheme>, sqlx::Error> {
+    let mut conn = get_db(pool).await;
+    let result = query_as!(
+        Morpheme,
+        "SELECT * FROM morpheme 
+        WHERE morpheme_word LIKE ?",
+        morpheme
+    )
+    .fetch_all(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            eprintln!("Error selecting rss channels by promtpt: {}", e);
+            Err(e)
+        }
+    }
+}
+
 pub async fn update_morpheme_by_id(
     pool: &State<MySqlPool>,
     update_morpheme: Morpheme,

@@ -20,6 +20,7 @@ mysql = "*"
 #r2d2 = "0.8.10"
 #r2d2_mysql = "25.0.0"
 sqlx = { version = "0.8", features = ["chrono", "mysql", "runtime-tokio"] }
+scraper = "0.22.0"
 
 # DateTime
 chrono = { version = "0.4", features = ["serde"] }
