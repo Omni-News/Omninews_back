@@ -3,7 +3,7 @@ use sqlx::{query, query_as, MySqlPool};
 
 use crate::{
     db::get_db,
-    model::{Morpheme, NewMorpheme},
+    model::morpheme::{Morpheme, NewMorpheme},
 };
 
 pub async fn select_morpheme_by_id(
@@ -79,7 +79,7 @@ pub async fn select_morphemes_by_morpheme(
 pub async fn update_morpheme_by_id(
     pool: &State<MySqlPool>,
     update_morpheme: Morpheme,
-) -> Result<u64, sqlx::Error> {
+) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await;
     let result = query!(
         "UPDATE morpheme
@@ -92,7 +92,7 @@ pub async fn update_morpheme_by_id(
     .await;
 
     match result {
-        Ok(_) => Ok(update_morpheme.morpheme_id.unwrap() as u64),
+        Ok(_) => Ok(update_morpheme.morpheme_id.unwrap()),
         Err(e) => {
             eprintln!("Error updating morpheme by id: {}", e);
             Err(e)
@@ -103,7 +103,7 @@ pub async fn update_morpheme_by_id(
 pub async fn insert_morpheme(
     pool: &State<MySqlPool>,
     morpheme: NewMorpheme,
-) -> Result<u64, sqlx::Error> {
+) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await;
     let result = query!(
         "INSERT INTO morpheme (morpheme_word, morpheme_rank) VALUES (?, ?);",
@@ -114,7 +114,7 @@ pub async fn insert_morpheme(
     .await;
 
     match result {
-        Ok(res) => Ok(res.last_insert_id()),
+        Ok(res) => Ok(res.last_insert_id() as i32),
         Err(e) => {
             eprintln!("Error inserting Morpheme: {}", e);
             Err(e)

@@ -9,16 +9,14 @@ mod model;
 mod morpheme;
 mod repository;
 mod service;
-use handler::prompt_handler::*;
-use handler::rss_handler::*;
 
+use handler::{rss_handler::*, search_handler::*};
 use rocket::routes;
 
 #[launch]
 async fn rocket() -> _ {
     config::load_env();
-    rocket::build().manage(db::create_pool().await).mount(
-        "/",
-        routes![create_rss, user_prompt, get_rss_list, get_channel_list],
-    )
+    rocket::build()
+        .manage(db::create_pool().await)
+        .mount("/", routes![create_rss, get_rss_list, get_channel_list])
 }

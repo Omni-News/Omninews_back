@@ -17,8 +17,8 @@ pub fn analyze_morpheme(paragraph: String) -> Result<Vec<String>, MorphemeError>
             return Err(MorphemeError::MecabInitialization);
         }
 
-        let result = mecab_sparse_tostr(mecab, paragraph.as_ptr() as *const i8);
-        let result_str = match std::ffi::CStr::from_ptr(result).to_str() {
+        let parsed_paragraph = mecab_sparse_tostr(mecab, paragraph.as_ptr() as *const i8);
+        let result = match std::ffi::CStr::from_ptr(parsed_paragraph).to_str() {
             Ok(str) => str,
             Err(err) => {
                 eprintln!("Failed to convert Mecab result to UTF-8: {}", err);
@@ -27,7 +27,7 @@ pub fn analyze_morpheme(paragraph: String) -> Result<Vec<String>, MorphemeError>
         };
 
         // Extract NNG, NNP Tag with ENG , NNG -> 일반 명사, NNP -> 고유 명사
-        let nng_keywords = extract_nngp_keywords(result_str);
+        let nng_keywords = extract_nngp_keywords(result);
         if nng_keywords.is_empty() {
             return Err(MorphemeError::KeywordsExtraction);
         }
@@ -42,16 +42,19 @@ pub fn extract_nngp_keywords(text: &str) -> Vec<String> {
 
     for word in text.split_whitespace() {
         let parts: Vec<&str> = word.split('/').collect();
+        // Extract word
         let part = parts[0];
 
         if part.contains("NNG") || part.contains("NNP") {
             let part: Vec<&str> = part.split(",").collect();
             if part.len() != 1 {
+                // Extract NNG or NNP word
                 keywords.push(part[3].to_string());
             }
         } else if !part.is_empty() {
             let part: Vec<&str> = part.split(",").collect();
 
+            // Extract ENG word
             if part.len() == 1 && part[0].as_bytes()[0].is_ascii_alphabetic() && part[0] != "EOS" {
                 keywords.push(part[0].to_string());
             }

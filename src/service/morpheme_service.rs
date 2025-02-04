@@ -4,57 +4,84 @@ use rocket::State;
 use sqlx::MySqlPool;
 
 use crate::{
-    model::{MorphemeToSourceLink, NewMorpheme, NewRssChannel, NewRssItem},
-    morpheme::{self, analyze::MorphemeError},
-    repository::{morpheme_repository, morpheme_to_source_link_repository},
+    model::{
+        morpheme::{Morpheme, MorphemeLinkMapping, NewMorpheme},
+        rss::{Newticle, NewticleType},
+    },
+    morpheme::analyze::{analyze_morpheme, MorphemeError},
+    repository::{morpheme_link_mapping_repository, morpheme_repository},
 };
 
-pub async fn validate_and_create_morpheme_for_rss(
+pub async fn get_morphemes_sources_by_search(
     pool: &State<MySqlPool>,
-    rss_item: NewRssItem,
-    rss_id: u64,
-) {
-    let mut passage = String::new();
-    passage.push_str(rss_item.rss_title.unwrap().as_str());
-    passage.push_str(rss_item.rss_description.unwrap().as_str());
+    search_morphemes: Vec<String>,
+) -> Result<Vec<MorphemeLinkMapping>, ()> {
+    let mut result = Vec::new();
 
-    if let Ok(morphemes) = get_morphemes(passage) {
-        create_morpheme_and_source_link(
-            pool,
-            morphemes,
-            "rss",
-            rss_id,
-            rss_item.rss_link.unwrap().as_str(),
-        )
-        .await
+    for prompt_morpheme in search_morphemes {
+        let morphemes = morpheme_repository::select_morphemes_by_morpheme(pool, prompt_morpheme)
+            .await
+            .map_err(|_| ())?;
+
+        for morpheme in morphemes {
+            if let Some(morpheme_id) = morpheme.morpheme_id {
+                let mut links =
+                    morpheme_link_mapping_repository::select_morphemes_link_by_morpheme_id(
+                        pool,
+                        morpheme_id,
+                    )
+                    .await
+                    .unwrap_or_else(|_| vec![]); // 에러 발생 시 빈 벡터 반환
+
+                result.append(&mut links);
+            }
+        }
+    }
+
+    Ok(result)
+}
+
+pub async fn create_morpheme_by_newticle(
+    pool: &State<MySqlPool>,
+    newticle: Newticle,
+    newticle_type: NewticleType,
+    id: i32,
+) -> Result<bool, ()> {
+    let (passage, newticle_image_url) = match newticle {
+        Newticle::NewRssChannel(channel) => (
+            format!(
+                "{} {}",
+                channel.channel_title.unwrap(),
+                channel.channel_description.unwrap()
+            ),
+            channel.channel_image_url.unwrap(),
+        ),
+
+        Newticle::NewRssItem(item) => (
+            format!(
+                "{} {}",
+                item.rss_title.unwrap(),
+                item.rss_description.unwrap()
+            ),
+            item.rss_image_link.unwrap(),
+        ),
+    };
+
+    if let Ok(morphemes) = get_morphemes_and_rank(passage) {
+        create_morpheme_and_source_link(pool, morphemes, newticle_type, id, newticle_image_url)
+            .await
+    } else {
+        // TODO 에러처리
+        Err(())
     }
 }
 
-pub async fn create_morpheme_for_channel(
-    pool: &State<MySqlPool>,
-    rss_channel: NewRssChannel,
-    channel_id: u64,
-) {
-    let mut passage = String::new();
-    passage.push_str(rss_channel.channel_title.unwrap().as_str());
-    passage.push_str(rss_channel.channel_description.unwrap().as_str());
-
-    if let Ok(morphemes) = get_morphemes(passage) {
-        create_morpheme_and_source_link(
-            pool,
-            morphemes,
-            "channel",
-            channel_id,
-            rss_channel.channel_link.unwrap().as_str(),
-        )
-        .await
-    }
-}
-
-pub fn get_morphemes(passage: String) -> Result<Vec<NewMorpheme>, MorphemeError> {
+fn get_morphemes_and_rank(passage: String) -> Result<Vec<NewMorpheme>, MorphemeError> {
     let mut count_map: HashMap<String, i32> = HashMap::new();
 
-    let analyzed_morpheme = morpheme::analyze::analyze_morpheme(passage)?;
+    let analyzed_morpheme = analyze_morpheme(passage)?;
+
+    // Remove deplicate morphemes and increase rank by 1.
     for morpheme in analyzed_morpheme {
         *count_map.entry(morpheme).or_insert(0) += 1;
     }
@@ -68,67 +95,76 @@ pub fn get_morphemes(passage: String) -> Result<Vec<NewMorpheme>, MorphemeError>
         .collect())
 }
 
-pub async fn create_morpheme_and_source_link(
+async fn create_morpheme_and_source_link(
     pool: &State<MySqlPool>,
     morphemes: Vec<NewMorpheme>,
-    newticle_type: &str,
-    newticle_id: u64,
-    link: &str,
-) {
+    newticle_type: NewticleType,
+    newticle_id: i32,
+    link: String,
+) -> Result<bool, ()> {
     for morpheme in morphemes {
-        let morpheme_word = morpheme.clone().morpheme_word.unwrap();
+        let morpheme_word = morpheme.morpheme_word.clone().unwrap_or_default();
+
         let morpheme_id =
             match morpheme_repository::select_morpheme_by_word(pool, morpheme_word).await {
-                Ok(existing_morpheme) => {
-                    let mut update_morpheme = existing_morpheme.clone();
-                    update_morpheme.morpheme_rank = update_morpheme.morpheme_rank.map(|e| e + 1);
+                Ok(morpheme) => set_morpheme_rank(pool, morpheme).await.unwrap_or_default(),
 
-                    morpheme_repository::update_morpheme_by_id(pool, update_morpheme)
-                        .await
-                        .unwrap()
-                }
                 Err(_) => morpheme_repository::insert_morpheme(pool, morpheme.clone())
                     .await
-                    .unwrap(),
+                    .unwrap_or_default(),
             };
 
-        let morpheme_to_source_link = MorphemeToSourceLink::new(
-            newticle_type,
-            Some(newticle_id as i32),
-            Some(morpheme_id as i32),
-            Some(link.to_string()),
-            morpheme.morpheme_rank,
-        );
-
-        morpheme_to_source_link_repository::insert_morpheme_to_source_link(
+        match store_morpheme_link_mapping(
             pool,
-            morpheme_to_source_link,
+            newticle_type.clone(),
+            newticle_id,
+            morpheme_id,
+            link.to_string(),
+            morpheme.morpheme_rank,
         )
         .await
-        .unwrap();
-    }
-}
-
-pub async fn get_morphemes_sources_from_prompt(
-    pool: &State<MySqlPool>,
-    prompt_morphemes: Vec<String>,
-) -> Result<Vec<MorphemeToSourceLink>, ()> {
-    let mut result: Vec<MorphemeToSourceLink> = Vec::new();
-    for prompt_morpheme in prompt_morphemes {
-        let morphemes = morpheme_repository::select_morphemes_by_morpheme(pool, prompt_morpheme)
-            .await
-            .unwrap();
-        for morpheme in morphemes {
-            result.append(
-                &mut morpheme_to_source_link_repository::select_morphemes_link_by_morpheme_id(
-                    pool,
-                    morpheme.morpheme_id.unwrap(),
-                )
-                .await
-                .unwrap(),
-            );
+        {
+            Ok(_) => (),
+            Err(_) => {
+                //TODO 에러처리
+            }
         }
     }
 
-    Ok(result)
+    Ok(true)
+}
+
+async fn set_morpheme_rank(pool: &State<MySqlPool>, mut morpheme: Morpheme) -> Result<i32, ()> {
+    morpheme.morpheme_rank = morpheme.morpheme_rank.map(|e| e + 1);
+
+    morpheme_repository::update_morpheme_by_id(pool, morpheme)
+        .await
+        .map_err(|_| ())
+}
+
+async fn store_morpheme_link_mapping(
+    pool: &State<MySqlPool>,
+    newticle_type: NewticleType,
+    newticle_id: i32,
+    morpheme_id: i32,
+    source_link: String,
+    source_rank: Option<i32>,
+) -> Result<bool, ()> {
+    let morpheme_link_mapping = MorphemeLinkMapping::new(
+        newticle_type,
+        Some(newticle_id),
+        Some(morpheme_id),
+        Some(source_link),
+        source_rank,
+    );
+
+    match morpheme_link_mapping_repository::insert_morpheme_link_mapping(
+        pool,
+        morpheme_link_mapping,
+    )
+    .await
+    {
+        Ok(_) => Ok(true),
+        Err(_) => Err(()),
+    }
 }

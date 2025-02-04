@@ -1,7 +1,7 @@
+use dotenv::dotenv;
 use std::env;
 
 pub fn load_env() {
-    use dotenv::dotenv;
     dotenv().ok();
 }
 

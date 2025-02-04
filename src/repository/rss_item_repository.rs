@@ -3,12 +3,12 @@ use sqlx::{query, query_as, MySqlPool};
 
 use crate::{
     db::get_db,
-    model::{NewRssItem, RssItem},
+    model::rss::{NewRssItem, RssItem},
 };
 
 pub async fn select_rss_item_by_id(
     pool: &State<MySqlPool>,
-    rss_id: u64,
+    rss_id: i32,
 ) -> Result<RssItem, sqlx::Error> {
     let mut conn = get_db(pool).await;
     let result = query_as!(
@@ -27,15 +27,15 @@ pub async fn select_rss_item_by_id(
         }
     }
 }
-pub async fn select_rss_item_by_link(
+pub async fn select_item_by_link(
     pool: &State<MySqlPool>,
-    rss_link: String,
+    item_link: String,
 ) -> Result<RssItem, sqlx::Error> {
     let mut conn = get_db(pool).await;
     let result = query_as!(
         RssItem,
         "SELECT * FROM rss_item WHERE rss_link=?;",
-        rss_link,
+        item_link,
     )
     .fetch_one(&mut *conn)
     .await;
@@ -51,14 +51,14 @@ pub async fn select_rss_item_by_link(
 
 pub async fn select_rss_items_by_morpheme_id_order_by_source_rank(
     pool: &State<MySqlPool>,
-    morpheme_id: u64,
+    morpheme_id: i32,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
     let mut conn = get_db(pool).await;
     let result = query_as!(
         RssItem,
         "SELECT r.* 
         FROM rss_item r 
-        JOIN morpheme_to_source_link m 
+        JOIN morpheme_link_mapping m 
         ON r.rss_id = m.rss_id
         WHERE m.morpheme_id=?
         ORDER BY m.source_rank DESC;",
@@ -81,14 +81,14 @@ pub async fn select_rss_items_by_morpheme_id_order_by_source_rank(
 
 pub async fn select_rss_items_by_morpheme_id_order_by_rss_rank(
     pool: &State<MySqlPool>,
-    morpheme_id: u64,
+    morpheme_id: i32,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
     let mut conn = get_db(pool).await;
     let result = query_as!(
         RssItem,
         "SELECT r.* 
         FROM rss_item r 
-        JOIN morpheme_to_source_link m 
+        JOIN morpheme_link_mapping m 
         ON r.rss_id = m.rss_id
         WHERE m.morpheme_id=?
         ORDER BY r.rss_rank DESC;",
@@ -111,14 +111,14 @@ pub async fn select_rss_items_by_morpheme_id_order_by_rss_rank(
 
 pub async fn select_rss_items_by_morpheme_id_order_by_pub_date(
     pool: &State<MySqlPool>,
-    morpheme_id: u64,
+    morpheme_id: i32,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
     let mut conn = get_db(pool).await;
     let result = query_as!(
         RssItem,
         "SELECT r.* 
         FROM rss_item r 
-        JOIN morpheme_to_source_link m 
+        JOIN morpheme_link_mapping m 
         ON r.rss_id = m.rss_id
         WHERE m.morpheme_id=?
         ORDER BY r.rss_pub_date DESC;",
@@ -141,7 +141,7 @@ pub async fn select_rss_items_by_morpheme_id_order_by_pub_date(
 pub async fn insert_rss_item(
     pool: &State<MySqlPool>,
     rss_item: NewRssItem,
-) -> Result<u64, sqlx::Error> {
+) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await;
     let result = query!(
         "INSERT INTO rss_item 
@@ -160,7 +160,7 @@ pub async fn insert_rss_item(
     .await;
 
     match result {
-        Ok(res) => Ok(res.last_insert_id()),
+        Ok(res) => Ok(res.last_insert_id() as i32),
         Err(e) => {
             eprintln!("Error inserting RSS item: {}", e);
             Err(e)
@@ -168,10 +168,10 @@ pub async fn insert_rss_item(
     }
 }
 
-pub async fn update_rss_item_by_id(
+pub async fn update_rss_item(
     pool: &State<MySqlPool>,
     update_rss_item: RssItem,
-) -> Result<u64, sqlx::Error> {
+) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await;
     let result = query!(
         "UPDATE rss_item
@@ -197,7 +197,7 @@ pub async fn update_rss_item_by_id(
     .await;
 
     match result {
-        Ok(_) => Ok(update_rss_item.rss_id.unwrap() as u64),
+        Ok(_) => Ok(update_rss_item.rss_id.unwrap()),
         Err(e) => {
             eprintln!("Error updating rss item: {}", e);
             Err(e)

@@ -2,7 +2,7 @@ use rocket::State;
 use sqlx::{query, query_as, MySqlPool};
 
 use crate::db::get_db;
-use crate::model::{NewRssChannel, RssChannel};
+use crate::model::rss::{NewRssChannel, RssChannel};
 
 pub async fn select_all_rss_channel(
     pool: &State<MySqlPool>,
@@ -23,7 +23,7 @@ pub async fn select_all_rss_channel(
 
 pub async fn select_rss_channel_by_id(
     pool: &State<MySqlPool>,
-    rss_channel_id: u64,
+    rss_channel_id: i32,
 ) -> Result<RssChannel, sqlx::Error> {
     let mut conn = get_db(pool).await;
     let result = query_as!(
@@ -69,14 +69,14 @@ pub async fn select_rss_channel_by_link(
 
 pub async fn select_rss_channels_by_morpheme_id_order_by_source_rank(
     pool: &State<MySqlPool>,
-    morpheme_id: u64,
+    morpheme_id: i32,
 ) -> Result<Vec<RssChannel>, sqlx::Error> {
     let mut conn = get_db(pool).await;
     let result = query_as!(
         RssChannel,
         "SELECT r.* 
         FROM rss_channel r 
-        JOIN morpheme_to_source_link m 
+        JOIN morpheme_link_mapping m 
         ON r.channel_id = m.channel_id
         WHERE m.morpheme_id=?
         ORDER BY m.source_rank DESC;",
@@ -99,14 +99,14 @@ pub async fn select_rss_channels_by_morpheme_id_order_by_source_rank(
 
 pub async fn select_rss_channels_by_morpheme_id_order_by_channel_rank(
     pool: &State<MySqlPool>,
-    morpheme_id: u64,
+    morpheme_id: i32,
 ) -> Result<Vec<RssChannel>, sqlx::Error> {
     let mut conn = get_db(pool).await;
     let result = query_as!(
         RssChannel,
         "SELECT r.* 
         FROM rss_channel r 
-        JOIN morpheme_to_source_link m 
+        JOIN morpheme_link_mapping m 
         ON r.channel_id = m.channel_id
         WHERE m.morpheme_id=?
         ORDER BY r.channel_rank DESC;",
@@ -130,7 +130,7 @@ pub async fn select_rss_channels_by_morpheme_id_order_by_channel_rank(
 pub async fn insert_rss_channel(
     pool: &State<MySqlPool>,
     rss_channel: NewRssChannel,
-) -> Result<u64, sqlx::Error> {
+) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await;
     let result = query!(
         "INSERT INTO rss_channel 
@@ -148,7 +148,7 @@ pub async fn insert_rss_channel(
     .await;
 
     match result {
-        Ok(res) => Ok(res.last_insert_id()),
+        Ok(res) => Ok(res.last_insert_id() as i32),
         Err(e) => {
             eprintln!("Error inserting RSS channel: {}", e);
             Err(e)
@@ -156,10 +156,10 @@ pub async fn insert_rss_channel(
     }
 }
 
-pub async fn update_rss_channel_by_id(
+pub async fn update_rss_channel(
     pool: &State<MySqlPool>,
     rss_channel: RssChannel,
-) -> Result<u64, sqlx::Error> {
+) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await;
     let result = query!(
         "UPDATE rss_channel
@@ -184,7 +184,7 @@ pub async fn update_rss_channel_by_id(
     .await;
 
     match result {
-        Ok(_) => Ok(rss_channel.channel_id.unwrap() as u64),
+        Ok(_) => Ok(rss_channel.channel_id.unwrap()),
         Err(e) => {
             eprintln!("Error updating rss channel: {}", e);
             Err(e)
