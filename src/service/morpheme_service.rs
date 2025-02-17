@@ -5,23 +5,27 @@ use sqlx::MySqlPool;
 
 use crate::{
     model::{
+        error::{MorphemeError, OmniNewsError},
         morpheme::{Morpheme, MorphemeLinkMapping, NewMorpheme},
         rss::{Newticle, NewticleType},
     },
-    morpheme::analyze::{analyze_morpheme, MorphemeError},
+    morpheme::analyze::analyze_morpheme,
     repository::{morpheme_link_mapping_repository, morpheme_repository},
 };
 
-pub async fn get_morphemes_sources_by_search(
+pub async fn get_morphemes_sources_by_search_value(
     pool: &State<MySqlPool>,
     search_morphemes: Vec<String>,
-) -> Result<Vec<MorphemeLinkMapping>, ()> {
+) -> Result<Vec<MorphemeLinkMapping>, OmniNewsError> {
     let mut result = Vec::new();
 
     for prompt_morpheme in search_morphemes {
         let morphemes = morpheme_repository::select_morphemes_by_morpheme(pool, prompt_morpheme)
             .await
-            .map_err(|_| ())?;
+            .map_err(|e| {
+                error!("Failed to select morphemes by morpheme: {}", e);
+                OmniNewsError::Database(e)
+            })?;
 
         for morpheme in morphemes {
             if let Some(morpheme_id) = morpheme.morpheme_id {
@@ -46,40 +50,40 @@ pub async fn create_morpheme_by_newticle(
     newticle: Newticle,
     newticle_type: NewticleType,
     id: i32,
-) -> Result<bool, ()> {
+) -> Result<bool, OmniNewsError> {
     let (passage, newticle_image_url) = match newticle {
         Newticle::NewRssChannel(channel) => (
             format!(
                 "{} {}",
-                channel.channel_title.unwrap(),
-                channel.channel_description.unwrap()
+                channel.channel_title.unwrap_or_default(),
+                channel.channel_description.unwrap_or_default()
             ),
-            channel.channel_image_url.unwrap(),
+            channel.channel_image_url.unwrap_or_default(),
         ),
 
         Newticle::NewRssItem(item) => (
             format!(
                 "{} {}",
-                item.rss_title.unwrap(),
-                item.rss_description.unwrap()
+                item.rss_title.unwrap_or_default(),
+                item.rss_description.unwrap_or_default()
             ),
-            item.rss_image_link.unwrap(),
+            item.rss_image_link.unwrap_or_default(),
         ),
     };
 
-    if let Ok(morphemes) = get_morphemes_and_rank(passage) {
-        create_morpheme_and_source_link(pool, morphemes, newticle_type, id, newticle_image_url)
-            .await
-    } else {
-        // TODO 에러처리
-        Err(())
+    match get_morphemes_and_rank(passage) {
+        Ok(morphemes) => {
+            create_morpheme_and_source_link(pool, morphemes, newticle_type, id, newticle_image_url)
+                .await
+        }
+        Err(e) => Err(OmniNewsError::Morpheme(e)),
     }
 }
 
 fn get_morphemes_and_rank(passage: String) -> Result<Vec<NewMorpheme>, MorphemeError> {
     let mut count_map: HashMap<String, i32> = HashMap::new();
 
-    let analyzed_morpheme = analyze_morpheme(passage)?;
+    let analyzed_morpheme = analyze_morpheme(passage).unwrap_or_default();
 
     // Remove deplicate morphemes and increase rank by 1.
     for morpheme in analyzed_morpheme {
@@ -101,7 +105,7 @@ async fn create_morpheme_and_source_link(
     newticle_type: NewticleType,
     newticle_id: i32,
     link: String,
-) -> Result<bool, ()> {
+) -> Result<bool, OmniNewsError> {
     for morpheme in morphemes {
         let morpheme_word = morpheme.morpheme_word.clone().unwrap_or_default();
 
@@ -111,10 +115,13 @@ async fn create_morpheme_and_source_link(
 
                 Err(_) => morpheme_repository::insert_morpheme(pool, morpheme.clone())
                     .await
-                    .unwrap_or_default(),
+                    .map_err(|e| {
+                        error!("Failed to insert morpheme: {}", e);
+                        OmniNewsError::Database(e)
+                    })?,
             };
 
-        match store_morpheme_link_mapping(
+        let _ = store_morpheme_link_mapping(
             pool,
             newticle_type.clone(),
             newticle_id,
@@ -122,24 +129,24 @@ async fn create_morpheme_and_source_link(
             link.to_string(),
             morpheme.morpheme_rank,
         )
-        .await
-        {
-            Ok(_) => (),
-            Err(_) => {
-                //TODO 에러처리
-            }
-        }
+        .await?;
     }
 
     Ok(true)
 }
 
-async fn set_morpheme_rank(pool: &State<MySqlPool>, mut morpheme: Morpheme) -> Result<i32, ()> {
+async fn set_morpheme_rank(
+    pool: &State<MySqlPool>,
+    mut morpheme: Morpheme,
+) -> Result<i32, OmniNewsError> {
     morpheme.morpheme_rank = morpheme.morpheme_rank.map(|e| e + 1);
 
     morpheme_repository::update_morpheme_by_id(pool, morpheme)
         .await
-        .map_err(|_| ())
+        .map_err(|e| {
+            error!("Failed to set morpheme rank: {}", e);
+            OmniNewsError::Database(e)
+        })
 }
 
 async fn store_morpheme_link_mapping(
@@ -149,7 +156,7 @@ async fn store_morpheme_link_mapping(
     morpheme_id: i32,
     source_link: String,
     source_rank: Option<i32>,
-) -> Result<bool, ()> {
+) -> Result<bool, OmniNewsError> {
     let morpheme_link_mapping = MorphemeLinkMapping::new(
         newticle_type,
         Some(newticle_id),
@@ -165,6 +172,9 @@ async fn store_morpheme_link_mapping(
     .await
     {
         Ok(_) => Ok(true),
-        Err(_) => Err(()),
+        Err(e) => {
+            error!("Failed to insert morpheme link mapping: {}", e);
+            Err(OmniNewsError::Database(e))
+        }
     }
 }

@@ -6,32 +6,11 @@ use crate::{
     model::rss::{NewRssItem, RssItem},
 };
 
-pub async fn select_rss_item_by_id(
-    pool: &State<MySqlPool>,
-    rss_id: i32,
-) -> Result<RssItem, sqlx::Error> {
-    let mut conn = get_db(pool).await;
-    let result = query_as!(
-        RssItem,
-        "SELECT * FROM rss_item WHERE rss_id=? ORDER BY rss_id DESC;",
-        rss_id,
-    )
-    .fetch_one(&mut *conn)
-    .await;
-
-    match result {
-        Ok(res) => Ok(res),
-        Err(e) => {
-            eprintln!("Error selecting rss item by id: {}", e);
-            Err(e)
-        }
-    }
-}
 pub async fn select_item_by_link(
     pool: &State<MySqlPool>,
     item_link: String,
 ) -> Result<RssItem, sqlx::Error> {
-    let mut conn = get_db(pool).await;
+    let mut conn = get_db(pool).await?;
     let result = query_as!(
         RssItem,
         "SELECT * FROM rss_item WHERE rss_link=?;",
@@ -42,10 +21,7 @@ pub async fn select_item_by_link(
 
     match result {
         Ok(res) => Ok(res),
-        Err(e) => {
-            eprintln!("Error selecting rss item by link: {}", e);
-            Err(e)
-        }
+        Err(e) => Err(e),
     }
 }
 
@@ -53,7 +29,7 @@ pub async fn select_rss_items_by_morpheme_id_order_by_source_rank(
     pool: &State<MySqlPool>,
     morpheme_id: i32,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
-    let mut conn = get_db(pool).await;
+    let mut conn = get_db(pool).await?;
     let result = query_as!(
         RssItem,
         "SELECT r.* 
@@ -69,13 +45,7 @@ pub async fn select_rss_items_by_morpheme_id_order_by_source_rank(
 
     match result {
         Ok(res) => Ok(res),
-        Err(e) => {
-            eprintln!(
-                "Error selecting rss items by morpheme id order by source rank  : {}",
-                e
-            );
-            Err(e)
-        }
+        Err(e) => Err(e),
     }
 }
 
@@ -83,7 +53,7 @@ pub async fn select_rss_items_by_morpheme_id_order_by_rss_rank(
     pool: &State<MySqlPool>,
     morpheme_id: i32,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
-    let mut conn = get_db(pool).await;
+    let mut conn = get_db(pool).await?;
     let result = query_as!(
         RssItem,
         "SELECT r.* 
@@ -99,13 +69,7 @@ pub async fn select_rss_items_by_morpheme_id_order_by_rss_rank(
 
     match result {
         Ok(res) => Ok(res),
-        Err(e) => {
-            eprintln!(
-                "Error selecting rss items by morpheme id order by rss rank: {}",
-                e
-            );
-            Err(e)
-        }
+        Err(e) => Err(e),
     }
 }
 
@@ -113,7 +77,7 @@ pub async fn select_rss_items_by_morpheme_id_order_by_pub_date(
     pool: &State<MySqlPool>,
     morpheme_id: i32,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
-    let mut conn = get_db(pool).await;
+    let mut conn = get_db(pool).await?;
     let result = query_as!(
         RssItem,
         "SELECT r.* 
@@ -129,20 +93,14 @@ pub async fn select_rss_items_by_morpheme_id_order_by_pub_date(
 
     match result {
         Ok(res) => Ok(res),
-        Err(e) => {
-            eprintln!(
-                "Error selecting rss items by morpheme id order by pub date: {}",
-                e
-            );
-            Err(e)
-        }
+        Err(e) => Err(e),
     }
 }
 pub async fn insert_rss_item(
     pool: &State<MySqlPool>,
     rss_item: NewRssItem,
 ) -> Result<i32, sqlx::Error> {
-    let mut conn = get_db(pool).await;
+    let mut conn = get_db(pool).await?;
     let result = query!(
         "INSERT INTO rss_item 
             (channel_id, rss_title, rss_description, rss_link, rss_author, rss_pub_date, rss_rank, rss_image_link)
@@ -161,10 +119,7 @@ pub async fn insert_rss_item(
 
     match result {
         Ok(res) => Ok(res.last_insert_id() as i32),
-        Err(e) => {
-            eprintln!("Error inserting RSS item: {}", e);
-            Err(e)
-        }
+        Err(e) => Err(e),
     }
 }
 
@@ -172,7 +127,7 @@ pub async fn update_rss_item(
     pool: &State<MySqlPool>,
     update_rss_item: RssItem,
 ) -> Result<i32, sqlx::Error> {
-    let mut conn = get_db(pool).await;
+    let mut conn = get_db(pool).await?;
     let result = query!(
         "UPDATE rss_item
     SET
@@ -198,9 +153,6 @@ pub async fn update_rss_item(
 
     match result {
         Ok(_) => Ok(update_rss_item.rss_id.unwrap()),
-        Err(e) => {
-            eprintln!("Error updating rss item: {}", e);
-            Err(e)
-        }
+        Err(e) => Err(e),
     }
 }

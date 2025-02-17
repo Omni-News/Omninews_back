@@ -1,11 +1,9 @@
-use crate::bindings::{mecab_destroy, mecab_new2, mecab_sparse_tostr};
+use log::warn;
 
-#[derive(Debug)]
-pub enum MorphemeError {
-    MecabInitialization,
-    MecabConvertUTF8,
-    KeywordsExtraction,
-}
+use crate::{
+    bindings::{mecab_destroy, mecab_new2, mecab_sparse_tostr},
+    model::error::MorphemeError,
+};
 
 ///
 /// 주어진paragraph의 NNG(일반 명사), NNP(고유 명사), ENG를 추출해 배열로 반환함.
@@ -14,6 +12,7 @@ pub fn analyze_morpheme(paragraph: String) -> Result<Vec<String>, MorphemeError>
     unsafe {
         let mecab = mecab_new2(b"\0".as_ptr() as *const i8);
         if mecab.is_null() {
+            error!("{}", MorphemeError::MecabInitialization);
             return Err(MorphemeError::MecabInitialization);
         }
 
@@ -21,7 +20,7 @@ pub fn analyze_morpheme(paragraph: String) -> Result<Vec<String>, MorphemeError>
         let result = match std::ffi::CStr::from_ptr(parsed_paragraph).to_str() {
             Ok(str) => str,
             Err(err) => {
-                eprintln!("Failed to convert Mecab result to UTF-8: {}", err);
+                warn!("{}: {}", MorphemeError::MecabConvertUTF8, err);
                 return Err(MorphemeError::MecabConvertUTF8);
             }
         };
@@ -29,6 +28,7 @@ pub fn analyze_morpheme(paragraph: String) -> Result<Vec<String>, MorphemeError>
         // Extract NNG, NNP Tag with ENG , NNG -> 일반 명사, NNP -> 고유 명사
         let nng_keywords = extract_nngp_keywords(result);
         if nng_keywords.is_empty() {
+            error!("{}", MorphemeError::KeywordsExtraction);
             return Err(MorphemeError::KeywordsExtraction);
         }
 

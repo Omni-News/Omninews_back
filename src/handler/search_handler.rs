@@ -5,7 +5,7 @@ use sqlx::MySqlPool;
 
 use crate::model::rss::{RssChannel, RssItem};
 use crate::model::search::SearchRequest;
-use crate::service::user_service;
+use crate::service::rss::{channel_service, item_service};
 
 #[post("/search/rss", data = "<request>")]
 pub async fn get_rss_list(
@@ -16,7 +16,7 @@ pub async fn get_rss_list(
         return Err(Status::BadRequest);
     }
 
-    match user_service::get_rss_list(pool, request.into_inner()).await {
+    match item_service::get_rss_list(pool, request.into_inner()).await {
         Ok(rss_list) => Ok(Json(rss_list)),
         Err(_) => Err(Status::InternalServerError),
     }
@@ -31,11 +31,8 @@ pub async fn get_channel_list(
         return Err(Status::BadRequest);
     }
 
-    match user_service::get_channel_list(pool, request.into_inner()).await {
+    match channel_service::get_channel_list(pool, request.into_inner()).await {
         Ok(channel_list) => Ok(Json(channel_list)),
-        Err(_) => {
-            // logging
-            Err(Status::InternalServerError)
-        }
+        Err(_) => Err(Status::InternalServerError),
     }
 }

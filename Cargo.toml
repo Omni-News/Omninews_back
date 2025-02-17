@@ -14,6 +14,8 @@ lazy_static = "1.5.0"
 # log
 log = "0.4.25"
 env_logger = "0.11.6"
+log4rs = "1.3.0"
+thiserror = "2.0.11"
 
 # db, sql
 mysql = "*"
@@ -38,7 +40,6 @@ libc = "0.2.169"
 # rss parsing
 reqwest = { version = "*", features = ["json"] }
 rss = "2.0"
-
 
 [build-dependencies]
 bindgen = "0.71.1"

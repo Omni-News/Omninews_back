@@ -13,8 +13,9 @@ pub async fn create_pool() -> MySqlPool {
         .expect("Failed to create MySQL pool")
 }
 
-pub async fn get_db(pool: &State<MySqlPool>) -> PoolConnection<MySql> {
-    pool.acquire()
-        .await
-        .expect("Failed to acquire a connection from the pool")
+pub async fn get_db(pool: &State<MySqlPool>) -> Result<PoolConnection<MySql>, sqlx::Error> {
+    pool.acquire().await.map_err(|e| {
+        error!("[Repository] Failed to acquire DB Connection pool: {:?}", e);
+        e
+    })
 }
