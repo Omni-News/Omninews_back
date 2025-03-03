@@ -3190,3 +3190,285 @@
 2025-03-01T15:07:21.471592+09:00 WARN - Received SIGINT. Requesting shutdown.
 2025-03-01T15:07:24.356388+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
 2025-03-01T15:08:20.724605+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T11:53:44.758298+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T11:58:17.954261+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T11:59:17.042787+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:02:57.980565+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:03:01.936427+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:07:06.979167+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:07:28.910704+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:07:29.330524+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:13:21.507489+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:16:20.011656+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:16:24.472290+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:16:36.756800+09:00 ERROR - [Service] Failed to parse xml: Custom("missing field `pub_date`")
+2025-03-03T12:16:36.756936+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T12:16:36.756987+09:00 ERROR - 500 Internal servcer Error: /news?query=%EC%9A%B0%ED%81%AC%EB%9D%BC%EC%9D%B4%EB%82%98&display=3&sort=sim
+2025-03-03T12:17:11.035083+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:17:14.265867+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:17:15.148776+09:00 ERROR - [Service] Failed to parse xml: Custom("missing field `last_build_date`")
+2025-03-03T12:17:15.148896+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T12:17:15.148939+09:00 ERROR - 500 Internal servcer Error: /news?query=%EC%9A%B0%ED%81%AC%EB%9D%BC%EC%9D%B4%EB%82%98&display=3&sort=sim
+2025-03-03T12:17:23.573213+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:17:25.825343+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:19:55.464935+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:21:10.384275+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:32:05.670273+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:32:11.327739+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:32:12.233468+09:00 WARN - Object {"description": String("미국 백악관이 <b>우크라이나</b> 전쟁 종식과 관련해 &quot;미국과 협상할 수 있고, 결국 러시아와도 협상해 전쟁을 끝낼... 젤렌스키 <b>우크라이나</b> 대통령 간 회담이 결렬된 이후 트럼프 대통령이 젤렌스키 대통령의 사임을 원하느냐는..."), "link": String("https://n.news.naver.com/mnews/article/666/0000065887?sid=104"), "originallink": String("https://www.kyeonggi.com/article/20250303580005"), "pubDate": String("Mon, 03 Mar 2025 09:01:00 +0900"), "title": String("백악관 &quot;<b>우크라이나</b>, 전쟁 종식 위해 협상 가능한 지도자 필요&quot;")}
+2025-03-03T12:32:12.233890+09:00 WARN - Object {"description": String("프랑스가 하늘과 바다에서 <b>우크라이나</b> 전쟁을 한 달간 중지하자고 공개 제안했다. 2일(현지시간) AFP통신에... 유럽에서 논의가 진행 중인 평화유지군에 대해선 &quot;몇주 안에 <b>우크라이나</b>에 주둔할 수는 없을 것&quot;이라면서..."), "link": String("https://n.news.naver.com/mnews/article/014/0005315394?sid=104"), "originallink": String("http://www.fnnews.com/news/202503030759000945"), "pubDate": String("Mon, 03 Mar 2025 08:06:00 +0900"), "title": String("지상전 빼고, 하늘과 바다에서 <b>우크라이나</b> 전쟁을 중지하자고 한 이유는...")}
+2025-03-03T12:32:12.234288+09:00 WARN - Object {"description": String("백악관이 <b>우크라이나</b> 전쟁 종전과 관련해 “우리는 미국과 협상할 수 있고, 결국 러시아와 협상을 해 전쟁을 끝낼 수 있는 (<b>우크라이나</b>) 지도자가 필요하다”고 밝혔다. 볼로디미르 젤렌스키 <b>우크라이나</b> 대통령. AP연합뉴스..."), "link": String("https://n.news.naver.com/mnews/article/022/0004015479?sid=104"), "originallink": String("http://www.segye.com/newsView/20250303500363?OutUrl=naver"), "pubDate": String("Mon, 03 Mar 2025 02:11:00 +0900"), "title": String("美, <b>우크라이나</b> 정권교체 지지 시사… “러시아와 협상할 수 있는 지도...")}
+2025-03-03T12:49:07.380199+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:49:23.247559+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:49:26.439760+09:00 WARN - String("<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\"><channel><title>Naver Open API - news ::&apos;우크라이나&apos;</title><link>https://search.naver.com</link><description>Naver Search Result</description><lastBuildDate>Mon, 03 Mar 2025 12:49:26 +0900</lastBuildDate><total>1059673</total><start>1</start><display>3</display><item><title>백악관 &amp;quot;&lt;b&gt;우크라이나&lt;/b&gt;, 전쟁 종식 위해 협상 가능한 지도자 필요&amp;quot;</title><originallink>https://www.kyeonggi.com/article/20250303580005</originallink><link>https://n.news.naver.com/mnews/article/666/0000065887?sid=104</link><description>미국 백악관이 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁 종식과 관련해 &amp;quot;미국과 협상할 수 있고, 결국 러시아와도 협상해 전쟁을 끝낼... 젤렌스키 &lt;b&gt;우크라이나&lt;/b&gt; 대통령 간 회담이 결렬된 이후 트럼프 대통령이 젤렌스키 대통령의 사임을 원하느냐는... </description><pubDate>Mon, 03 Mar 2025 09:01:00 +0900</pubDate></item><item><title>지상전 빼고, 하늘과 바다에서 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁을 중지하자고 한 이유는...</title><originallink>http://www.fnnews.com/news/202503030759000945</originallink><link>https://n.news.naver.com/mnews/article/014/0005315394?sid=104</link><description>프랑스가 하늘과 바다에서 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁을 한 달간 중지하자고 공개 제안했다. 2일(현지시간) AFP통신에... 유럽에서 논의가 진행 중인 평화유지군에 대해선 &amp;quot;몇주 안에 &lt;b&gt;우크라이나&lt;/b&gt;에 주둔할 수는 없을 것&amp;quot;이라면서... </description><pubDate>Mon, 03 Mar 2025 08:06:00 +0900</pubDate></item><item><title>美, &lt;b&gt;우크라이나&lt;/b&gt; 정권교체 지지 시사… “러시아와 협상할 수 있는 지도...</title><originallink>http://www.segye.com/newsView/20250303500363?OutUrl=naver</originallink><link>https://n.news.naver.com/mnews/article/022/0004015479?sid=104</link><description>백악관이 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁 종전과 관련해 “우리는 미국과 협상할 수 있고, 결국 러시아와 협상을 해 전쟁을 끝낼 수 있는 (&lt;b&gt;우크라이나&lt;/b&gt;) 지도자가 필요하다”고 밝혔다. 볼로디미르 젤렌스키 &lt;b&gt;우크라이나&lt;/b&gt; 대통령. AP연합뉴스... </description><pubDate>Mon, 03 Mar 2025 02:11:00 +0900</pubDate></item></channel></rss>")
+2025-03-03T12:49:26.440537+09:00 ERROR - Handler get_news panicked.
+2025-03-03T12:49:26.440691+09:00 WARN - A panic is treated as an internal server error.
+2025-03-03T12:49:26.440747+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T12:49:26.440771+09:00 ERROR - 500 Internal servcer Error: /news?query=%EC%9A%B0%ED%81%AC%EB%9D%BC%EC%9D%B4%EB%82%98&display=3&sort=sim
+2025-03-03T12:54:01.806547+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:54:06.166991+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:54:11.297298+09:00 WARN - String("<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\"><channel><title>Naver Open API - news ::&apos;우크라이나&apos;</title><link>https://search.naver.com</link><description>Naver Search Result</description><lastBuildDate>Mon, 03 Mar 2025 12:54:11 +0900</lastBuildDate><total>1059673</total><start>1</start><display>3</display><item><title>백악관 &amp;quot;&lt;b&gt;우크라이나&lt;/b&gt;, 전쟁 종식 위해 협상 가능한 지도자 필요&amp;quot;</title><originallink>https://www.kyeonggi.com/article/20250303580005</originallink><link>https://n.news.naver.com/mnews/article/666/0000065887?sid=104</link><description>미국 백악관이 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁 종식과 관련해 &amp;quot;미국과 협상할 수 있고, 결국 러시아와도 협상해 전쟁을 끝낼... 젤렌스키 &lt;b&gt;우크라이나&lt;/b&gt; 대통령 간 회담이 결렬된 이후 트럼프 대통령이 젤렌스키 대통령의 사임을 원하느냐는... </description><pubDate>Mon, 03 Mar 2025 09:01:00 +0900</pubDate></item><item><title>지상전 빼고, 하늘과 바다에서 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁을 중지하자고 한 이유는...</title><originallink>http://www.fnnews.com/news/202503030759000945</originallink><link>https://n.news.naver.com/mnews/article/014/0005315394?sid=104</link><description>프랑스가 하늘과 바다에서 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁을 한 달간 중지하자고 공개 제안했다. 2일(현지시간) AFP통신에... 유럽에서 논의가 진행 중인 평화유지군에 대해선 &amp;quot;몇주 안에 &lt;b&gt;우크라이나&lt;/b&gt;에 주둔할 수는 없을 것&amp;quot;이라면서... </description><pubDate>Mon, 03 Mar 2025 08:06:00 +0900</pubDate></item><item><title>美, &lt;b&gt;우크라이나&lt;/b&gt; 정권교체 지지 시사… “러시아와 협상할 수 있는 지도...</title><originallink>http://www.segye.com/newsView/20250303500363?OutUrl=naver</originallink><link>https://n.news.naver.com/mnews/article/022/0004015479?sid=104</link><description>백악관이 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁 종전과 관련해 “우리는 미국과 협상할 수 있고, 결국 러시아와 협상을 해 전쟁을 끝낼 수 있는 (&lt;b&gt;우크라이나&lt;/b&gt;) 지도자가 필요하다”고 밝혔다. 볼로디미르 젤렌스키 &lt;b&gt;우크라이나&lt;/b&gt; 대통령. AP연합뉴스... </description><pubDate>Mon, 03 Mar 2025 02:11:00 +0900</pubDate></item></channel></rss>")
+2025-03-03T12:54:11.298601+09:00 ERROR - Handler get_news panicked.
+2025-03-03T12:54:11.298754+09:00 WARN - A panic is treated as an internal server error.
+2025-03-03T12:54:11.298966+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T12:54:11.299076+09:00 ERROR - 500 Internal servcer Error: /news?query=%EC%9A%B0%ED%81%AC%EB%9D%BC%EC%9D%B4%EB%82%98&display=3&sort=sim
+2025-03-03T12:54:50.346020+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:54:53.876132+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:54:54.106689+09:00 WARN - String("<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\"><channel><title>Naver Open API - news ::&apos;우크라이나&apos;</title><link>https://search.naver.com</link><description>Naver Search Result</description><lastBuildDate>Mon, 03 Mar 2025 12:54:54 +0900</lastBuildDate><total>1059674</total><start>1</start><display>3</display><item><title>백악관 &amp;quot;&lt;b&gt;우크라이나&lt;/b&gt;, 전쟁 종식 위해 협상 가능한 지도자 필요&amp;quot;</title><originallink>https://www.kyeonggi.com/article/20250303580005</originallink><link>https://n.news.naver.com/mnews/article/666/0000065887?sid=104</link><description>미국 백악관이 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁 종식과 관련해 &amp;quot;미국과 협상할 수 있고, 결국 러시아와도 협상해 전쟁을 끝낼... 젤렌스키 &lt;b&gt;우크라이나&lt;/b&gt; 대통령 간 회담이 결렬된 이후 트럼프 대통령이 젤렌스키 대통령의 사임을 원하느냐는... </description><pubDate>Mon, 03 Mar 2025 09:01:00 +0900</pubDate></item><item><title>지상전 빼고, 하늘과 바다에서 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁을 중지하자고 한 이유는...</title><originallink>http://www.fnnews.com/news/202503030759000945</originallink><link>https://n.news.naver.com/mnews/article/014/0005315394?sid=104</link><description>프랑스가 하늘과 바다에서 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁을 한 달간 중지하자고 공개 제안했다. 2일(현지시간) AFP통신에... 유럽에서 논의가 진행 중인 평화유지군에 대해선 &amp;quot;몇주 안에 &lt;b&gt;우크라이나&lt;/b&gt;에 주둔할 수는 없을 것&amp;quot;이라면서... </description><pubDate>Mon, 03 Mar 2025 08:06:00 +0900</pubDate></item><item><title>美, &lt;b&gt;우크라이나&lt;/b&gt; 정권교체 지지 시사… “러시아와 협상할 수 있는 지도...</title><originallink>http://www.segye.com/newsView/20250303500363?OutUrl=naver</originallink><link>https://n.news.naver.com/mnews/article/022/0004015479?sid=104</link><description>백악관이 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁 종전과 관련해 “우리는 미국과 협상할 수 있고, 결국 러시아와 협상을 해 전쟁을 끝낼 수 있는 (&lt;b&gt;우크라이나&lt;/b&gt;) 지도자가 필요하다”고 밝혔다. 볼로디미르 젤렌스키 &lt;b&gt;우크라이나&lt;/b&gt; 대통령. AP연합뉴스... </description><pubDate>Mon, 03 Mar 2025 02:11:00 +0900</pubDate></item></channel></rss>")
+2025-03-03T12:54:54.107127+09:00 WARN - Null
+2025-03-03T12:54:54.108182+09:00 ERROR - Handler get_news panicked.
+2025-03-03T12:54:54.108357+09:00 WARN - A panic is treated as an internal server error.
+2025-03-03T12:54:54.108460+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T12:54:54.108516+09:00 ERROR - 500 Internal servcer Error: /news?query=%EC%9A%B0%ED%81%AC%EB%9D%BC%EC%9D%B4%EB%82%98&display=3&sort=sim
+2025-03-03T12:55:03.478014+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:55:06.158785+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:55:06.760888+09:00 WARN - String("<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss version=\"2.0\"><channel><title>Naver Open API - news ::&apos;우크라이나&apos;</title><link>https://search.naver.com</link><description>Naver Search Result</description><lastBuildDate>Mon, 03 Mar 2025 12:55:06 +0900</lastBuildDate><total>1059674</total><start>1</start><display>3</display><item><title>백악관 &amp;quot;&lt;b&gt;우크라이나&lt;/b&gt;, 전쟁 종식 위해 협상 가능한 지도자 필요&amp;quot;</title><originallink>https://www.kyeonggi.com/article/20250303580005</originallink><link>https://n.news.naver.com/mnews/article/666/0000065887?sid=104</link><description>미국 백악관이 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁 종식과 관련해 &amp;quot;미국과 협상할 수 있고, 결국 러시아와도 협상해 전쟁을 끝낼... 젤렌스키 &lt;b&gt;우크라이나&lt;/b&gt; 대통령 간 회담이 결렬된 이후 트럼프 대통령이 젤렌스키 대통령의 사임을 원하느냐는... </description><pubDate>Mon, 03 Mar 2025 09:01:00 +0900</pubDate></item><item><title>지상전 빼고, 하늘과 바다에서 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁을 중지하자고 한 이유는...</title><originallink>http://www.fnnews.com/news/202503030759000945</originallink><link>https://n.news.naver.com/mnews/article/014/0005315394?sid=104</link><description>프랑스가 하늘과 바다에서 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁을 한 달간 중지하자고 공개 제안했다. 2일(현지시간) AFP통신에... 유럽에서 논의가 진행 중인 평화유지군에 대해선 &amp;quot;몇주 안에 &lt;b&gt;우크라이나&lt;/b&gt;에 주둔할 수는 없을 것&amp;quot;이라면서... </description><pubDate>Mon, 03 Mar 2025 08:06:00 +0900</pubDate></item><item><title>美, &lt;b&gt;우크라이나&lt;/b&gt; 정권교체 지지 시사… “러시아와 협상할 수 있는 지도...</title><originallink>http://www.segye.com/newsView/20250303500363?OutUrl=naver</originallink><link>https://n.news.naver.com/mnews/article/022/0004015479?sid=104</link><description>백악관이 &lt;b&gt;우크라이나&lt;/b&gt; 전쟁 종전과 관련해 “우리는 미국과 협상할 수 있고, 결국 러시아와 협상을 해 전쟁을 끝낼 수 있는 (&lt;b&gt;우크라이나&lt;/b&gt;) 지도자가 필요하다”고 밝혔다. 볼로디미르 젤렌스키 &lt;b&gt;우크라이나&lt;/b&gt; 대통령. AP연합뉴스... </description><pubDate>Mon, 03 Mar 2025 02:11:00 +0900</pubDate></item></channel></rss>")
+2025-03-03T12:55:06.761325+09:00 WARN - Null
+2025-03-03T12:55:06.762417+09:00 ERROR - Handler get_news panicked.
+2025-03-03T12:55:06.762595+09:00 WARN - A panic is treated as an internal server error.
+2025-03-03T12:55:06.762719+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T12:55:06.762790+09:00 ERROR - 500 Internal servcer Error: /news?query=%EC%9A%B0%ED%81%AC%EB%9D%BC%EC%9D%B4%EB%82%98&display=3&sort=sim
+2025-03-03T12:55:30.658363+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:55:33.908646+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:55:41.448107+09:00 ERROR - Handler get_news panicked.
+2025-03-03T12:55:41.448285+09:00 WARN - A panic is treated as an internal server error.
+2025-03-03T12:55:41.448394+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T12:55:41.448433+09:00 ERROR - 500 Internal servcer Error: /news?query=%EC%9A%B0%ED%81%AC%EB%9D%BC%EC%9D%B4%EB%82%98&display=3&sort=sim
+2025-03-03T12:56:59.688844+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:57:04.347982+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:57:31.067887+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:57:34.105549+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:57:34.938561+09:00 WARN - Object {"channel": Object {"description": String("Naver Search Result"), "display": Number(3), "item": Array [Object {"description": String("미국 백악관이 <b>우크라이나</b> 전쟁 종식과 관련해 &quot;미국과 협상할 수 있고, 결국 러시아와도 협상해 전쟁을 끝낼... 젤렌스키 <b>우크라이나</b> 대통령 간 회담이 결렬된 이후 트럼프 대통령이 젤렌스키 대통령의 사임을 원하느냐는..."), "link": String("https://n.news.naver.com/mnews/article/666/0000065887?sid=104"), "originallink": String("https://www.kyeonggi.com/article/20250303580005"), "pubDate": String("Mon, 03 Mar 2025 09:01:00 +0900"), "title": String("백악관 &quot;<b>우크라이나</b>, 전쟁 종식 위해 협상 가능한 지도자 필요&quot;")}, Object {"description": String("프랑스가 하늘과 바다에서 <b>우크라이나</b> 전쟁을 한 달간 중지하자고 공개 제안했다. 2일(현지시간) AFP통신에... 유럽에서 논의가 진행 중인 평화유지군에 대해선 &quot;몇주 안에 <b>우크라이나</b>에 주둔할 수는 없을 것&quot;이라면서..."), "link": String("https://n.news.naver.com/mnews/article/014/0005315394?sid=104"), "originallink": String("http://www.fnnews.com/news/202503030759000945"), "pubDate": String("Mon, 03 Mar 2025 08:06:00 +0900"), "title": String("지상전 빼고, 하늘과 바다에서 <b>우크라이나</b> 전쟁을 중지하자고 한 이유는...")}, Object {"description": String("백악관이 <b>우크라이나</b> 전쟁 종전과 관련해 “우리는 미국과 협상할 수 있고, 결국 러시아와 협상을 해 전쟁을 끝낼 수 있는 (<b>우크라이나</b>) 지도자가 필요하다”고 밝혔다. 볼로디미르 젤렌스키 <b>우크라이나</b> 대통령. AP연합뉴스..."), "link": String("https://n.news.naver.com/mnews/article/022/0004015479?sid=104"), "originallink": String("http://www.segye.com/newsView/20250303500363?OutUrl=naver"), "pubDate": String("Mon, 03 Mar 2025 02:11:00 +0900"), "title": String("美, <b>우크라이나</b> 정권교체 지지 시사… “러시아와 협상할 수 있는 지도...")}], "lastBuildDate": String("Mon, 03 Mar 2025 12:57:34 +0900"), "link": String("https://search.naver.com"), "start": Number(1), "title": String("Naver Open API - news ::'우크라이나'"), "total": Number(1059675)}}
+2025-03-03T12:57:48.513208+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T12:57:50.796839+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T12:57:51.748874+09:00 WARN - Object {"description": String("미국 백악관이 <b>우크라이나</b> 전쟁 종식과 관련해 &quot;미국과 협상할 수 있고, 결국 러시아와도 협상해 전쟁을 끝낼... 젤렌스키 <b>우크라이나</b> 대통령 간 회담이 결렬된 이후 트럼프 대통령이 젤렌스키 대통령의 사임을 원하느냐는..."), "link": String("https://n.news.naver.com/mnews/article/666/0000065887?sid=104"), "originallink": String("https://www.kyeonggi.com/article/20250303580005"), "pubDate": String("Mon, 03 Mar 2025 09:01:00 +0900"), "title": String("백악관 &quot;<b>우크라이나</b>, 전쟁 종식 위해 협상 가능한 지도자 필요&quot;")}
+2025-03-03T12:57:51.749035+09:00 WARN - Object {"description": String("프랑스가 하늘과 바다에서 <b>우크라이나</b> 전쟁을 한 달간 중지하자고 공개 제안했다. 2일(현지시간) AFP통신에... 유럽에서 논의가 진행 중인 평화유지군에 대해선 &quot;몇주 안에 <b>우크라이나</b>에 주둔할 수는 없을 것&quot;이라면서..."), "link": String("https://n.news.naver.com/mnews/article/014/0005315394?sid=104"), "originallink": String("http://www.fnnews.com/news/202503030759000945"), "pubDate": String("Mon, 03 Mar 2025 08:06:00 +0900"), "title": String("지상전 빼고, 하늘과 바다에서 <b>우크라이나</b> 전쟁을 중지하자고 한 이유는...")}
+2025-03-03T12:57:51.749165+09:00 WARN - Object {"description": String("백악관이 <b>우크라이나</b> 전쟁 종전과 관련해 “우리는 미국과 협상할 수 있고, 결국 러시아와 협상을 해 전쟁을 끝낼 수 있는 (<b>우크라이나</b>) 지도자가 필요하다”고 밝혔다. 볼로디미르 젤렌스키 <b>우크라이나</b> 대통령. AP연합뉴스..."), "link": String("https://n.news.naver.com/mnews/article/022/0004015479?sid=104"), "originallink": String("http://www.segye.com/newsView/20250303500363?OutUrl=naver"), "pubDate": String("Mon, 03 Mar 2025 02:11:00 +0900"), "title": String("美, <b>우크라이나</b> 정권교체 지지 시사… “러시아와 협상할 수 있는 지도...")}
+2025-03-03T13:01:23.200201+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T13:01:27.625683+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T13:01:28.157598+09:00 ERROR - [Service] Failed to parse xml: Custom("missing field `pub_date`")
+2025-03-03T13:01:28.158581+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T13:01:28.158645+09:00 ERROR - 500 Internal servcer Error: /news?query=%EC%9A%B0%ED%81%AC%EB%9D%BC%EC%9D%B4%EB%82%98&display=3&sort=sim
+2025-03-03T13:04:05.874119+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T13:04:09.697298+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T13:08:28.212831+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T13:08:31.935724+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T13:22:50.079220+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T13:30:54.203545+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T13:30:58.706717+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T13:32:46.956074+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T13:32:51.731273+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T13:35:34.944016+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T13:43:09.866834+09:00 ERROR - Rocket failed to launch due to the following route collisions:
+2025-03-03T13:43:59.498360+09:00 ERROR - Rocket failed to launch due to the following route collisions:
+2025-03-03T13:44:40.078877+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T13:44:54.530494+09:00 WARN - Query string failed to match route declaration.
+2025-03-03T13:44:54.530565+09:00 WARN - missing
+2025-03-03T13:44:54.530617+09:00 ERROR - No matching routes for GET /news?%EC%A0%95%EC%B9%98.
+2025-03-03T13:44:54.530646+09:00 WARN - No 422 catcher registered. Using Rocket default.
+2025-03-03T13:45:35.136876+09:00 WARN - Query string failed to match route declaration.
+2025-03-03T13:45:35.137139+09:00 WARN - missing
+2025-03-03T13:45:35.137208+09:00 ERROR - No matching routes for GET /news?query=%EC%9A%B0%ED%81%AC%EB%9D%BC%EC%9D%B4%EB%82%98&display=10&sort=sim.
+2025-03-03T13:45:35.137243+09:00 WARN - No 422 catcher registered. Using Rocket default.
+2025-03-03T14:24:06.244760+09:00 ERROR - No matching routes for GET /fetch_strart.
+2025-03-03T14:24:06.247419+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-03T14:24:06.247793+09:00 ERROR - 404 Not Found: /fetch_strart
+2025-03-03T14:24:10.775789+09:00 ERROR - No matching routes for GET /news/fetch_strart.
+2025-03-03T14:24:10.775912+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-03T14:24:10.775967+09:00 ERROR - 404 Not Found: /news/fetch_strart
+2025-03-03T14:35:18.942319+09:00 ERROR - [Service] Failed to parse xml: Custom("missing field `item`")
+2025-03-03T14:35:18.943499+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T14:35:18.943780+09:00 ERROR - 500 Internal servcer Error: /news/api?query=af1324&display=10&sort=sim
+2025-03-03T14:39:16.634341+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 31420
+2025-03-03T14:39:16.662351+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 33946
+2025-03-03T14:39:16.671769+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 19943
+2025-03-03T14:39:16.798805+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 25746
+2025-03-03T14:39:16.896332+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 28667
+2025-03-03T14:39:16.899303+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 18514
+2025-03-03T14:39:16.907509+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 30702
+2025-03-03T14:39:16.913062+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 46251
+2025-03-03T14:39:16.984713+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 49250
+2025-03-03T14:39:21.080645+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 178946
+2025-03-03T14:39:21.115520+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 170916
+2025-03-03T14:39:23.866675+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 56719
+2025-03-03T14:39:25.018715+09:00 ERROR - [Service] Failed to insert rss channel: Database(MySqlDatabaseError { code: Some("23000"), number: 1062, message: "Duplicate entry '주요 뉴스 - Google 뉴스' for key 'rss_channel.channel_title'" })
+2025-03-03T14:39:25.018973+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T14:39:25.019037+09:00 ERROR - 500 Internal servcer Error: /rss/all
+2025-03-03T14:40:10.449694+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 33639
+2025-03-03T14:40:10.457516+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 19943
+2025-03-03T14:40:10.770343+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 21449
+2025-03-03T14:40:11.934570+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 45055
+2025-03-03T14:40:11.985152+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 27200
+2025-03-03T14:40:21.799610+09:00 ERROR - [Service] Failed to insert rss channel: Database(MySqlDatabaseError { code: Some("23000"), number: 1062, message: "Duplicate entry '주요 뉴스 - Google 뉴스' for key 'rss_channel.channel_title'" })
+2025-03-03T14:40:21.801616+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T14:40:21.801712+09:00 ERROR - 500 Internal servcer Error: /rss/all
+2025-03-03T14:41:33.811060+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 31500
+2025-03-03T14:41:34.157074+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 20339
+2025-03-03T14:41:34.210835+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 27704
+2025-03-03T14:41:37.934192+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 181511
+2025-03-03T14:41:38.554301+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 165532
+2025-03-03T14:41:38.586740+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 157539
+2025-03-03T14:41:42.186080+09:00 ERROR - [Service] Failed to insert rss channel: Database(MySqlDatabaseError { code: Some("23000"), number: 1062, message: "Duplicate entry '주요 뉴스 - Google 뉴스' for key 'rss_channel.channel_title'" })
+2025-03-03T14:41:42.186986+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T14:41:42.187072+09:00 ERROR - 500 Internal servcer Error: /rss/all
+2025-03-03T14:43:00.256773+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 7926
+2025-03-03T14:43:00.537690+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 47537
+2025-03-03T14:43:00.600459+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 20339
+2025-03-03T14:43:00.772127+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 29979
+2025-03-03T14:43:01.267509+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 27226
+2025-03-03T14:43:04.221459+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 178946
+2025-03-03T14:43:07.257761+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 131930
+2025-03-03T14:43:10.165339+09:00 ERROR - [Service] Failed to read from rss body: InvalidStartTag
+2025-03-03T14:43:10.165654+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T14:43:10.165720+09:00 ERROR - 500 Internal servcer Error: /rss/all
+2025-03-03T14:44:01.888073+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 31420
+2025-03-03T14:44:01.898977+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 33640
+2025-03-03T14:44:02.304923+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 28180
+2025-03-03T14:44:02.311960+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 21530
+2025-03-03T14:44:02.682725+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 30944
+2025-03-03T14:44:03.026601+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 49523
+2025-03-03T14:44:03.032984+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 40438
+2025-03-03T14:44:07.162110+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 181744
+2025-03-03T14:44:07.876986+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 165532
+2025-03-03T14:44:09.281466+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 200372
+2025-03-03T14:44:09.863765+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 56719
+2025-03-03T14:44:13.961696+09:00 ERROR - Failed to extract key words
+2025-03-03T14:44:27.421634+09:00 ERROR - Failed to extract key words
+2025-03-03T14:44:29.237148+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 169972
+2025-03-03T14:44:29.270556+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 165570
+2025-03-03T14:44:29.298482+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 157577
+2025-03-03T14:44:30.538913+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 200372
+2025-03-03T14:44:35.096282+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 33685
+2025-03-03T14:44:35.896439+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 28103
+2025-03-03T14:44:37.652853+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 1769
+2025-03-03T14:44:43.769331+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 17836
+2025-03-03T14:44:47.158253+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 23140
+2025-03-03T14:44:47.186936+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 37147
+2025-03-03T14:44:47.197229+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 16463
+2025-03-03T14:44:47.696492+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 17630
+2025-03-03T14:44:47.712462+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 17705
+2025-03-03T14:44:48.058149+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 608
+2025-03-03T14:44:48.073519+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 79418
+2025-03-03T14:44:48.937432+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 63694
+2025-03-03T14:44:49.186023+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 57108
+2025-03-03T14:44:49.195004+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 34900
+2025-03-03T14:44:49.605197+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 66786
+2025-03-03T14:44:49.616066+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 48628
+2025-03-03T14:44:52.593151+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 41945
+2025-03-03T14:44:56.403419+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 55623
+2025-03-03T14:44:56.409154+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 16282
+2025-03-03T14:44:57.088772+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 79654
+2025-03-03T14:44:57.098606+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 42422
+2025-03-03T14:44:57.108459+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 31156
+2025-03-03T14:44:58.712418+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 62722
+2025-03-03T14:44:59.065266+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 54189
+2025-03-03T14:44:59.708625+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 35154
+2025-03-03T14:45:01.246944+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 16312
+2025-03-03T14:45:02.337688+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 98753
+2025-03-03T14:45:03.239190+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 25443
+2025-03-03T14:45:04.546327+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 71673
+2025-03-03T14:45:09.634938+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 51884
+2025-03-03T14:45:11.066789+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 10932
+2025-03-03T14:45:12.190918+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 19063
+2025-03-03T14:45:12.203801+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 25953
+2025-03-03T14:45:14.193591+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 24359
+2025-03-03T14:45:14.616279+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 7308
+2025-03-03T14:45:14.885600+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 21861
+2025-03-03T14:45:14.893859+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 14327
+2025-03-03T14:45:15.427338+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12756
+2025-03-03T14:45:15.770585+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 16890
+2025-03-03T14:45:16.237658+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 10598
+2025-03-03T14:45:16.245368+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 9340
+2025-03-03T14:45:16.516832+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 6379
+2025-03-03T14:45:16.955868+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 18316
+2025-03-03T14:45:19.144780+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 26313
+2025-03-03T14:45:19.153719+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12725
+2025-03-03T14:45:20.599316+09:00 ERROR - Failed to extract key words
+2025-03-03T14:45:22.048110+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 30548
+2025-03-03T14:45:25.279221+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 17963
+2025-03-03T14:45:25.289973+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 14092
+2025-03-03T14:45:25.300630+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 15734
+2025-03-03T14:45:27.565857+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12758
+2025-03-03T14:45:30.350851+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 21879
+2025-03-03T14:45:30.620490+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 28112
+2025-03-03T14:45:30.940468+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 12327
+2025-03-03T14:45:32.258309+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 29074
+2025-03-03T14:45:33.448248+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 14867
+2025-03-03T14:45:33.640762+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 152947
+2025-03-03T14:45:35.242956+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 13303
+2025-03-03T14:45:36.450620+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 6849
+2025-03-03T14:45:36.887079+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 7500
+2025-03-03T14:45:37.236363+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 15966
+2025-03-03T14:45:37.245145+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 13046
+2025-03-03T14:45:37.796963+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 20738
+2025-03-03T14:45:38.784310+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 32241
+2025-03-03T14:45:44.811847+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 23775
+2025-03-03T14:45:45.283481+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 70821
+2025-03-03T14:45:47.795186+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 31945
+2025-03-03T14:45:47.808116+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 76523
+2025-03-03T14:45:50.390514+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 15235
+2025-03-03T14:45:50.475747+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 14496
+2025-03-03T14:45:50.486158+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 19948
+2025-03-03T14:45:50.491967+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12932
+2025-03-03T14:45:51.212221+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 18392
+2025-03-03T14:45:56.416235+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 57757
+2025-03-03T14:46:37.075815+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 283338
+2025-03-03T14:46:38.797144+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 175219
+2025-03-03T14:46:38.817952+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 146288
+2025-03-03T14:46:41.051977+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 182034
+2025-03-03T14:46:41.084567+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 248506
+2025-03-03T14:46:42.854201+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 65435
+2025-03-03T14:46:44.053313+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 47050
+2025-03-03T14:47:02.110808+09:00 ERROR - Failed to extract key words
+2025-03-03T14:47:02.305771+09:00 ERROR - Failed to extract key words
+2025-03-03T14:47:24.417908+09:00 ERROR - Failed to extract key words
+2025-03-03T14:47:27.108864+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 70046
+2025-03-03T14:47:27.123322+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 88301
+2025-03-03T14:47:27.139184+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 89711
+2025-03-03T14:47:27.160426+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 139468
+2025-03-03T14:47:27.176102+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 82040
+2025-03-03T14:47:27.181070+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 31204
+2025-03-03T14:47:27.192395+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 85326
+2025-03-03T14:47:30.270167+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 105552
+2025-03-03T14:47:31.049609+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 142313
+2025-03-03T14:47:42.674011+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 56911
+2025-03-03T14:47:43.948508+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 127722
+2025-03-03T14:47:43.960527+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 76957
+2025-03-03T14:47:52.731794+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 42343
+2025-03-03T14:47:57.023699+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 154843
+2025-03-03T14:47:57.045709+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 141266
+2025-03-03T14:47:59.381182+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 63423
+2025-03-03T14:47:59.409366+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 129568
+2025-03-03T14:48:00.801435+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 72413
+2025-03-03T14:48:09.755039+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 106865
+2025-03-03T14:48:09.767397+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 59207
+2025-03-03T14:48:40.574420+09:00 ERROR - Failed to extract key words
+2025-03-03T14:48:44.189043+09:00 ERROR - Failed to extract key words
+2025-03-03T14:49:04.086373+09:00 ERROR - Failed to extract key words
+2025-03-03T14:52:09.645824+09:00 ERROR - [Service] Failed to parse xml: Custom("missing field `channel`")
+2025-03-03T14:52:09.646770+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T14:52:09.646843+09:00 ERROR - 500 Internal servcer Error: /news/api?query=%20%20&display=10&sort=sim
+2025-03-03T14:52:10.004948+09:00 ERROR - [Service] Failed to parse xml: Custom("missing field `channel`")
+2025-03-03T14:52:10.005315+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-03T14:52:10.005351+09:00 ERROR - 500 Internal servcer Error: /news/api?query=%20%20&display=10&sort=sim
+2025-03-03T14:53:25.122705+09:00 WARN - Received SIGINT. Requesting shutdown.

@@ -28,7 +28,7 @@ pub fn analyze_morpheme(paragraph: String) -> Result<Vec<String>, MorphemeError>
         // Extract NNG, NNP Tag with ENG , NNG -> 일반 명사, NNP -> 고유 명사
         let nng_keywords = extract_nngp_keywords(result);
         if nng_keywords.is_empty() {
-            error!("{}", MorphemeError::KeywordsExtraction);
+            warn!("{}", MorphemeError::KeywordsExtraction);
             return Err(MorphemeError::KeywordsExtraction);
         }
 

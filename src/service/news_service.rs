@@ -1,19 +1,17 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, env};
 
 use crate::{
-    global::FETCH_FLAG,
     model::{
         error::OmniNewsError,
-        news::{NewNews, News},
+        news::{NewNews, News, NewsItem, NewsParams},
     },
     repository::news_repository,
 };
 use chrono::{Duration, NaiveDateTime};
-use reqwest::Client;
+use reqwest::{header::HeaderMap, Client, Response};
 use rocket::State;
 use scraper::{Html, Selector};
 use sqlx::MySqlPool;
-use tokio::time;
 
 type NewsType = HashMap<String, i32>;
 
@@ -21,13 +19,112 @@ pub async fn get_news(
     pool: &State<MySqlPool>,
     category: String,
 ) -> Result<Vec<News>, OmniNewsError> {
-    match news_repository::select_news_by_category(pool, category.clone()).await {
+    match news_repository::select_news_by_category(pool, category).await {
         Ok(news) => Ok(news),
         Err(e) => {
-            error!("[Service] Failed to select news with {}: {:?}", category, e);
+            error!("[Service] Failed to fetch news: {:?}", e);
             Err(OmniNewsError::Database(e))
         }
     }
+}
+
+pub async fn get_news_by_api(params: NewsParams) -> Result<Vec<NewsItem>, OmniNewsError> {
+    let res = request_naver_news_api(params).await?;
+
+    let xml_data = res.text().await.map_err(|e| {
+        error!("[Service] Failed to fetch news items: {:?}", e);
+        OmniNewsError::FetchNews
+    })?;
+
+    get_news_items_by_xml(xml_data)
+}
+
+async fn request_naver_news_api(params: NewsParams) -> Result<Response, OmniNewsError> {
+    let client = reqwest::Client::new();
+
+    let mut head = HeaderMap::new();
+    head.append(
+        "X-Naver-Client-Id",
+        env::var("NAVER_CLIENT_ID")
+            .expect("NAVER_CLIENT_ID is must be set")
+            .parse()
+            .unwrap(),
+    );
+    head.append(
+        "X-Naver-Client-Secret",
+        env::var("NAVER_CLIENT_SECRET")
+            .expect("NAVER_CLIENT_SECRET is must be set")
+            .parse()
+            .unwrap(),
+    );
+
+    let url = format!(
+        "https://openapi.naver.com/v1/search/news.xml?query={}&display={}&sort={}",
+        params.query.unwrap_or_default(),
+        params.display.unwrap_or_default(),
+        params.sort.unwrap_or_default()
+    );
+
+    client.get(url).headers(head).send().await.map_err(|e| {
+        error!("[Service] Failed to fetch news: {:?}", e);
+        OmniNewsError::FetchNews
+    })
+}
+
+fn get_news_items_by_xml(xml_data: String) -> Result<Vec<NewsItem>, OmniNewsError> {
+    use quick_xml::de::from_str;
+    use serde::{Deserialize, Serialize};
+
+    #[derive(Debug, Serialize, Deserialize)]
+    pub struct NewsRss {
+        channel: Channel,
+    }
+
+    #[derive(Debug, Serialize, Deserialize)]
+    #[allow(non_snake_case)]
+    pub struct Channel {
+        title: String,
+        link: String,
+        description: String,
+        lastBuildDate: String,
+        total: u32,
+        start: u32,
+        display: u32,
+        item: Vec<NewsItemAPI>,
+    }
+
+    #[derive(Debug, Serialize, Deserialize)]
+    #[allow(non_snake_case)]
+    pub struct NewsItemAPI {
+        title: String,
+        originallink: String,
+        link: String,
+        description: String,
+        pubDate: String,
+    }
+
+    let rss: NewsRss = from_str(xml_data.as_str()).map_err(|e| {
+        error!("[Service] Failed to parse xml: {:?}", e);
+        OmniNewsError::FetchNews
+    })?;
+
+    let items = rss.channel.item;
+
+    let mut result: Vec<NewsItem> = Vec::new();
+    for item in items {
+        result.push(NewsItem {
+            news_title: Some(item.title),
+            news_original_link: Some(item.originallink),
+            news_link: Some(item.link),
+            news_description: Some(item.description),
+            news_pub_date: Some(
+                NaiveDateTime::parse_from_str(&item.pubDate, "%a, %d %b %Y %H:%M:%S %z")
+                    .unwrap_or_default(),
+            ),
+        });
+    }
+
+    Ok(result)
 }
 
 pub async fn delete_old_news(pool: &MySqlPool) -> Result<i32, OmniNewsError> {
@@ -197,18 +294,4 @@ fn pub_date_to_naive_time(pub_date: String) -> Option<NaiveDateTime> {
     } else {
         None
     }
-}
-
-async fn get_news() {
-    let client = reqwest::Client::new();
-
-    let mut head = HeaderMap::new();
-    head.append("X-Naver-Client-Id", "4jfC5AiK9mIpPzUSJWGG".parse().unwrap());
-    head.append("X-Naver-Client-Secret", "Aw__VeIGuh".parse().unwrap());
-
-    let res = client
-    .get("https://openapi.naver.com/v1/search/news.xml?query=\"Rust언어\"&display=10&sort=sim")
-    .headers(head)
-    .send()
-    .await
 }

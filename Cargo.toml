@@ -41,5 +41,8 @@ libc = "0.2.169"
 reqwest = { version = "*", features = ["json"] }
 rss = "2.0"
 
+# xml 
+quick-xml = { version = "*", features = ["serialize"] }
+
 [build-dependencies]
 bindgen = "0.71.1"

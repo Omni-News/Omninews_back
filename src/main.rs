@@ -47,6 +47,7 @@ async fn rocket() -> _ {
                 fetch_start,
                 fetch_stop,
                 get_news,
+                get_news_by_api,
                 health_check,
             ],
         )
