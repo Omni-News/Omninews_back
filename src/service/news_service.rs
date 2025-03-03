@@ -198,3 +198,17 @@ fn pub_date_to_naive_time(pub_date: String) -> Option<NaiveDateTime> {
         None
     }
 }
+
+async fn get_news() {
+    let client = reqwest::Client::new();
+
+    let mut head = HeaderMap::new();
+    head.append("X-Naver-Client-Id", "4jfC5AiK9mIpPzUSJWGG".parse().unwrap());
+    head.append("X-Naver-Client-Secret", "Aw__VeIGuh".parse().unwrap());
+
+    let res = client
+    .get("https://openapi.naver.com/v1/search/news.xml?query=\"Rust언어\"&display=10&sort=sim")
+    .headers(head)
+    .send()
+    .await
+}
