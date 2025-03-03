@@ -1,14 +1,20 @@
 use rocket::{http::Status, serde::json::Json, State};
 use sqlx::MySqlPool;
 
-use crate::{model::news::News, service::news_service};
+use crate::{global::FETCH_FLAG, model::news::News, service::news_service};
 
-#[get("/fetch_news")]
-pub async fn create_news(pool: &State<MySqlPool>) -> Result<(), Status> {
-    match news_service::crawl_news_and_store_every_5_minutes(pool).await {
-        Ok(_) => Ok(()),
-        Err(_) => Err(Status::InternalServerError),
-    }
+#[get("/fetch_start")]
+pub async fn fetch_start() -> &'static str {
+    let mut fetch_flag = FETCH_FLAG.lock().await;
+    *fetch_flag = true;
+    "Fetching started!"
+}
+
+#[get("/fetch_stop")]
+pub async fn fetch_stop() -> &'static str {
+    let mut fetch_flag = FETCH_FLAG.lock().await;
+    *fetch_flag = false;
+    "Fetching stopped!"
 }
 
 #[get("/news?<category>")]

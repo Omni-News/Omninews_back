@@ -1,5 +1,3 @@
-use bindgen;
-
 fn main() {
     // 빌드가 변경될 때마다 다시 빌드
     println!("cargo:rerun-if-changed=build.rs");

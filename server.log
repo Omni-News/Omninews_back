@@ -3170,3 +3170,23 @@
 2025-02-17T13:33:55.344916+09:00 WARN - Received SIGINT. Requesting shutdown.
 2025-02-17T13:33:59.500681+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
 2025-02-17T14:05:54.901617+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-02-17T15:01:23.144716+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-02-17T15:01:29.146944+09:00 WARN - Shutdown failed: outstanding background I/O.
+2025-02-17T15:01:29.150535+09:00 ERROR - Rocket failed to shutdown gracefully.
+2025-02-26T16:41:42.290941+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-01T14:38:39.307644+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-01T14:41:10.081009+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-01T14:42:11.047134+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-01T14:46:23.958927+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-01T14:46:28.480875+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-01T14:59:41.444961+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-01T14:59:45.935193+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-01T15:03:24.342640+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-01T15:03:36.424868+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-01T15:04:21.587753+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-01T15:04:24.902346+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-01T15:04:59.723846+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-01T15:05:02.224089+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-01T15:07:21.471592+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-01T15:07:24.356388+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-01T15:08:20.724605+09:00 WARN - Received SIGINT. Requesting shutdown.

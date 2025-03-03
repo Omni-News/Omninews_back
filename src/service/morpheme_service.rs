@@ -23,7 +23,7 @@ pub async fn get_morphemes_sources_by_search_value(
         let morphemes = morpheme_repository::select_morphemes_by_morpheme(pool, prompt_morpheme)
             .await
             .map_err(|e| {
-                error!("Failed to select morphemes by morpheme: {}", e);
+                error!("[Service] Failed to select morphemes by morpheme: {}", e);
                 OmniNewsError::Database(e)
             })?;
 
@@ -116,7 +116,7 @@ async fn create_morpheme_and_source_link(
                 Err(_) => morpheme_repository::insert_morpheme(pool, morpheme.clone())
                     .await
                     .map_err(|e| {
-                        error!("Failed to insert morpheme: {}", e);
+                        error!("[Service] Failed to insert morpheme: {}", e);
                         OmniNewsError::Database(e)
                     })?,
             };
@@ -144,7 +144,7 @@ async fn set_morpheme_rank(
     morpheme_repository::update_morpheme_by_id(pool, morpheme)
         .await
         .map_err(|e| {
-            error!("Failed to set morpheme rank: {}", e);
+            error!("[Service] Failed to set morpheme rank: {}", e);
             OmniNewsError::Database(e)
         })
 }
@@ -173,7 +173,7 @@ async fn store_morpheme_link_mapping(
     {
         Ok(_) => Ok(true),
         Err(e) => {
-            error!("Failed to insert morpheme link mapping: {}", e);
+            error!("[Service] Failed to insert morpheme link mapping: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }

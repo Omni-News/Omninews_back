@@ -2,7 +2,7 @@ use rocket::State;
 use sqlx::{query, query_as, MySqlPool};
 
 use crate::{
-    db::get_db,
+    db::{get_db, get_db_scheduler},
     model::news::{NewNews, News},
 };
 
@@ -27,10 +27,10 @@ pub async fn select_news_by_category(
 }
 
 pub async fn select_news_by_title(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     news_title: String,
 ) -> Result<Option<i32>, sqlx::Error> {
-    let mut conn = get_db(pool).await?;
+    let mut conn = get_db_scheduler(pool).await?;
 
     let result = query!(
         r#"
@@ -47,8 +47,8 @@ pub async fn select_news_by_title(
     }
 }
 
-pub async fn insert_news(pool: &State<MySqlPool>, news: NewNews) -> Result<i32, sqlx::Error> {
-    let mut conn = get_db(pool).await?;
+pub async fn insert_news(pool: &MySqlPool, news: NewNews) -> Result<i32, sqlx::Error> {
+    let mut conn = get_db_scheduler(pool).await?;
 
     let result = query!(
         r#"
@@ -66,6 +66,23 @@ pub async fn insert_news(pool: &State<MySqlPool>, news: NewNews) -> Result<i32, 
 
     match result {
         Ok(res) => Ok(res.last_insert_id() as i32),
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn delete_old_news(pool: &MySqlPool) -> Result<i32, sqlx::Error> {
+    let mut conn = get_db_scheduler(pool).await?;
+
+    let result = query!(
+        r#"
+        DELETE FROM news WHERE news_pub_date < DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+        "#
+    )
+    .execute(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res.rows_affected() as i32),
         Err(e) => Err(e),
     }
 }

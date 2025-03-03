@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
+    global::FETCH_FLAG,
     model::{
         error::OmniNewsError,
         news::{NewNews, News},
@@ -23,29 +24,31 @@ pub async fn get_news(
     match news_repository::select_news_by_category(pool, category.clone()).await {
         Ok(news) => Ok(news),
         Err(e) => {
-            error!("Failed to select news with {}: {:?}", category, e);
+            error!("[Service] Failed to select news with {}: {:?}", category, e);
             Err(OmniNewsError::Database(e))
         }
     }
 }
 
-pub async fn crawl_news_and_store_every_5_minutes(
-    pool: &State<MySqlPool>,
-) -> Result<(), OmniNewsError> {
-    let mut handle = time::interval(time::Duration::from_secs(300));
+pub async fn delete_old_news(pool: &MySqlPool) -> Result<i32, OmniNewsError> {
+    match news_repository::delete_old_news(pool).await {
+        Ok(count) => Ok(count),
+        Err(e) => {
+            error!("[Service] Failed to delete old news: {:?}", e);
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
 
+pub async fn crawl_news_and_store_every_5_minutes(pool: &MySqlPool) -> Result<(), OmniNewsError> {
     let news_type = set_news_type();
 
-    loop {
-        handle.tick().await;
-
-        match fetch_news_and_store(pool, news_type.clone()).await {
-            Ok(_) => info!("Successfully fetched news"),
-            Err(e) => {
-                error!("Failed to fetch news: {:?}", e);
-                return Err(OmniNewsError::FetchNews);
-            }
-        };
+    match fetch_news_and_store(pool, news_type.clone()).await {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            error!("[Service] Failed to fetch news: {:?}", e);
+            Err(OmniNewsError::FetchNews)
+        }
     }
 }
 
@@ -69,10 +72,7 @@ fn set_news_type() -> NewsType {
     news_type
 }
 
-async fn fetch_news_and_store(
-    pool: &State<MySqlPool>,
-    news_type: NewsType,
-) -> Result<(), OmniNewsError> {
+async fn fetch_news_and_store(pool: &MySqlPool, news_type: NewsType) -> Result<(), OmniNewsError> {
     let client = Client::new();
 
     for (subject, code) in &news_type {
@@ -92,10 +92,10 @@ async fn fetch_news_and_store(
             match news_repository::select_news_by_title(pool, news.news_title.clone().unwrap())
                 .await
             {
-                Ok(i) => (),
-                Err(e) => {
+                Ok(_) => (),
+                Err(_) => {
                     let _ = news_repository::insert_news(pool, news).await.map_err(|e| {
-                        error!("Failed to insert news: {:?}", e);
+                        error!("[Service] Failed to insert news: {:?}", e);
                         OmniNewsError::Database(e)
                     });
                 }

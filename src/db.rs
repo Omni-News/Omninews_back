@@ -19,3 +19,10 @@ pub async fn get_db(pool: &State<MySqlPool>) -> Result<PoolConnection<MySql>, sq
         e
     })
 }
+
+pub async fn get_db_scheduler(pool: &MySqlPool) -> Result<PoolConnection<MySql>, sqlx::Error> {
+    pool.acquire().await.map_err(|e| {
+        error!("[Scheduler] Failed to acquire DB Connection pool: {:?}", e);
+        e
+    })
+}

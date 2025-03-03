@@ -157,7 +157,7 @@ pub async fn get_rss_list(
                     .await
                     .map_err(|e| {
                         error!(
-                            "Faild to select items by morpheme id order by source rank: {}",
+                            "[Service] Faild to select items by morpheme id order by source rank: {}",
                             e
                         );
                         OmniNewsError::Database(e)
@@ -171,7 +171,7 @@ pub async fn get_rss_list(
                     .await
                     .map_err(|e| {
                         error!(
-                            "Failed to select items by morpheme id order by rss rank: {}",
+                            "[Service] Failed to select items by morpheme id order by rss rank: {}",
                             e
                         );
                         OmniNewsError::Database(e)
@@ -185,7 +185,7 @@ pub async fn get_rss_list(
                     .await
                     .map_err(|e| {
                         error!(
-                            "Failed to select items by morpheme id order by pub date: {}",
+                            "[Service] Failed to select items by morpheme id order by pub date: {}",
                             e
                         );
                         OmniNewsError::Database(e)

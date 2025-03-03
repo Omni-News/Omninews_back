@@ -21,7 +21,7 @@ pub async fn create_rss_all(
     links: Vec<RssLink>,
 ) -> Result<bool, OmniNewsError> {
     for link in links {
-        info!("Add : {}", link.link);
+        info!("[Service] Add : {}", link.link);
         create_rss_and_morpheme(pool, link).await?;
     }
     Ok(true)
@@ -43,12 +43,12 @@ pub async fn create_rss_and_morpheme(
 
 async fn parse_rss_link_to_channel(link: &str) -> Result<Channel, OmniNewsError> {
     let response = reqwest::get(link).await.map_err(|e| {
-        error!("Not found url : {}", link);
+        error!("[Service] Not found url : {}", link);
         OmniNewsError::Request(e)
     })?;
     let body = response.text().await.map_err(OmniNewsError::Request)?;
     Channel::read_from(body.as_bytes()).map_err(|e| {
-        error!("Failed to read from rss body: {:?}", e);
+        error!("[Service] Failed to read from rss body: {:?}", e);
         OmniNewsError::Parse
     })
 }
@@ -93,7 +93,7 @@ async fn store_rss_channel(
         Err(_) => Ok(rss_channel_repository::insert_rss_channel(pool, channel)
             .await
             .map_err(|e| {
-                error!("Failed to insert rss channel: {:?}", e);
+                error!("[Service] Failed to insert rss channel: {:?}", e);
                 OmniNewsError::Database(e)
             })?),
     }
@@ -108,7 +108,7 @@ async fn set_channel_rank(
     rss_channel_repository::update_rss_channel(pool, channel)
         .await
         .map_err(|e| {
-            error!("Failed to set channel rank: {:?}", e);
+            error!("[Service] Failed to set channel rank: {:?}", e);
             OmniNewsError::Database(e)
         })
 }
@@ -134,7 +134,7 @@ pub async fn get_channel_list(
                     )
                     .await
                     .map_err(|e| {
-                            error!("Faild to select channels by morpheme id order by source rank: {}", e);
+                            error!("[Service] Faild to select channels by morpheme id order by source rank: {}", e);
                             OmniNewsError::Database(e)
                         })?
                 }
@@ -145,7 +145,7 @@ pub async fn get_channel_list(
                     )
                     .await
                     .map_err(|e| {
-                            error!("Failed to select channels by morpheme id order by channel rank: {}", e);
+                            error!("[Service] Failed to select channels by morpheme id order by channel rank: {}", e);
                             OmniNewsError::Database(e)
                         })?
                 }
