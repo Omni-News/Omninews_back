@@ -24,6 +24,26 @@ pub async fn select_rss_channel_by_link(
     }
 }
 
+pub async fn select_rss_channel_by_channel_rss_link(
+    pool: &State<MySqlPool>,
+    rss_link: String,
+) -> Result<RssChannel, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+    let result = query_as!(
+        RssChannel,
+        "SELECT * FROM rss_channel
+                WHERE channel_rss_link = ?",
+        rss_link,
+    )
+    .fetch_one(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res),
+        Err(e) => Err(e),
+    }
+}
+
 pub async fn select_rss_channels_by_morpheme_id_order_by_source_rank(
     pool: &State<MySqlPool>,
     morpheme_id: i32,
@@ -72,6 +92,25 @@ pub async fn select_rss_channels_by_morpheme_id_order_by_channel_rank(
     }
 }
 
+pub async fn select_rss_channels_order_by_channel_rank(
+    pool: &State<MySqlPool>,
+) -> Result<Vec<RssChannel>, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+    let result = query_as!(
+        RssChannel,
+        "SELECT * FROM rss_channel
+        ORDER BY channel_rank DESC
+        LIMIT 50;",
+    )
+    .fetch_all(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res),
+        Err(e) => Err(e),
+    }
+}
+
 pub async fn insert_rss_channel(
     pool: &State<MySqlPool>,
     rss_channel: NewRssChannel,
@@ -79,8 +118,8 @@ pub async fn insert_rss_channel(
     let mut conn = get_db(pool).await?;
     let result = query!(
         "INSERT INTO rss_channel 
-            (channel_title, channel_description, channel_link, channel_image_url, channel_language, rss_generator, channel_rank)
-            VALUES (?, ?, ?, ?, ?, ?, ?);",
+            (channel_title, channel_description, channel_link, channel_image_url, channel_language, rss_generator, channel_rank, channel_rss_link)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
         rss_channel.channel_title,
         rss_channel.channel_description,
         rss_channel.channel_link,
@@ -88,6 +127,7 @@ pub async fn insert_rss_channel(
         rss_channel.channel_language,
         rss_channel.rss_generator,
         rss_channel.channel_rank,
+        rss_channel.channel_rss_link,
     )
     .execute(&mut *conn)
     .await;
@@ -111,7 +151,8 @@ pub async fn update_rss_channel(
         channel_image_url = ?,
         channel_language = ?,
         rss_generator = ?,
-        channel_rank = ?
+        channel_rank = ?,
+        channel_rss_link = ?
     WHERE channel_id = ?;",
         rss_channel.channel_title,
         rss_channel.channel_description,
@@ -120,6 +161,7 @@ pub async fn update_rss_channel(
         rss_channel.channel_language,
         rss_channel.rss_generator,
         rss_channel.channel_rank,
+        rss_channel.channel_rss_link,
         rss_channel.channel_id,
     )
     .execute(&mut *conn)

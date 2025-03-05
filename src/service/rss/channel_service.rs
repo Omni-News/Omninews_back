@@ -1,4 +1,5 @@
 use log::info;
+use rand::{seq::SliceRandom, thread_rng};
 use rocket::State;
 use rss::Channel;
 use sqlx::MySqlPool;
@@ -33,7 +34,7 @@ pub async fn create_rss_and_morpheme(
 ) -> Result<i32, OmniNewsError> {
     let rss_channel = parse_rss_link_to_channel(&rss_link.link).await?;
 
-    let channel = make_rss_channel(rss_channel.clone());
+    let channel = make_rss_channel(rss_channel.clone(), rss_link.link);
     let channel_id = store_channel_and_morpheme(pool, channel).await?;
 
     item_service::crate_rss_item_and_morpheme(pool, rss_channel, channel_id).await?;
@@ -53,7 +54,7 @@ async fn parse_rss_link_to_channel(link: &str) -> Result<Channel, OmniNewsError>
     })
 }
 
-fn make_rss_channel(channel: Channel) -> NewRssChannel {
+fn make_rss_channel(channel: Channel, rss_link: String) -> NewRssChannel {
     NewRssChannel {
         channel_title: Some(channel.title().to_string()),
         channel_link: Some(channel.link().to_string()),
@@ -62,6 +63,7 @@ fn make_rss_channel(channel: Channel) -> NewRssChannel {
         channel_language: Some(channel.language().unwrap_or("None").to_string()),
         rss_generator: Some(channel.generator().unwrap_or("None").to_string()),
         channel_rank: Some(1),
+        channel_rss_link: Some(rss_link),
     }
 }
 
@@ -155,4 +157,52 @@ pub async fn get_channel_list(
     }
 
     Ok(result)
+}
+
+// 랭크 50순위 채널에서 20개 랜덤 반환
+pub async fn get_recommend_channel(
+    pool: &State<MySqlPool>,
+) -> Result<Vec<RssChannel>, OmniNewsError> {
+    match rss_channel_repository::select_rss_channels_order_by_channel_rank(pool).await {
+        Ok(mut res) => {
+            let mut rng = thread_rng();
+            res.shuffle(&mut rng);
+            Ok(res.into_iter().take(20).collect())
+        }
+        Err(e) => {
+            error!(
+                "[Service] Failed to select channels order by channel rank: {:?}",
+                e
+            );
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
+
+pub async fn get_rss_preview(rss_link: String) -> Result<RssChannel, OmniNewsError> {
+    let rss_channel = parse_rss_link_to_channel(&rss_link).await?;
+    let new_channel = make_rss_channel(rss_channel, rss_link.clone());
+    let channel = RssChannel {
+        channel_id: Some(0),
+        channel_title: Some(new_channel.channel_title.unwrap_or_default()),
+        channel_image_url: Some(new_channel.channel_image_url.unwrap_or_default()),
+        channel_description: Some(new_channel.channel_description.unwrap_or_default()),
+        channel_link: Some(new_channel.channel_link.unwrap_or_default()),
+        channel_language: Some(new_channel.channel_language.unwrap_or_default()),
+        channel_rank: Some(0),
+        rss_generator: Some(new_channel.rss_generator.unwrap_or_default()),
+        channel_rss_link: Some(rss_link),
+    };
+
+    Ok(channel)
+}
+
+pub async fn is_rss_exist(
+    pool: &State<MySqlPool>,
+    rss_link: String,
+) -> Result<bool, OmniNewsError> {
+    match rss_channel_repository::select_rss_channel_by_channel_rss_link(pool, rss_link).await {
+        Ok(_) => Ok(true),
+        Err(_) => Ok(false),
+    }
 }

@@ -51,7 +51,7 @@ pub async fn create_morpheme_by_newticle(
     newticle_type: NewticleType,
     id: i32,
 ) -> Result<bool, OmniNewsError> {
-    let (passage, newticle_image_url) = match newticle {
+    let (passage, newticle_link) = match newticle {
         Newticle::NewRssChannel(channel) => (
             format!(
                 "{} {}",
@@ -67,14 +67,13 @@ pub async fn create_morpheme_by_newticle(
                 item.rss_title.unwrap_or_default(),
                 item.rss_description.unwrap_or_default()
             ),
-            item.rss_image_link.unwrap_or_default(),
+            item.rss_link.unwrap_or_default(),
         ),
     };
 
     match get_morphemes_and_rank(passage) {
         Ok(morphemes) => {
-            create_morpheme_and_source_link(pool, morphemes, newticle_type, id, newticle_image_url)
-                .await
+            create_morpheme_and_source_link(pool, morphemes, newticle_type, id, newticle_link).await
         }
         Err(e) => Err(OmniNewsError::Morpheme(e)),
     }

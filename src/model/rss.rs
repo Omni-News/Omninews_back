@@ -28,6 +28,7 @@ pub struct NewRssChannel {
     pub channel_language: Option<String>,
     pub rss_generator: Option<String>,
     pub channel_rank: Option<i32>,
+    pub channel_rss_link: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
@@ -40,6 +41,7 @@ pub struct RssChannel {
     pub channel_language: Option<String>,
     pub rss_generator: Option<String>,
     pub channel_rank: Option<i32>,
+    pub channel_rss_link: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]

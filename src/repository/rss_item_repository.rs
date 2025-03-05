@@ -1,3 +1,4 @@
+use log::info;
 use rocket::State;
 use sqlx::{query, query_as, MySqlPool};
 
@@ -96,6 +97,53 @@ pub async fn select_rss_items_by_morpheme_id_order_by_pub_date(
         Err(e) => Err(e),
     }
 }
+
+pub async fn select_rss_items_order_by_rss_rank(
+    pool: &State<MySqlPool>,
+) -> Result<Vec<RssItem>, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+    let result = query_as!(
+        RssItem,
+        "SELECT * FROM rss_item ORDER BY rss_rank DESC
+         LIMIT 100;",
+    )
+    .fetch_all(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res),
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn select_rss_items_by_channel_title(
+    pool: &State<MySqlPool>,
+    channel_title: String,
+) -> Result<Vec<RssItem>, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+    let query = format!(
+        "SELECT * FROM rss_item r
+        WHERE r.channel_id = (SELECT channel_id FROM rss_channel WHERE channel_title={})
+        ORDER BY r.rss_pub_date DESC;",
+        channel_title
+    );
+
+    let result = query_as!(
+        RssItem,
+        "SELECT * FROM rss_item r
+        WHERE r.channel_id = (SELECT channel_id FROM rss_channel WHERE channel_title=?)
+        ORDER BY r.rss_pub_date DESC;",
+        channel_title,
+    )
+    .fetch_all(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res),
+        Err(e) => Err(e),
+    }
+}
+
 pub async fn insert_rss_item(
     pool: &State<MySqlPool>,
     rss_item: NewRssItem,

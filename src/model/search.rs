@@ -2,14 +2,14 @@ use serde::{Deserialize, Serialize};
 
 use super::rss::{RssChannel, RssItem};
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, FromFormField)]
 pub enum SearchType {
     Accuracy,
     Popularity,
     Latest,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, FromForm)]
 pub struct SearchRequest {
     pub search_value: Option<String>,
     pub search_type: Option<SearchType>,

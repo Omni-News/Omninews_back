@@ -9,10 +9,12 @@ use crate::{
     service::morpheme_service::{self, create_morpheme_by_newticle},
 };
 use chrono::{DateTime, NaiveDateTime};
+use log::info;
+use rand::{seq::SliceRandom, thread_rng};
 use rocket::State;
 use rss::{Channel, Item};
 use scraper::{Html, Selector};
-use sqlx::MySqlPool;
+use sqlx::{pool, MySqlPool};
 
 pub async fn crate_rss_item_and_morpheme(
     pool: &State<MySqlPool>,
@@ -196,4 +198,34 @@ pub async fn get_rss_list(
     }
 
     Ok(result)
+}
+
+// 상위 100개 중 50개 랜덤 반환
+pub async fn get_recommend_item(pool: &State<MySqlPool>) -> Result<Vec<RssItem>, OmniNewsError> {
+    match rss_item_repository::select_rss_items_order_by_rss_rank(pool).await {
+        Ok(mut res) => {
+            let mut rng = thread_rng();
+            res.shuffle(&mut rng);
+            Ok(res.into_iter().take(50).collect())
+        }
+        Err(e) => {
+            error!(
+                "[Service] Failed to select items order by rss rank: {:?}",
+                e
+            );
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
+
+pub async fn get_rss_item_by_channel_title(
+    pool: &State<MySqlPool>,
+    channel_title: String,
+) -> Result<Vec<RssItem>, OmniNewsError> {
+    rss_item_repository::select_rss_items_by_channel_title(pool, channel_title)
+        .await
+        .map_err(|e| {
+            error!("[Service] Failed to select items by channel title: {:?}", e);
+            OmniNewsError::Database(e)
+        })
 }

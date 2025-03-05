@@ -3472,3 +3472,291 @@
 2025-03-03T14:52:10.005315+09:00 WARN - Responding with registered (internal_error) 500 catcher.
 2025-03-03T14:52:10.005351+09:00 ERROR - 500 Internal servcer Error: /news/api?query=%20%20&display=10&sort=sim
 2025-03-03T14:53:25.122705+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T17:49:07.000923+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T17:49:14.153334+09:00 ERROR - No matching routes for POST /search/rss application/json.
+2025-03-03T17:49:14.153470+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-03T17:49:14.153507+09:00 ERROR - 404 Not Found: /search/rss
+2025-03-03T17:49:49.801942+09:00 WARN - No 400 catcher registered. Using Rocket default.
+2025-03-03T17:50:32.661105+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-03T17:50:35.561108+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-03T19:44:27.522932+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T09:12:56.269551+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T14:10:19.288237+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T15:36:26.248599+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T15:36:32.001718+09:00 ERROR - Rocket failed to launch due to the following route collisions:
+2025-03-05T15:37:05.629751+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T16:45:26.217330+09:00 ERROR - No matching routes for GET /rss/items?channel_id=4.
+2025-03-05T16:45:26.219017+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T16:45:26.219858+09:00 ERROR - 404 Not Found: /rss/items?channel_id=4
+2025-03-05T16:47:41.258413+09:00 ERROR - No matching routes for GET /rss/items?channel_id=36.
+2025-03-05T16:47:41.259518+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T16:47:41.259633+09:00 ERROR - 404 Not Found: /rss/items?channel_id=36
+2025-03-05T17:00:32.780782+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:00:36.750925+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:02:32.530758+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:02:36.384503+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:03:24.961758+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:03:28.974947+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:03:47.185260+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:03:50.257906+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:06:15.989309+09:00 ERROR - No matching routes for GET /rss/items?channel_id=6.
+2025-03-05T17:06:15.989763+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:06:15.989845+09:00 ERROR - 404 Not Found: /rss/items?channel_id=6
+2025-03-05T17:07:05.731541+09:00 ERROR - No matching routes for GET /rss/items?channel_id=60.
+2025-03-05T17:07:05.733472+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:07:05.733813+09:00 ERROR - 404 Not Found: /rss/items?channel_id=60
+2025-03-05T17:08:38.402271+09:00 ERROR - No matching routes for GET /rss/items?channel_id=16.
+2025-03-05T17:08:38.403324+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:08:38.403395+09:00 ERROR - 404 Not Found: /rss/items?channel_id=16
+2025-03-05T17:10:23.337789+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:10:27.427925+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:16:09.637603+09:00 ERROR - No matching routes for GET /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4.
+2025-03-05T17:16:09.638354+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:16:09.638394+09:00 ERROR - 404 Not Found: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:17:12.687766+09:00 ERROR - No matching routes for GET /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4.
+2025-03-05T17:17:12.688855+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:17:12.689017+09:00 ERROR - 404 Not Found: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:17:21.177846+09:00 ERROR - No matching routes for GET /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4.
+2025-03-05T17:17:21.178620+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:17:21.178705+09:00 ERROR - 404 Not Found: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:17:48.621336+09:00 ERROR - No matching routes for GET /rss/items?channel_title=%EC%B2%AD%EB%85%84%EC%B7%A8%EC%97%85%EA%B3%B5%EC%9E%91%EC%86%8C.
+2025-03-05T17:17:48.622002+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:17:48.622125+09:00 ERROR - 404 Not Found: /rss/items?channel_title=%EC%B2%AD%EB%85%84%EC%B7%A8%EC%97%85%EA%B3%B5%EC%9E%91%EC%86%8C
+2025-03-05T17:18:02.140947+09:00 ERROR - No matching routes for GET /rss/items?channel_title=%EC%8A%A4%EB%A7%88%ED%8A%B8%EA%B0%80%EC%A0%AF.
+2025-03-05T17:18:02.141438+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:18:02.141523+09:00 ERROR - 404 Not Found: /rss/items?channel_title=%EC%8A%A4%EB%A7%88%ED%8A%B8%EA%B0%80%EC%A0%AF
+2025-03-05T17:18:27.180327+09:00 ERROR - No matching routes for GET /rss/items?channel_title=%EC%98%A4%EB%8A%98%EC%9D%98%EB%89%B4%EC%8A%A4%20-%20%EC%9D%B4%ED%8B%B0%EB%89%B4%EC%8A%A4.
+2025-03-05T17:18:27.181053+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:18:27.181128+09:00 ERROR - 404 Not Found: /rss/items?channel_title=%EC%98%A4%EB%8A%98%EC%9D%98%EB%89%B4%EC%8A%A4%20-%20%EC%9D%B4%ED%8B%B0%EB%89%B4%EC%8A%A4
+2025-03-05T17:18:32.278547+09:00 ERROR - No matching routes for GET /rss/items?channel_title=%EB%8F%99%EC%95%84%EB%8B%B7%EC%BB%B4%20:%20%EB%8F%99%EC%95%84%EC%9D%BC%EB%B3%B4%20%EC%A0%84%EC%B2%B4%20%EB%89%B4%EC%8A%A4.
+2025-03-05T17:18:32.278613+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:18:32.278642+09:00 ERROR - 404 Not Found: /rss/items?channel_title=%EB%8F%99%EC%95%84%EB%8B%B7%EC%BB%B4%20:%20%EB%8F%99%EC%95%84%EC%9D%BC%EB%B3%B4%20%EC%A0%84%EC%B2%B4%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:19:24.244363+09:00 ERROR - No matching routes for GET /rss/items?channel_title=%EB%AA%A8%EB%B0%94%EC%9D%BC%20%EC%BB%A8%ED%85%90%EC%B8%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0.
+2025-03-05T17:19:24.245599+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:19:24.245914+09:00 ERROR - 404 Not Found: /rss/items?channel_title=%EB%AA%A8%EB%B0%94%EC%9D%BC%20%EC%BB%A8%ED%85%90%EC%B8%A0%20%EC%9D%B4%EC%95%BC%EA%B8%B0
+2025-03-05T17:25:59.255017+09:00 ERROR - No matching routes for GET /rss/items?channel_title=%EC%A0%84%EC%B2%B4%EA%B8%B0%EC%82%AC+%3A+%EC%A0%95%EC%B9%98+%3A+%EB%89%B4%EC%8A%A4+%3A+%ED%95%9C%EA%B2%A8%EB%A0%88+%EB%89%B4%EC%8A%A4+-+%EC%9D%B8%ED%84%B0%EB%84%B7%ED%95%9C%EA%B2%A8%EB%A0%88.
+2025-03-05T17:25:59.255770+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:25:59.255805+09:00 ERROR - 404 Not Found: /rss/items?channel_title=%EC%A0%84%EC%B2%B4%EA%B8%B0%EC%82%AC+%3A+%EC%A0%95%EC%B9%98+%3A+%EB%89%B4%EC%8A%A4+%3A+%ED%95%9C%EA%B2%A8%EB%A0%88+%EB%89%B4%EC%8A%A4+-+%EC%9D%B8%ED%84%B0%EB%84%B7%ED%95%9C%EA%B2%A8%EB%A0%88
+2025-03-05T17:26:04.659847+09:00 ERROR - No matching routes for GET /rss/items?channel_title=kmin-283.log.
+2025-03-05T17:26:04.660026+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:26:04.660090+09:00 ERROR - 404 Not Found: /rss/items?channel_title=kmin-283.log
+2025-03-05T17:26:38.086938+09:00 ERROR - No matching routes for GET /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4.
+2025-03-05T17:26:38.088607+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:26:38.088660+09:00 ERROR - 404 Not Found: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:29:42.448699+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:29:48.263922+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:30:22.562831+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:30:25.678336+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:30:36.829493+09:00 ERROR - No matching routes for GET /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4.
+2025-03-05T17:30:36.829824+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:30:36.829890+09:00 ERROR - 404 Not Found: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:30:57.675357+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:31:00.880604+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:31:03.895945+09:00 ERROR - No matching routes for GET /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4.
+2025-03-05T17:31:03.896011+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:31:03.896045+09:00 ERROR - 404 Not Found: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:31:38.197492+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:31:41.851042+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:31:43.622649+09:00 ERROR - No matching routes for GET /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4.
+2025-03-05T17:31:43.622686+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:31:43.622700+09:00 ERROR - 404 Not Found: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:31:54.929148+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:31:57.842993+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:31:58.683862+09:00 ERROR - No matching routes for GET /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4.
+2025-03-05T17:31:58.683903+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:31:58.683917+09:00 ERROR - 404 Not Found: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:32:38.068851+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:32:41.867220+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:32:42.404178+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-05T17:32:42.404236+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T17:32:42.404250+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:32:58.069222+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:33:06.720318+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:33:08.319499+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-05T17:33:08.319555+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T17:33:08.319612+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:33:36.186924+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:33:40.081294+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:33:40.735530+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-05T17:33:40.735586+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T17:33:40.735600+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:34:37.141502+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:34:41.250475+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:34:44.308957+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-05T17:34:44.309405+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T17:34:44.309437+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:49:08.516251+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:49:13.922610+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:49:16.552919+09:00 ERROR - No matching routes for GET /rss/item?channel_title=%EB%A8%B8%EB%8B%88%EC%95%BC%EB%A8%B8%EB%8B%88%EC%95%BC.
+2025-03-05T17:49:16.552977+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T17:49:16.553008+09:00 ERROR - 404 Not Found: /rss/item?channel_title=%EB%A8%B8%EB%8B%88%EC%95%BC%EB%A8%B8%EB%8B%88%EC%95%BC
+2025-03-05T17:49:50.805564+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-05T17:49:50.806469+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T17:49:50.806553+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:50:39.754064+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-05T17:50:39.754362+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T17:50:39.754400+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:50:43.442118+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-05T17:50:43.442284+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T17:50:43.442320+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:50:50.701469+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-05T17:50:50.702415+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T17:50:50.702461+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:50:53.285701+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-05T17:50:53.285907+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T17:50:53.285967+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T17:52:18.611806+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T17:52:23.871144+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T17:57:36.166601+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-05T17:57:36.166833+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T17:57:36.166854+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T18:07:45.364788+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-05T18:07:45.365532+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T18:07:45.365598+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T18:18:36.835146+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-05T18:18:36.836269+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T18:18:36.836374+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T18:18:41.924363+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-05T18:18:41.924491+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T18:18:41.924528+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_title=%EC%A3%BC%EC%9A%94%20%EB%89%B4%EC%8A%A4%20-%20Google%20%EB%89%B4%EC%8A%A4
+2025-03-05T18:36:49.223070+09:00 ERROR - No matching routes for GET /rss/preview?url=https://www.hani.co.kr/rss/cartoon.
+2025-03-05T18:36:49.224525+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T18:36:49.224617+09:00 ERROR - 404 Not Found: /rss/preview?url=https://www.hani.co.kr/rss/cartoon
+2025-03-05T18:37:00.151004+09:00 ERROR - No matching routes for GET /rss/preview?url=https://www.hani.co.kr/rss/cartoon.
+2025-03-05T18:37:00.151947+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T18:37:00.152043+09:00 ERROR - 404 Not Found: /rss/preview?url=https://www.hani.co.kr/rss/cartoon
+2025-03-05T18:37:01.198453+09:00 ERROR - No matching routes for GET /rss/preview?url=https://www.hani.co.kr/rss/cartoon.
+2025-03-05T18:37:01.198530+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T18:37:01.198562+09:00 ERROR - 404 Not Found: /rss/preview?url=https://www.hani.co.kr/rss/cartoon
+2025-03-05T18:37:02.924217+09:00 ERROR - No matching routes for GET /rss/preview?url=https://www.hani.co.kr/rss/cartoon.
+2025-03-05T18:37:02.924317+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T18:37:02.924359+09:00 ERROR - 404 Not Found: /rss/preview?url=https://www.hani.co.kr/rss/cartoon
+2025-03-05T18:37:04.496779+09:00 ERROR - No matching routes for GET /rss/preview?url=https://www.hani.co.kr/rss/cartoon.
+2025-03-05T18:37:04.496864+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T18:37:04.496903+09:00 ERROR - 404 Not Found: /rss/preview?url=https://www.hani.co.kr/rss/cartoon
+2025-03-05T18:42:06.926005+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T18:42:10.127239+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T18:42:42.724151+09:00 ERROR - No matching routes for GET /rss/preview?rss_link=https://www.hani.co.kr/rss/cartoon.
+2025-03-05T18:42:42.724383+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T18:42:42.724419+09:00 ERROR - 404 Not Found: /rss/preview?rss_link=https://www.hani.co.kr/rss/cartoon
+2025-03-05T18:43:06.109541+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T18:43:10.684781+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T18:43:28.011650+09:00 WARN - Query string failed to match route declaration.
+2025-03-05T18:43:28.011951+09:00 WARN - missing
+2025-03-05T18:43:28.012014+09:00 ERROR - No matching routes for GET /rss/preview?url=https://www.hani.co.kr/rss/cartoon.
+2025-03-05T18:43:28.012049+09:00 WARN - No 422 catcher registered. Using Rocket default.
+2025-03-05T18:43:47.885605+09:00 WARN - Query string failed to match route declaration.
+2025-03-05T18:43:47.886491+09:00 WARN - missing
+2025-03-05T18:43:47.888965+09:00 ERROR - No matching routes for GET /rss/preview?url=https://www.hani.co.kr/rss/cartoon.
+2025-03-05T18:43:47.889324+09:00 WARN - No 422 catcher registered. Using Rocket default.
+2025-03-05T18:55:02.626608+09:00 ERROR - [Service] Not found url : sera
+2025-03-05T18:55:02.627358+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T18:55:02.627389+09:00 ERROR - 500 Internal servcer Error: /rss/preview?rss_link=sera
+2025-03-05T19:09:28.193133+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T19:09:31.748383+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T19:20:03.167179+09:00 ERROR - No matching routes for GET /rss/exists?rss_link=https://jungbo11.tistory.com/rss.
+2025-03-05T19:20:03.168215+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T19:20:03.168258+09:00 ERROR - 404 Not Found: /rss/exists?rss_link=https://jungbo11.tistory.com/rss
+2025-03-05T19:20:11.237043+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 15186
+2025-03-05T19:20:11.732124+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 9509
+2025-03-05T19:20:12.160996+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12137
+2025-03-05T19:20:13.694872+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 25615
+2025-03-05T19:20:17.155458+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 10012
+2025-03-05T19:20:19.264730+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 14014
+2025-03-05T19:20:19.278268+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 14907
+2025-03-05T19:21:06.063644+09:00 ERROR - No matching routes for GET /rss/exists?rss_link=https://kangpojol.tistory.com/rss.
+2025-03-05T19:21:06.064935+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T19:21:06.064957+09:00 ERROR - 404 Not Found: /rss/exists?rss_link=https://kangpojol.tistory.com/rss
+2025-03-05T19:24:23.546115+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T19:24:27.977452+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T19:24:35.161037+09:00 ERROR - No matching routes for GET /rss/exists?rss_link=https://kangpojol.tistory.com/rss.
+2025-03-05T19:24:35.161083+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-05T19:24:35.161097+09:00 ERROR - 404 Not Found: /rss/exists?rss_link=https://kangpojol.tistory.com/rss
+2025-03-05T19:26:43.637320+09:00 ERROR - [Service] Failed to read from rss body: InvalidStartTag
+2025-03-05T19:26:43.637970+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T19:26:43.638015+09:00 ERROR - 500 Internal servcer Error: /rss/preview?rss_link=https://kangpojol.tistory.com/rs
+2025-03-05T19:26:49.258922+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 48251
+2025-03-05T19:26:49.295750+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 57162
+2025-03-05T19:26:49.772321+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 28680
+2025-03-05T19:26:50.363355+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 58679
+2025-03-05T19:26:52.535194+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 33791
+2025-03-05T19:26:55.921803+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 127342
+2025-03-05T19:26:59.455245+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 28635
+2025-03-05T19:27:01.233527+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 28675
+2025-03-05T19:27:05.629475+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 37050
+2025-03-05T19:27:07.654413+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 37454
+2025-03-05T19:27:10.095513+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 35338
+2025-03-05T19:27:10.546195+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 44619
+2025-03-05T19:27:12.189194+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 58459
+2025-03-05T19:27:31.107780+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 1201
+2025-03-05T19:27:36.883274+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 94333
+2025-03-05T19:27:44.852886+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 45732
+2025-03-05T19:27:45.829201+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 37024
+2025-03-05T19:27:54.801983+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 35757
+2025-03-05T19:27:56.235395+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 32818
+2025-03-05T19:27:56.732589+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 60610
+2025-03-05T19:27:57.399511+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 35358
+2025-03-05T19:27:57.846916+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 45650
+2025-03-05T19:27:57.857588+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 31304
+2025-03-05T19:27:59.046445+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 56287
+2025-03-05T19:29:20.105822+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 1201
+2025-03-05T19:29:23.252915+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 28093
+2025-03-05T19:29:23.274837+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 28824
+2025-03-05T19:29:23.817370+09:00 WARN - Failed to convert Mecab result to UTF-8: incomplete utf-8 byte sequence from index 58852
+2025-03-05T19:29:27.154210+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 35977
+2025-03-05T19:29:28.122423+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 54625
+2025-03-05T19:29:28.136602+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 52071
+2025-03-05T19:29:32.187120+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 36986
+2025-03-05T19:29:33.063834+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 34760
+2025-03-05T19:29:34.772714+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 38200
+2025-03-05T19:29:36.275001+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 46543
+2025-03-05T19:29:38.166654+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 38329
+2025-03-05T19:29:39.842445+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 36313
+2025-03-05T19:29:41.379982+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 41206
+2025-03-05T19:29:42.878593+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 35338
+2025-03-05T19:29:42.905614+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 38411
+2025-03-05T19:29:43.576147+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 31304
+2025-03-05T19:29:43.595804+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 53916
+2025-03-05T19:29:44.178040+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 58495
+2025-03-05T19:29:45.096481+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 57794
+2025-03-05T19:32:01.753692+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T19:32:05.319743+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T19:32:43.817071+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 25646
+2025-03-05T19:32:43.831496+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 14005
+2025-03-05T19:32:44.291734+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 26080
+2025-03-05T19:32:45.135941+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 22322
+2025-03-05T19:50:10.209998+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T19:50:15.126585+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T19:50:46.028670+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 13578
+2025-03-05T19:50:46.041433+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 23652
+2025-03-05T19:50:46.129182+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 24493
+2025-03-05T19:53:13.295640+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-05T19:54:03.836013+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-05T19:54:12.665480+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 13578
+2025-03-05T19:54:12.859443+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 24598
+2025-03-05T19:55:06.842858+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 10783
+2025-03-05T19:55:07.129965+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 52496
+2025-03-05T19:55:07.284262+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 30472
+2025-03-05T19:55:08.076865+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12359
+2025-03-05T19:58:26.133458+09:00 ERROR - [Service] Failed to read from rss body: InvalidStartTag
+2025-03-05T19:58:26.134664+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-05T19:58:26.134746+09:00 ERROR - 500 Internal servcer Error: /rss/preview?rss_link=https://notice.tistory.com/rs
+2025-03-05T19:59:23.799785+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 19431
+2025-03-05T19:59:24.390082+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 14123
+2025-03-05T19:59:25.398090+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 11465
+2025-03-05T19:59:54.624733+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 13578
+2025-03-05T20:18:14.389333+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 666
+2025-03-05T20:18:15.884972+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 63694
+2025-03-05T20:18:15.891208+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 28210
+2025-03-05T20:18:16.500069+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 66678
+2025-03-05T20:18:16.882152+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 55074
+2025-03-05T20:18:17.489706+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 22318
+2025-03-05T20:18:17.505281+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 81694
+2025-03-05T20:18:18.103912+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 135793
+2025-03-05T20:18:18.114406+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 66647
+2025-03-05T20:18:18.232255+09:00 WARN - Failed to convert Mecab result to UTF-8: incomplete utf-8 byte sequence from index 67168
+2025-03-05T20:18:18.626739+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 71338
+2025-03-05T20:18:19.952971+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 50761
+2025-03-05T20:18:20.733169+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 54189
+2025-03-05T20:18:23.537100+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 98753
+2025-03-05T20:27:07.271357+09:00 WARN - Received SIGINT. Requesting shutdown.
