@@ -165,10 +165,36 @@ pub async fn update_rss_channel(
         rss_channel.channel_id,
     )
     .execute(&mut *conn)
-    .await;
+    .await?;
 
-    match result {
-        Ok(_) => Ok(rss_channel.channel_id.unwrap()),
-        Err(e) => Err(e),
+    if result.rows_affected() > 0 {
+        Ok(result.last_insert_id() as i32)
+    } else {
+        Err(sqlx::Error::RowNotFound)
+    }
+}
+
+pub async fn update_rss_channel_rank_by_link(
+    pool: &State<MySqlPool>,
+    rss_link: String,
+    num: i32,
+) -> Result<bool, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+    info!("rss_link: {}", rss_link);
+    let result = query!(
+        "UPDATE rss_channel
+        SET channel_rank = channel_rank + ?
+        WHERE channel_rss_link = ?;
+        ",
+        num,
+        rss_link
+    )
+    .execute(&mut *conn)
+    .await?;
+
+    if result.rows_affected() > 0 {
+        Ok(true)
+    } else {
+        Ok(false)
     }
 }

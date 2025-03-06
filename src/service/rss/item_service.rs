@@ -86,7 +86,7 @@ fn make_rss_item(channel_id: i32, item: &Item, item_image_link: String) -> NewRs
         rss_link: Some(item.link().unwrap_or("None").to_string()),
         rss_author: Some(item.author().unwrap_or("None").to_string()),
         rss_pub_date: parse_pub_date(item.pub_date()),
-        rss_rank: Some(1),
+        rss_rank: Some(0),
         rss_image_link: Some(item_image_link),
     }
 }

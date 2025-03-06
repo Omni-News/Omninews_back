@@ -62,7 +62,7 @@ fn make_rss_channel(channel: Channel, rss_link: String) -> NewRssChannel {
         channel_image_url: channel.image().map(|e| e.url().to_string()),
         channel_language: Some(channel.language().unwrap_or("None").to_string()),
         rss_generator: Some(channel.generator().unwrap_or("None").to_string()),
-        channel_rank: Some(1),
+        channel_rank: Some(0),
         channel_rss_link: Some(rss_link),
     }
 }
@@ -91,7 +91,7 @@ async fn store_rss_channel(
     let channel_link = channel.channel_link.clone().unwrap_or_default();
 
     match rss_channel_repository::select_rss_channel_by_link(pool, channel_link).await {
-        Ok(channel) => Ok(set_channel_rank(pool, channel).await?),
+        Ok(channel) => Ok(channel.channel_id.unwrap()),
         Err(_) => Ok(rss_channel_repository::insert_rss_channel(pool, channel)
             .await
             .map_err(|e| {
@@ -101,18 +101,25 @@ async fn store_rss_channel(
     }
 }
 
-async fn set_channel_rank(
+pub async fn update_rss_channel_rank(
     pool: &State<MySqlPool>,
-    mut channel: RssChannel,
-) -> Result<i32, OmniNewsError> {
-    channel.channel_rank = channel.channel_rank.map(|e| e + 1);
+    rss_link: String,
+    num: i32,
+) -> Result<bool, OmniNewsError> {
+    match rss_channel_repository::update_rss_channel_rank_by_link(pool, rss_link, num).await {
+        Ok(res) => Ok(res),
+        Err(e) => Err(OmniNewsError::Database(e)),
+    }
+}
 
-    rss_channel_repository::update_rss_channel(pool, channel)
-        .await
-        .map_err(|e| {
-            error!("[Service] Failed to set channel rank: {:?}", e);
-            OmniNewsError::Database(e)
-        })
+pub async fn get_rss_channel_by_link(
+    pool: &State<MySqlPool>,
+    link: String,
+) -> Result<RssChannel, OmniNewsError> {
+    match rss_channel_repository::select_rss_channel_by_channel_rss_link(pool, link).await {
+        Ok(res) => Ok(res),
+        Err(e) => Err(OmniNewsError::Database(e)),
+    }
 }
 
 pub async fn get_channel_list(

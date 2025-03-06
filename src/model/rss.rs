@@ -68,3 +68,9 @@ pub struct RssItem {
     pub rss_rank: Option<i32>,
     pub rss_image_link: Option<String>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UpdateRssRank {
+    pub rss_link: String,
+    pub num: i32,
+}
