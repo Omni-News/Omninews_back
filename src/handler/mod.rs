@@ -1,3 +1,4 @@
+pub mod bookmark_handler;
 pub mod error_handler;
 pub mod health_handler;
 pub mod news_handler;

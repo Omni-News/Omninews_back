@@ -13,8 +13,8 @@ mod scheduler;
 mod service;
 
 use handler::{
-    error_handler::error_catchers, health_handler::*, news_handler::*, rss_handler::*,
-    search_handler::*,
+    bookmark_handler::*, error_handler::error_catchers, health_handler::*, news_handler::*,
+    rss_handler::*, search_handler::*,
 };
 use rocket::routes;
 use sqlx::MySqlPool;
@@ -52,6 +52,7 @@ async fn rocket() -> _ {
                 is_rss_exist,
                 update_rss_channel_rank,
                 get_rss_channel_by_link,
+                get_bookmark_items,
             ],
         )
         .register("/", error_catchers())

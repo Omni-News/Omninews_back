@@ -4602,3 +4602,87 @@
 2025-03-06T19:55:56.666075+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
 2025-03-06T19:57:08.542092+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 55140
 2025-03-06T19:58:18.557099+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-08T12:20:47.334235+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-08T12:25:19.972143+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 79456
+2025-03-08T12:25:21.885809+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 24384
+2025-03-08T12:25:22.311725+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 218450
+2025-03-08T12:25:22.533648+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 22167
+2025-03-08T12:25:22.544761+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 81712
+2025-03-08T12:25:22.765090+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 218812
+2025-03-08T12:25:22.771956+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 47728
+2025-03-08T12:25:23.875283+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 24774
+2025-03-08T12:25:25.155826+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 71827
+2025-03-08T12:25:26.426506+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 36617
+2025-03-08T12:25:29.053749+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 17739
+2025-03-08T12:25:29.071873+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 98913
+2025-03-08T12:39:51.307866+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 71257
+2025-03-08T12:39:53.950782+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 56998
+2025-03-08T12:39:55.460126+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 134805
+2025-03-08T13:22:52.508769+09:00 ERROR - No matching routes for GET /bookmarks.
+2025-03-08T13:22:52.509323+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:22:52.509540+09:00 ERROR - 404 Not Found: /bookmarks
+2025-03-08T13:22:52.536379+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T13:22:52.536461+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:22:52.536499+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T13:22:52.537475+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T13:22:52.537521+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:22:52.537549+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T13:22:57.651896+09:00 ERROR - No matching routes for GET /bookmarks.
+2025-03-08T13:22:57.652332+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:22:57.652367+09:00 ERROR - 404 Not Found: /bookmarks
+2025-03-08T13:22:57.657070+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T13:22:57.657169+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:22:57.657228+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T13:22:57.658906+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T13:22:57.659101+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:22:57.659160+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T13:23:01.288006+09:00 ERROR - No matching routes for GET /bookmarks.
+2025-03-08T13:23:01.289152+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:23:01.289206+09:00 ERROR - 404 Not Found: /bookmarks
+2025-03-08T13:23:01.299519+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T13:23:01.299599+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:23:01.299629+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T13:23:01.301324+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T13:23:01.301414+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:23:01.301455+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T13:23:03.166649+09:00 ERROR - No matching routes for GET /bookmarks.
+2025-03-08T13:23:03.166882+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:23:03.166954+09:00 ERROR - 404 Not Found: /bookmarks
+2025-03-08T13:23:03.185376+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T13:23:03.185460+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:23:03.185493+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T13:23:03.187207+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T13:23:03.187268+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:23:03.187302+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T13:23:11.075685+09:00 ERROR - No matching routes for GET /bookmarks.
+2025-03-08T13:23:11.076513+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:23:11.076603+09:00 ERROR - 404 Not Found: /bookmarks
+2025-03-08T13:23:11.085671+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T13:23:11.085732+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:23:11.085757+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T13:23:11.087056+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T13:23:11.087147+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:23:11.087205+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T13:23:18.579595+09:00 ERROR - No matching routes for GET /bookmarks.
+2025-03-08T13:23:18.581216+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:23:18.581271+09:00 ERROR - 404 Not Found: /bookmarks
+2025-03-08T13:23:18.589428+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T13:23:18.589502+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:23:18.589535+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T13:23:18.591154+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T13:23:18.591279+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T13:23:18.591349+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T13:54:35.207508+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-08T13:55:31.128298+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-08T13:56:43.916206+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-08T13:58:18.652601+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-08T13:59:46.273996+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-08T13:59:51.002822+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-08T14:10:05.759170+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-08T14:10:09.930531+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-08T14:10:35.714072+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-08T14:10:39.093885+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-08T14:34:29.200130+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-08T14:34:33.361483+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-08T14:35:18.539122+09:00 WARN - Data guard `Json < Vec < ChannelLink > >` failed: Parse("[\n    {\"channel_link\": \"http://inuit.co.kr/rss\"},\n\t\t{\"channel_link\": \"http://pennyway.net/rss\"}\n]", Error("missing field `link`", line: 2, column: 46)).
+2025-03-08T14:35:18.539630+09:00 WARN - No 422 catcher registered. Using Rocket default.
