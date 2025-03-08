@@ -1,4 +1,3 @@
-use percent_encoding::percent_decode_str;
 use rocket::serde::json::Json;
 use rocket::{http::Status, State};
 use sqlx::MySqlPool;
@@ -17,16 +16,12 @@ pub async fn get_rss_channel_by_link(
     }
 }
 
-#[get("/rss/items?<channel_title>")]
-pub async fn get_rss_item_by_channel_title(
+#[get("/rss/items?<channel_link>")]
+pub async fn get_rss_item_by_channel_link(
     pool: &State<MySqlPool>,
-    channel_title: String,
+    channel_link: String,
 ) -> Result<Json<Vec<RssItem>>, Status> {
-    let decoded = percent_decode_str(channel_title.as_str())
-        .decode_utf8()
-        .expect("유효한 UTF-8 문자열이 아닙니다");
-
-    match item_service::get_rss_item_by_channel_title(pool, decoded.to_string()).await {
+    match item_service::get_rss_item_by_channel_link(pool, channel_link).await {
         Ok(res) => Ok(Json(res)),
         Err(_) => Err(Status::InternalServerError),
     }

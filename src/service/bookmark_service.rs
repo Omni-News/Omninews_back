@@ -2,13 +2,13 @@ use rocket::State;
 use sqlx::MySqlPool;
 
 use crate::{
-    model::{bookmark::ChannelLink, error::OmniNewsError, rss::RssItem},
-    repository::bookmark_repository,
+    model::{error::OmniNewsError, rss::RssItem, subscribe::ChannelLink},
+    repository::subscribe_repository,
 };
 
 use super::rss::channel_service;
 
-pub async fn get_bookmark_items(
+pub async fn get_subscribe_items(
     pool: &State<MySqlPool>,
     channel_links: Vec<ChannelLink>,
 ) -> Result<Vec<RssItem>, OmniNewsError> {
@@ -24,7 +24,7 @@ pub async fn get_bookmark_items(
         }
     }
 
-    match bookmark_repository::select_bookmark_items(pool, channel_ids).await {
+    match subscribe_repository::select_subscribe_items(pool, channel_ids).await {
         Ok(res) => Ok(res),
         Err(e) => Err(OmniNewsError::Database(e)),
     }

@@ -4686,3 +4686,269 @@
 2025-03-08T14:34:33.361483+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
 2025-03-08T14:35:18.539122+09:00 WARN - Data guard `Json < Vec < ChannelLink > >` failed: Parse("[\n    {\"channel_link\": \"http://inuit.co.kr/rss\"},\n\t\t{\"channel_link\": \"http://pennyway.net/rss\"}\n]", Error("missing field `link`", line: 2, column: 46)).
 2025-03-08T14:35:18.539630+09:00 WARN - No 422 catcher registered. Using Rocket default.
+2025-03-08T14:41:04.296348+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-08T14:41:08.789180+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-08T14:42:23.000429+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-08T14:42:26.421410+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-08T14:47:26.716150+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:47:26.717977+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:47:26.718009+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:47:26.720564+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:47:26.720745+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:47:26.720773+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:47:39.989470+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:47:39.989976+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:47:39.990017+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:47:39.995358+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:47:39.995443+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:47:39.995484+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:47:41.339558+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:47:41.339673+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:47:41.339722+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:47:41.341241+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:47:41.341347+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:47:41.341396+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:49:55.730507+09:00 ERROR - No matching routes for POST /subscribe/items application/json.
+2025-03-08T14:49:55.733485+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:49:55.733546+09:00 ERROR - 404 Not Found: /subscribe/items
+2025-03-08T14:49:55.817788+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:49:55.817849+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:49:55.817880+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:49:55.819673+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:49:55.819736+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:49:55.819765+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:49:59.533658+09:00 ERROR - No matching routes for POST /subscribe/items application/json.
+2025-03-08T14:49:59.533765+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:49:59.533820+09:00 ERROR - 404 Not Found: /subscribe/items
+2025-03-08T14:49:59.545869+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:49:59.545977+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:49:59.546030+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:49:59.555342+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:49:59.555473+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:49:59.555534+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:50:32.544037+09:00 ERROR - No matching routes for POST /subscribe/items application/json.
+2025-03-08T14:50:32.544567+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:50:32.544618+09:00 ERROR - 404 Not Found: /subscribe/items
+2025-03-08T14:50:32.599204+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:50:32.599270+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:50:32.599301+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:50:32.600978+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:50:32.601119+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:50:32.601171+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:50:36.181616+09:00 ERROR - No matching routes for POST /subscribe/items application/json.
+2025-03-08T14:50:36.181695+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:50:36.181728+09:00 ERROR - 404 Not Found: /subscribe/items
+2025-03-08T14:50:36.187975+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:50:36.188038+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:50:36.188067+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:50:36.189193+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:50:36.189277+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:50:36.189323+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:50:39.089252+09:00 ERROR - No matching routes for POST /subscribe/items application/json.
+2025-03-08T14:50:39.090065+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:50:39.090253+09:00 ERROR - 404 Not Found: /subscribe/items
+2025-03-08T14:50:39.105818+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:50:39.105912+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:50:39.105971+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:50:39.107742+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:50:39.107830+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:50:39.107867+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:51:12.385401+09:00 ERROR - No matching routes for POST /subscribe/items application/json.
+2025-03-08T14:51:12.385686+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:51:12.385734+09:00 ERROR - 404 Not Found: /subscribe/items
+2025-03-08T14:51:12.423256+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:51:12.423330+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:51:12.423362+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:51:12.425230+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:51:12.425297+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:51:12.425326+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:52:14.467124+09:00 ERROR - No matching routes for POST /subscribe/items application/json.
+2025-03-08T14:52:14.467396+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:52:14.467443+09:00 ERROR - 404 Not Found: /subscribe/items
+2025-03-08T14:52:14.514702+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:52:14.514774+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:52:14.514806+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:52:14.516499+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:52:14.516566+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:52:14.516595+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:52:18.483563+09:00 ERROR - No matching routes for POST /subscribe/items application/json.
+2025-03-08T14:52:18.483634+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:52:18.483667+09:00 ERROR - 404 Not Found: /subscribe/items
+2025-03-08T14:52:18.490784+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:52:18.490853+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:52:18.490884+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:52:18.491772+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:52:18.491845+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:52:18.491874+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:52:43.073078+09:00 ERROR - No matching routes for POST /subscribe/items application/json.
+2025-03-08T14:52:43.075579+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:52:43.075620+09:00 ERROR - 404 Not Found: /subscribe/items
+2025-03-08T14:52:43.094276+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:52:43.094380+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:52:43.094424+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:52:43.095784+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:52:43.095845+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:52:43.095886+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:53:25.220162+09:00 ERROR - No matching routes for POST /subscribe/items application/json.
+2025-03-08T14:53:25.220864+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:53:25.220919+09:00 ERROR - 404 Not Found: /subscribe/items
+2025-03-08T14:53:27.458387+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-08T14:53:31.737182+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-08T14:53:43.406287+09:00 WARN - Data guard `Json < Vec < ChannelLink > >` failed: Parse("{\"link\":[\"http://poem23.com/rss\",\"http://pennyway.net/rss\"]}", Error("invalid type: map, expected a sequence", line: 1, column: 0)).
+2025-03-08T14:53:43.406703+09:00 WARN - No 422 catcher registered. Using Rocket default.
+2025-03-08T14:53:43.438876+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:53:43.438986+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:53:43.439023+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:53:43.442453+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:53:43.442521+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:53:43.442552+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:56:11.220237+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:56:11.220698+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:56:11.220740+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:56:11.224451+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:56:11.224518+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:56:11.224547+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:56:30.488461+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:56:30.488769+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:56:30.488845+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:56:30.492469+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:56:30.492918+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:56:30.493002+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:56:51.338755+09:00 ERROR - No matching routes for POST /bookmarks application/json.
+2025-03-08T14:56:51.339256+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:56:51.339745+09:00 ERROR - 404 Not Found: /bookmarks
+2025-03-08T14:56:52.556826+09:00 ERROR - No matching routes for DELETE /bookmarks?link=http://poem23.com/3492 application/json.
+2025-03-08T14:56:52.556950+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:56:52.557252+09:00 ERROR - 404 Not Found: /bookmarks?link=http://poem23.com/3492
+2025-03-08T14:56:53.627439+09:00 ERROR - No matching routes for POST /bookmarks application/json.
+2025-03-08T14:56:53.627506+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:56:53.627538+09:00 ERROR - 404 Not Found: /bookmarks
+2025-03-08T14:56:53.997275+09:00 ERROR - No matching routes for DELETE /bookmarks?link=http://poem23.com/3490 application/json.
+2025-03-08T14:56:53.997395+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:56:53.997450+09:00 ERROR - 404 Not Found: /bookmarks?link=http://poem23.com/3490
+2025-03-08T14:57:04.245340+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:57:04.245680+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:57:04.245753+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:57:04.246994+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:57:04.247056+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:57:04.247085+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T14:57:07.300034+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T14:57:07.300113+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:57:07.300142+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T14:57:07.301630+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T14:57:07.301734+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T14:57:07.301799+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T15:04:50.935944+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T15:04:50.936656+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:04:50.936691+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T15:04:50.939980+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T15:04:50.940112+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:04:50.940158+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T15:04:55.807538+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T15:04:55.807665+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:04:55.807734+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T15:04:55.810284+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T15:04:55.810435+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:04:55.810502+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T15:04:58.389946+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T15:04:58.390124+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:04:58.390170+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T15:05:02.517176+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T15:05:02.517990+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:05:02.518090+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T15:05:12.493640+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-08T15:05:12.493940+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-08T15:05:13.928381+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-08T15:05:13.928450+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-08T15:05:18.570044+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://inuit.co.kr/rss.
+2025-03-08T15:05:18.570215+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:05:18.570243+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://inuit.co.kr/rss
+2025-03-08T15:05:38.151798+09:00 ERROR - No matching routes for POST /bookmarks application/json.
+2025-03-08T15:05:38.152410+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:05:38.152600+09:00 ERROR - 404 Not Found: /bookmarks
+2025-03-08T15:05:38.947571+09:00 ERROR - No matching routes for DELETE /bookmarks?link=http://inuit.co.kr/2638 application/json.
+2025-03-08T15:05:38.947728+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:05:38.947788+09:00 ERROR - 404 Not Found: /bookmarks?link=http://inuit.co.kr/2638
+2025-03-08T15:09:26.226870+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-08T15:09:31.945584+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-08T15:09:54.616870+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://inuit.co.kr/rss.
+2025-03-08T15:09:54.617213+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:09:54.617257+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://inuit.co.kr/rss
+2025-03-08T15:10:04.876949+09:00 WARN - Query string failed to match route declaration.
+2025-03-08T15:10:04.877340+09:00 WARN - missing
+2025-03-08T15:10:04.877455+09:00 ERROR - No matching routes for GET /rss/items?channel_title=http://pennyway.net/rss.
+2025-03-08T15:10:04.877518+09:00 WARN - No 422 catcher registered. Using Rocket default.
+2025-03-08T15:10:08.053320+09:00 WARN - Query string failed to match route declaration.
+2025-03-08T15:10:08.053377+09:00 WARN - missing
+2025-03-08T15:10:08.053451+09:00 ERROR - No matching routes for GET /rss/items?channel_title=http://photohistory.tistory.com/rss.
+2025-03-08T15:10:08.053483+09:00 WARN - No 422 catcher registered. Using Rocket default.
+2025-03-08T15:10:51.959859+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://inuit.co.kr/rss.
+2025-03-08T15:10:51.961088+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:10:51.961143+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://inuit.co.kr/rss
+2025-03-08T15:10:53.901747+09:00 WARN - Query string failed to match route declaration.
+2025-03-08T15:10:53.901862+09:00 WARN - missing
+2025-03-08T15:10:53.901940+09:00 ERROR - No matching routes for GET /rss/items?channel_title=http://inuit.co.kr/rss.
+2025-03-08T15:10:53.901980+09:00 WARN - No 422 catcher registered. Using Rocket default.
+2025-03-08T15:11:02.877991+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://inuit.co.kr/rss.
+2025-03-08T15:11:02.878248+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:11:02.878310+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://inuit.co.kr/rss
+2025-03-08T15:11:31.570181+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://inuit.co.kr/rss.
+2025-03-08T15:11:31.570261+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:11:31.570292+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://inuit.co.kr/rss
+2025-03-08T15:11:31.571128+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://feeds2.feedburner.com/ringblog.
+2025-03-08T15:11:31.571169+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:11:31.571193+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://feeds2.feedburner.com/ringblog
+2025-03-08T15:11:31.571965+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T15:11:31.572017+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:11:31.572046+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T15:11:31.572763+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://photohistory.tistory.com/rss.
+2025-03-08T15:11:31.572802+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:11:31.572827+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://photohistory.tistory.com/rss
+2025-03-08T15:11:31.573564+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T15:11:31.573624+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:11:31.573656+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T15:24:37.189577+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://inuit.co.kr/rss.
+2025-03-08T15:24:37.190173+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:24:37.190207+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://inuit.co.kr/rss
+2025-03-08T15:24:37.195842+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://feeds2.feedburner.com/ringblog.
+2025-03-08T15:24:37.195898+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:24:37.195916+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://feeds2.feedburner.com/ringblog
+2025-03-08T15:24:37.442967+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T15:24:37.443033+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:24:37.443065+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T15:24:37.445612+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://photohistory.tistory.com/rss.
+2025-03-08T15:24:37.445672+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:24:37.445702+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://photohistory.tistory.com/rss
+2025-03-08T15:24:37.456789+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T15:24:37.456906+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:24:37.456978+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T15:24:41.277396+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://inuit.co.kr/rss.
+2025-03-08T15:24:41.277467+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:24:41.277504+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://inuit.co.kr/rss
+2025-03-08T15:24:41.290853+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://feeds2.feedburner.com/ringblog.
+2025-03-08T15:24:41.290934+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:24:41.290977+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://feeds2.feedburner.com/ringblog
+2025-03-08T15:24:41.292586+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T15:24:41.292665+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:24:41.292706+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T15:24:41.293919+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://photohistory.tistory.com/rss.
+2025-03-08T15:24:41.293992+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:24:41.294030+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://photohistory.tistory.com/rss
+2025-03-08T15:24:41.295969+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T15:24:41.296082+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:24:41.296151+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T15:32:57.960728+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://inuit.co.kr/rss.
+2025-03-08T15:32:57.961595+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:32:57.961668+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://inuit.co.kr/rss
+2025-03-08T15:32:57.966915+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://feeds2.feedburner.com/ringblog.
+2025-03-08T15:32:57.967023+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:32:57.967069+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://feeds2.feedburner.com/ringblog
+2025-03-08T15:32:57.969687+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://poem23.com/rss.
+2025-03-08T15:32:57.969787+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:32:57.969848+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://poem23.com/rss
+2025-03-08T15:32:57.972617+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://photohistory.tistory.com/rss.
+2025-03-08T15:32:57.972667+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:32:57.972690+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://photohistory.tistory.com/rss
+2025-03-08T15:32:57.976490+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
+2025-03-08T15:32:57.976633+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-08T15:32:57.976723+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss

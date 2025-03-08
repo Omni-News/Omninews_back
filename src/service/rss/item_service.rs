@@ -218,7 +218,7 @@ pub async fn get_recommend_item(pool: &State<MySqlPool>) -> Result<Vec<RssItem>,
     }
 }
 
-pub async fn get_rss_item_by_channel_title(
+pub async fn get_rss_item_by_channel_link(
     pool: &State<MySqlPool>,
     channel_title: String,
 ) -> Result<Vec<RssItem>, OmniNewsError> {

@@ -3,7 +3,7 @@ use sqlx::{query_as, MySqlPool};
 
 use crate::{db::get_db, model::rss::RssItem};
 
-pub async fn select_bookmark_items(
+pub async fn select_subscribe_items(
     pool: &State<MySqlPool>,
     channels: Vec<i32>,
 ) -> Result<Vec<RssItem>, sqlx::Error> {

@@ -1,4 +1,3 @@
-use log::info;
 use rocket::State;
 use sqlx::{query, query_as, MySqlPool};
 
@@ -118,22 +117,16 @@ pub async fn select_rss_items_order_by_rss_rank(
 
 pub async fn select_rss_items_by_channel_title(
     pool: &State<MySqlPool>,
-    channel_title: String,
+    channel_link: String,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
-    let query = format!(
-        "SELECT * FROM rss_item r
-        WHERE r.channel_id = (SELECT channel_id FROM rss_channel WHERE channel_title={})
-        ORDER BY r.rss_pub_date DESC;",
-        channel_title
-    );
 
     let result = query_as!(
         RssItem,
         "SELECT * FROM rss_item r
-        WHERE r.channel_id = (SELECT channel_id FROM rss_channel WHERE channel_title=?)
+        WHERE r.channel_id = (SELECT channel_id FROM rss_channel WHERE channel_rss_link=?)
         ORDER BY r.rss_pub_date DESC;",
-        channel_title,
+        channel_link,
     )
     .fetch_all(&mut *conn)
     .await;
