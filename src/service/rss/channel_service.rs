@@ -37,7 +37,12 @@ pub async fn create_rss_and_morpheme(
     let channel = make_rss_channel(rss_channel.clone(), rss_link.link);
     let channel_id = store_channel_and_morpheme(pool, channel).await?;
 
-    item_service::crate_rss_item_and_morpheme(pool, rss_channel, channel_id).await?;
+    item_service::crate_rss_item_and_morpheme(pool, rss_channel, channel_id)
+        .await
+        .map_err(|e| {
+            error!("[Service] Failed to create rss item and morpheme: {:?}", e);
+            return e;
+        });
 
     Ok(channel_id)
 }
@@ -121,7 +126,6 @@ pub async fn get_rss_channel_by_link(
         Err(e) => Err(OmniNewsError::Database(e)),
     }
 }
-
 pub async fn get_channel_list(
     pool: &State<MySqlPool>,
     value: SearchRequest,

@@ -115,7 +115,7 @@ pub async fn select_rss_items_order_by_rss_rank(
     }
 }
 
-pub async fn select_rss_items_by_channel_title(
+pub async fn select_rss_items_by_channel_link(
     pool: &State<MySqlPool>,
     channel_link: String,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
@@ -164,36 +164,26 @@ pub async fn insert_rss_item(
     }
 }
 
-pub async fn update_rss_item(
+pub async fn update_rss_channel_rank_by_link(
     pool: &State<MySqlPool>,
-    update_rss_item: RssItem,
-) -> Result<i32, sqlx::Error> {
+    rss_link: String,
+    num: i32,
+) -> Result<bool, sqlx::Error> {
     let mut conn = get_db(pool).await?;
     let result = query!(
         "UPDATE rss_item
-    SET
-        channel_id=?,
-        rss_title=?,
-        rss_description=?,
-        rss_link=?,
-        rss_author=?,
-        rss_pub_date=?,
-        rss_rank=?
-    WHERE rss_id=?",
-        update_rss_item.channel_id,
-        update_rss_item.rss_title,
-        update_rss_item.rss_description,
-        update_rss_item.rss_link,
-        update_rss_item.rss_author,
-        update_rss_item.rss_pub_date,
-        update_rss_item.rss_rank,
-        update_rss_item.rss_id,
+        SET rss_rank = rss_rank + ?
+        WHERE rss_link = ?;
+        ",
+        num,
+        rss_link
     )
     .execute(&mut *conn)
-    .await;
+    .await?;
 
-    match result {
-        Ok(_) => Ok(update_rss_item.rss_id.unwrap()),
-        Err(e) => Err(e),
+    if result.rows_affected() > 0 {
+        Ok(true)
+    } else {
+        Ok(false)
     }
 }

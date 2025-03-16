@@ -109,3 +109,18 @@ pub async fn update_rss_channel_rank(
         Err(_) => Err(Status::InternalServerError),
     }
 }
+
+#[post("/rss/item/rank", data = "<update_rss_rank>")]
+pub async fn update_rss_item_rank(
+    pool: &State<MySqlPool>,
+    update_rss_rank: Json<UpdateRssRank>,
+) -> Result<&str, Status> {
+    let update_rss_rank = update_rss_rank.into_inner();
+
+    match item_service::update_rss_item_by_rank(pool, update_rss_rank.rss_link, update_rss_rank.num)
+        .await
+    {
+        Ok(_) => Ok("Success"),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}

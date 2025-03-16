@@ -53,6 +53,7 @@ async fn rocket() -> _ {
                 update_rss_channel_rank,
                 get_rss_channel_by_link,
                 get_subscribe_items,
+                update_rss_item_rank,
             ],
         )
         .register("/", error_catchers())

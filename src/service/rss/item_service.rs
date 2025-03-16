@@ -9,12 +9,11 @@ use crate::{
     service::morpheme_service::{self, create_morpheme_by_newticle},
 };
 use chrono::{DateTime, NaiveDateTime};
-use log::info;
 use rand::{seq::SliceRandom, thread_rng};
 use rocket::State;
 use rss::{Channel, Item};
 use scraper::{Html, Selector};
-use sqlx::{pool, MySqlPool};
+use sqlx::MySqlPool;
 
 pub async fn crate_rss_item_and_morpheme(
     pool: &State<MySqlPool>,
@@ -104,7 +103,6 @@ fn parse_pub_date(pub_date_str: Option<&str>) -> Option<NaiveDateTime> {
         })
 }
 
-// TODO 사용자가 rss를 눌렀을 때도 rank +1 처리.
 async fn store_rss_item_and_morpheme(
     pool: &State<MySqlPool>,
     mut rss_item: NewRssItem,
@@ -116,7 +114,7 @@ async fn store_rss_item_and_morpheme(
     };
 
     match rss_item_repository::select_item_by_link(pool, item_link).await {
-        Ok(item) => Ok(set_item_rank(pool, item).await?),
+        Ok(item) => Ok(item.rss_id.unwrap()),
         Err(_) => rss_item_repository::insert_rss_item(pool, rss_item)
             .await
             .map_err(|e| {
@@ -124,17 +122,6 @@ async fn store_rss_item_and_morpheme(
                 OmniNewsError::Database(e)
             }),
     }
-}
-
-async fn set_item_rank(pool: &State<MySqlPool>, mut item: RssItem) -> Result<i32, OmniNewsError> {
-    item.rss_rank = item.rss_rank.map(|r| r + 1);
-
-    rss_item_repository::update_rss_item(pool, item)
-        .await
-        .map_err(|e| {
-            error!("[Service] Failed to set item rank: {}", e);
-            OmniNewsError::Database(e)
-        })
 }
 
 pub async fn get_rss_list(
@@ -220,12 +207,24 @@ pub async fn get_recommend_item(pool: &State<MySqlPool>) -> Result<Vec<RssItem>,
 
 pub async fn get_rss_item_by_channel_link(
     pool: &State<MySqlPool>,
-    channel_title: String,
+    channel_link: String,
 ) -> Result<Vec<RssItem>, OmniNewsError> {
-    rss_item_repository::select_rss_items_by_channel_title(pool, channel_title)
+    info!("[Service] Get rss item by channel link: {}", channel_link);
+    rss_item_repository::select_rss_items_by_channel_link(pool, channel_link)
         .await
         .map_err(|e| {
-            error!("[Service] Failed to select items by channel title: {:?}", e);
+            error!("[Service] Failed to select items by channel link: {:?}", e);
             OmniNewsError::Database(e)
         })
+}
+
+pub async fn update_rss_item_by_rank(
+    pool: &State<MySqlPool>,
+    rss_link: String,
+    num: i32,
+) -> Result<bool, OmniNewsError> {
+    match rss_item_repository::update_rss_channel_rank_by_link(pool, rss_link, num).await {
+        Ok(res) => Ok(res),
+        Err(e) => Err(OmniNewsError::Database(e)),
+    }
 }

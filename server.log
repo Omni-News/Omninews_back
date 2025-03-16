@@ -4952,3 +4952,630 @@
 2025-03-08T15:32:57.976490+09:00 ERROR - No matching routes for GET /bookmarks/channel?rss_link=http://pennyway.net/rss.
 2025-03-08T15:32:57.976633+09:00 WARN - Responding with registered (not_found) 404 catcher.
 2025-03-08T15:32:57.976723+09:00 ERROR - 404 Not Found: /bookmarks/channel?rss_link=http://pennyway.net/rss
+2025-03-08T15:43:24.790937+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-08T15:43:25.360072+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-08T19:17:09.593805+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-10T10:17:11.163372+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T10:17:11.163941+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-10T10:32:45.750504+09:00 ERROR - No matching routes for GET /bookmarks/search?q=f.
+2025-03-10T10:32:45.751586+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:32:45.751819+09:00 ERROR - 404 Not Found: /bookmarks/search?q=f
+2025-03-10T10:32:47.781102+09:00 ERROR - No matching routes for GET /bookmarks/search?q=%20.
+2025-03-10T10:32:47.781166+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:32:47.781195+09:00 ERROR - 404 Not Found: /bookmarks/search?q=%20
+2025-03-10T10:32:47.832281+09:00 ERROR - No matching routes for GET /bookmarks/search?q=%20.
+2025-03-10T10:32:47.832352+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:32:47.832392+09:00 ERROR - 404 Not Found: /bookmarks/search?q=%20
+2025-03-10T10:32:47.952524+09:00 ERROR - No matching routes for GET /bookmarks/search?q=%20.
+2025-03-10T10:32:47.952584+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:32:47.952615+09:00 ERROR - 404 Not Found: /bookmarks/search?q=%20
+2025-03-10T10:32:47.974866+09:00 ERROR - No matching routes for GET /bookmarks/search?q=%20%20.
+2025-03-10T10:32:47.974980+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:32:47.975106+09:00 ERROR - 404 Not Found: /bookmarks/search?q=%20%20
+2025-03-10T10:32:48.490198+09:00 ERROR - No matching routes for GET /bookmarks/search?q=%20.
+2025-03-10T10:32:48.490280+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:32:48.490323+09:00 ERROR - 404 Not Found: /bookmarks/search?q=%20
+2025-03-10T10:32:50.289413+09:00 ERROR - No matching routes for GET /bookmarks/search?q=I.
+2025-03-10T10:32:50.289556+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:32:50.289594+09:00 ERROR - 404 Not Found: /bookmarks/search?q=I
+2025-03-10T10:32:50.705971+09:00 ERROR - No matching routes for GET /bookmarks/search?q=In.
+2025-03-10T10:32:50.706041+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:32:50.706072+09:00 ERROR - 404 Not Found: /bookmarks/search?q=In
+2025-03-10T10:32:56.232235+09:00 ERROR - No matching routes for GET /bookmarks/search?q=d.
+2025-03-10T10:32:56.232533+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:32:56.232578+09:00 ERROR - 404 Not Found: /bookmarks/search?q=d
+2025-03-10T10:32:57.187099+09:00 ERROR - No matching routes for GET /bookmarks/search?q=I.
+2025-03-10T10:32:57.187166+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:32:57.187268+09:00 ERROR - 404 Not Found: /bookmarks/search?q=I
+2025-03-10T10:32:57.522070+09:00 ERROR - No matching routes for GET /bookmarks/search?q=In.
+2025-03-10T10:32:57.522251+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:32:57.522320+09:00 ERROR - 404 Not Found: /bookmarks/search?q=In
+2025-03-10T10:32:57.957298+09:00 ERROR - No matching routes for GET /bookmarks/search?q=I.
+2025-03-10T10:32:57.957382+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:32:57.957419+09:00 ERROR - 404 Not Found: /bookmarks/search?q=I
+2025-03-10T10:33:02.723852+09:00 ERROR - No matching routes for GET /bookmarks/search?q=I.
+2025-03-10T10:33:02.724151+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:33:02.724237+09:00 ERROR - 404 Not Found: /bookmarks/search?q=I
+2025-03-10T10:33:02.906490+09:00 ERROR - No matching routes for GET /bookmarks/search?q=Ip.
+2025-03-10T10:33:02.906610+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:33:02.906654+09:00 ERROR - 404 Not Found: /bookmarks/search?q=Ip
+2025-03-10T10:33:03.173228+09:00 ERROR - No matching routes for GET /bookmarks/search?q=Iph.
+2025-03-10T10:33:03.173291+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:33:03.173325+09:00 ERROR - 404 Not Found: /bookmarks/search?q=Iph
+2025-03-10T10:33:03.531076+09:00 ERROR - No matching routes for GET /bookmarks/search?q=Ip.
+2025-03-10T10:33:03.531139+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:33:03.531169+09:00 ERROR - 404 Not Found: /bookmarks/search?q=Ip
+2025-03-10T10:33:03.662991+09:00 ERROR - No matching routes for GET /bookmarks/search?q=I.
+2025-03-10T10:33:03.663059+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:33:03.663155+09:00 ERROR - 404 Not Found: /bookmarks/search?q=I
+2025-03-10T10:33:15.515195+09:00 ERROR - No matching routes for GET /bookmarks/search?q=2.
+2025-03-10T10:33:15.516074+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:33:15.516143+09:00 ERROR - 404 Not Found: /bookmarks/search?q=2
+2025-03-10T10:33:18.616359+09:00 ERROR - No matching routes for GET /bookmarks/search?q=w.
+2025-03-10T10:33:18.616427+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:33:18.616461+09:00 ERROR - 404 Not Found: /bookmarks/search?q=w
+2025-03-10T10:33:20.583654+09:00 ERROR - No matching routes for GET /bookmarks/search?q=2.
+2025-03-10T10:33:20.583785+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:33:20.583829+09:00 ERROR - 404 Not Found: /bookmarks/search?q=2
+2025-03-10T10:33:23.233469+09:00 ERROR - No matching routes for GET /bookmarks/search?q=2.
+2025-03-10T10:33:23.233791+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:33:23.233823+09:00 ERROR - 404 Not Found: /bookmarks/search?q=2
+2025-03-10T10:33:23.314456+09:00 ERROR - No matching routes for GET /bookmarks/search?q=25.
+2025-03-10T10:33:23.314546+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:33:23.314594+09:00 ERROR - 404 Not Found: /bookmarks/search?q=25
+2025-03-10T10:43:50.725357+09:00 ERROR - No matching routes for POST /bookmarks application/json.
+2025-03-10T10:43:50.726829+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:43:50.726904+09:00 ERROR - 404 Not Found: /bookmarks
+2025-03-10T10:43:51.573125+09:00 ERROR - No matching routes for DELETE /bookmarks?link=http://inuit.co.kr/2638 application/json.
+2025-03-10T10:43:51.573276+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T10:43:51.573352+09:00 ERROR - 404 Not Found: /bookmarks?link=http://inuit.co.kr/2638
+2025-03-10T11:20:21.652866+09:00 ERROR - No matching routes for POST /bookmarks application/json.
+2025-03-10T11:20:21.654364+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T11:20:21.654752+09:00 ERROR - 404 Not Found: /bookmarks
+2025-03-10T11:20:22.276311+09:00 ERROR - No matching routes for DELETE /bookmarks?link=http://inuit.co.kr/2638 application/json.
+2025-03-10T11:20:22.276413+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-10T11:20:22.276486+09:00 ERROR - 404 Not Found: /bookmarks?link=http://inuit.co.kr/2638
+2025-03-10T14:21:10.246393+09:00 WARN - Failed to extract key words
+2025-03-10T14:21:10.247579+09:00 WARN - Failed to extract key words
+2025-03-10T14:21:10.247698+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:21:10.247749+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:21:10.248455+09:00 ERROR - 500 Internal servcer Error: /search/rss?search_value=1&search_type=Accuracy
+2025-03-10T14:21:10.248638+09:00 ERROR - 500 Internal servcer Error: /search/channel?search_value=1&search_type=Accuracy
+2025-03-10T14:21:16.389515+09:00 WARN - Failed to extract key words
+2025-03-10T14:21:16.389794+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:21:16.389906+09:00 ERROR - 500 Internal servcer Error: /search/rss?search_value=1&search_type=Accuracy
+2025-03-10T14:21:18.113266+09:00 WARN - Failed to extract key words
+2025-03-10T14:21:18.113411+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:21:18.113459+09:00 ERROR - 500 Internal servcer Error: /search/rss?search_value=2&search_type=Accuracy
+2025-03-10T14:22:55.394543+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 7926
+2025-03-10T14:22:55.788722+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 33639
+2025-03-10T14:22:55.802472+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 20126
+2025-03-10T14:22:56.141447+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 25746
+2025-03-10T14:22:56.147101+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 20339
+2025-03-10T14:22:56.507406+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 16115
+2025-03-10T14:23:05.229283+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 50114
+2025-03-10T14:23:13.134626+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 131247
+2025-03-10T14:23:18.587098+09:00 WARN - Failed to extract key words
+2025-03-10T14:23:40.354755+09:00 WARN - Failed to extract key words
+2025-03-10T14:23:41.799687+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 178946
+2025-03-10T14:23:43.068807+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 165735
+2025-03-10T14:23:43.099972+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 156773
+2025-03-10T14:23:47.743318+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 129567
+2025-03-10T14:23:47.761695+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 56719
+2025-03-10T14:23:52.392712+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 13520
+2025-03-10T14:23:52.403427+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 42692
+2025-03-10T14:23:55.962978+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 85583
+2025-03-10T14:23:55.976578+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 101585
+2025-03-10T14:23:55.987875+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 83666
+2025-03-10T14:23:56.684378+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 38367
+2025-03-10T14:23:56.697897+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 104934
+2025-03-10T14:24:01.444881+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 32662
+2025-03-10T14:24:01.459991+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 23638
+2025-03-10T14:24:04.293709+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 627
+2025-03-10T14:24:05.895475+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 95237
+2025-03-10T14:24:05.924190+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 87632
+2025-03-10T14:24:06.527119+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 74170
+2025-03-10T14:24:10.769236+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 50241
+2025-03-10T14:24:10.779763+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 66678
+2025-03-10T14:24:13.379584+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 54677
+2025-03-10T14:24:13.387263+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 22126
+2025-03-10T14:24:13.405230+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 81694
+2025-03-10T14:24:13.420244+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 41945
+2025-03-10T14:24:13.426239+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 31102
+2025-03-10T14:24:13.433704+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 49405
+2025-03-10T14:24:16.081182+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 21524
+2025-03-10T14:24:17.532949+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 16507
+2025-03-10T14:24:20.080588+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 36617
+2025-03-10T14:24:22.814969+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 54189
+2025-03-10T14:24:24.077178+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 17739
+2025-03-10T14:24:26.719510+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 69305
+2025-03-10T14:24:27.745965+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 55970
+2025-03-10T14:24:30.591642+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 56998
+2025-03-10T14:24:32.154912+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 134805
+2025-03-10T14:24:34.610963+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 16520
+2025-03-10T14:24:36.077380+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 28949
+2025-03-10T14:24:36.466119+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 26431
+2025-03-10T14:24:38.348199+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 29171
+2025-03-10T14:24:39.577492+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12342
+2025-03-10T14:24:39.586462+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 7308
+2025-03-10T14:24:39.596316+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 15891
+2025-03-10T14:24:40.454070+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 10296
+2025-03-10T14:24:41.665131+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 9590
+2025-03-10T14:24:44.526996+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 22847
+2025-03-10T14:24:45.266680+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 26403
+2025-03-10T14:24:46.324510+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 11037
+2025-03-10T14:24:46.722753+09:00 WARN - Failed to extract key words
+2025-03-10T14:24:48.012108+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 30548
+2025-03-10T14:24:48.185353+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 55510
+2025-03-10T14:24:49.385523+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 15510
+2025-03-10T14:24:50.657429+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 28194
+2025-03-10T14:24:51.819953+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 19697
+2025-03-10T14:24:52.994633+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 25354
+2025-03-10T14:24:53.009535+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 47078
+2025-03-10T14:24:54.596036+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 21899
+2025-03-10T14:24:55.353686+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 20013
+2025-03-10T14:24:56.558260+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 24952
+2025-03-10T14:24:57.461533+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 31728
+2025-03-10T14:24:58.263108+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 155770
+2025-03-10T14:24:59.816143+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 19667
+2025-03-10T14:24:59.847915+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 17950
+2025-03-10T14:25:02.728712+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 6849
+2025-03-10T14:25:03.291535+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 9004
+2025-03-10T14:25:05.769366+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 24091
+2025-03-10T14:25:20.457020+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12396
+2025-03-10T14:25:21.421093+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 19948
+2025-03-10T14:25:21.433032+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 15130
+2025-03-10T14:25:25.456945+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 9396
+2025-03-10T14:26:16.973705+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 347358
+2025-03-10T14:26:23.602461+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 50431
+2025-03-10T14:26:26.974215+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 78881
+2025-03-10T14:27:09.791540+09:00 WARN - Failed to extract key words
+2025-03-10T14:27:12.166655+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 82264
+2025-03-10T14:27:16.996923+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 57725
+2025-03-10T14:27:18.137536+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 88301
+2025-03-10T14:27:20.043373+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 139427
+2025-03-10T14:27:23.291520+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 86151
+2025-03-10T14:27:37.259486+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 88221
+2025-03-10T14:27:42.589113+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 59368
+2025-03-10T14:27:43.838589+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 127722
+2025-03-10T14:27:49.178925+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 117028
+2025-03-10T14:27:49.741085+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 83452
+2025-03-10T14:27:49.751532+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 68485
+2025-03-10T14:27:52.148782+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 112241
+2025-03-10T14:27:52.158964+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 58884
+2025-03-10T14:27:57.761460+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 52477
+2025-03-10T14:28:01.644312+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 122552
+2025-03-10T14:28:48.315717+09:00 WARN - Failed to extract key words
+2025-03-10T14:28:48.599439+09:00 WARN - Failed to extract key words
+2025-03-10T14:29:10.216113+09:00 WARN - Failed to extract key words
+2025-03-10T14:30:56.862838+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:30:56.863339+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:30:56.863530+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:31:02.983136+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:31:02.983291+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:31:02.983322+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:34:59.274845+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:34:59.275371+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:34:59.275418+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:43:41.333030+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:43:41.333518+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:43:41.333679+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:43:58.685499+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:43:58.685808+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:43:58.685839+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:44:17.554569+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:44:17.556840+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:44:17.556884+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:45:09.848191+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:45:09.850168+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:45:09.850256+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:46:46.359682+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:46:46.360262+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:46:46.360315+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:47:22.949872+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:47:22.950259+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:47:22.950296+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:47:34.231261+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:47:34.231703+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:47:34.231748+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:51:40.827448+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:51:40.828133+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:51:40.828173+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:52:19.539168+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:52:19.539630+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:52:19.539666+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:52:50.672873+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:52:50.673153+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:52:50.673186+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:53:06.337958+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:53:06.338270+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:53:06.338314+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:53:15.235898+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:53:15.236121+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:53:15.236163+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:53:41.307129+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:53:41.307237+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:53:41.307269+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:53:44.052151+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:53:44.052332+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:53:44.052363+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T14:53:45.540203+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-10T14:53:45.541138+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-10T14:53:45.541185+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-10T15:00:26.199911+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-11T21:42:46.138379+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-11T21:43:33.137070+09:00 ERROR - No matching routes for GET / text/html.
+2025-03-11T21:43:33.137583+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-11T21:43:33.137626+09:00 ERROR - 404 Not Found: /
+2025-03-11T21:43:33.161113+09:00 ERROR - No matching routes for GET /favicon.ico.
+2025-03-11T21:43:33.161173+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-11T21:43:33.161200+09:00 ERROR - 404 Not Found: /favicon.ico
+2025-03-11T21:44:11.109501+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-11T21:44:13.136732+09:00 WARN - Rocket has launched from http://127.0.0.1:8080
+2025-03-11T21:44:47.348727+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-11T21:44:49.109758+09:00 WARN - Rocket has launched from http://127.0.0.1:1027
+2025-03-11T21:44:58.685835+09:00 ERROR - No matching routes for GET / text/html.
+2025-03-11T21:44:58.685926+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-11T21:44:58.685969+09:00 ERROR - 404 Not Found: /
+2025-03-11T21:44:58.746715+09:00 ERROR - No matching routes for GET /favicon.ico.
+2025-03-11T21:44:58.746781+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-11T21:44:58.746818+09:00 ERROR - 404 Not Found: /favicon.ico
+2025-03-11T21:46:51.502319+09:00 ERROR - No matching routes for GET / text/html.
+2025-03-11T21:46:51.503056+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-11T21:46:51.503106+09:00 ERROR - 404 Not Found: /
+2025-03-11T21:49:39.485192+09:00 ERROR - No matching routes for GET / text/html.
+2025-03-11T21:49:39.486354+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-11T21:49:39.486472+09:00 ERROR - 404 Not Found: /
+2025-03-11T22:12:04.488006+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-11T22:12:06.413982+09:00 WARN - Rocket has launched from http://0.0.0.0:1027
+2025-03-11T22:12:21.305253+09:00 ERROR - No matching routes for GET / text/html.
+2025-03-11T22:12:21.306340+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-11T22:12:21.306546+09:00 ERROR - 404 Not Found: /
+2025-03-11T22:12:21.522900+09:00 ERROR - No matching routes for GET /favicon.ico.
+2025-03-11T22:12:21.522956+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-11T22:12:21.522989+09:00 ERROR - 404 Not Found: /favicon.ico
+2025-03-11T22:19:58.474376+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-11T22:19:58.474681+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:19:58.474712+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-11T22:25:01.297713+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:25:01.303043+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-11T22:26:49.346692+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-11T22:26:49.347279+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:26:49.347334+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-11T22:38:20.738076+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:38:20.738595+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-11T22:38:41.889957+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:38:41.890212+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-11T22:40:01.486012+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:40:01.487015+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-11T22:40:06.645623+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:40:06.645743+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-11T22:40:15.159951+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:40:15.160046+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-11T22:40:22.095083+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-11T22:40:22.095730+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:40:22.095777+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-11T22:40:25.790414+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-11T22:40:25.790535+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:40:25.790572+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-11T22:40:39.307639+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-11T22:40:39.308403+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:40:39.308464+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-11T22:40:42.913175+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-11T22:40:42.913352+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:40:42.913394+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-11T22:41:00.350401+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-11T22:41:00.350813+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:41:00.350863+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-11T22:41:02.984951+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-11T22:41:02.985046+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:41:02.985080+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-11T22:41:03.892778+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-11T22:41:03.892831+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:41:03.892846+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-11T22:41:04.527806+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-11T22:41:04.527953+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:41:04.527996+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-11T22:41:18.232279+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-11T22:41:18.232755+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:41:18.232786+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-11T22:43:11.983249+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-11T22:43:11.984188+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:43:11.984231+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-11T22:45:55.849689+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-11T22:45:55.850261+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-11T22:45:55.850346+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-12T04:01:34.948635+09:00 ERROR - No matching routes for GET /.
+2025-03-12T04:01:34.949389+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-12T04:01:34.949486+09:00 ERROR - 404 Not Found: /
+2025-03-12T15:36:32.562569+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-12T15:36:32.563331+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-12T15:36:32.563627+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://poem23.com/rss
+2025-03-12T15:36:33.905517+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-12T15:36:33.905599+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-12T15:36:33.905626+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://poem23.com/rss
+2025-03-12T15:36:44.046019+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-12T15:36:44.046766+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-12T15:36:44.046810+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://poem23.com/rss
+2025-03-12T15:36:44.957232+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-12T15:36:44.957384+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-12T15:36:44.957446+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://poem23.com/rss
+2025-03-13T11:07:14.328299+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-13T11:07:14.328837+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T11:07:14.328953+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-13T11:07:20.588008+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-13T11:07:20.588392+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T11:07:20.588458+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-13T11:07:33.152850+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-13T11:07:33.153119+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T11:07:33.153153+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-13T11:27:15.469757+09:00 ERROR - No matching routes for GET / text/html.
+2025-03-13T11:27:15.477292+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-13T11:27:15.477344+09:00 ERROR - 404 Not Found: /
+2025-03-13T14:03:10.012038+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-13T14:03:10.012645+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:03:10.012709+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-13T14:03:15.241299+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-13T14:03:15.241476+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:03:15.241513+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-13T14:03:21.560712+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-13T14:03:21.561501+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:03:21.561547+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-13T14:04:13.491101+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:04:13.516999+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-13T14:04:31.919180+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-13T14:04:31.919639+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:04:31.919761+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-13T14:11:37.374646+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-13T14:11:42.792774+09:00 WARN - Rocket has launched from http://0.0.0.0:1027
+2025-03-13T14:12:18.419589+09:00 ERROR - [Service] Failed to select items by channel title: Database(MySqlDatabaseError { code: Some("21000"), number: 1242, message: "Subquery returns more than 1 row" })
+2025-03-13T14:12:18.419965+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:12:18.420033+09:00 ERROR - 500 Internal servcer Error: /rss/items?channel_link=http://photohistory.tistory.com/rss
+2025-03-13T14:14:29.874783+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:14:29.875672+09:00 ERROR - 500 Internal servcer Error: /rss/channel?rss_link=http://photohistory.tistory.com/rss
+2025-03-13T14:14:32.579702+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:14:32.579782+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-13T14:14:32.581500+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:14:32.581561+09:00 ERROR - 500 Internal servcer Error: /rss/channel?rss_link=http://photohistory.tistory.com/rss
+2025-03-13T14:14:48.435202+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:14:48.435368+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:14:48.435428+09:00 ERROR - 500 Internal servcer Error: /rss/channel?rss_link=http://photohistory.tistory.com/rss
+2025-03-13T14:14:48.435460+09:00 ERROR - 500 Internal servcer Error: /rss/channel?rss_link=http://photohistory.tistory.com/rss
+2025-03-13T14:14:59.052289+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:14:59.052363+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:14:59.052416+09:00 ERROR - 500 Internal servcer Error: /rss/channel?rss_link=http://photohistory.tistory.com/rss
+2025-03-13T14:14:59.052453+09:00 ERROR - 500 Internal servcer Error: /rss/channel?rss_link=http://photohistory.tistory.com/rss
+2025-03-13T14:15:45.293669+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:15:45.293795+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:15:45.293975+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-13T14:15:45.293988+09:00 ERROR - 500 Internal servcer Error: /rss/channel?rss_link=http://photohistory.tistory.com/rss
+2025-03-13T14:15:47.640160+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:15:47.640295+09:00 ERROR - 500 Internal servcer Error: /rss/channel?rss_link=http://photohistory.tistory.com/rss
+2025-03-13T14:15:47.644440+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:15:47.644502+09:00 ERROR - 500 Internal servcer Error: /rss/channel?rss_link=http://photohistory.tistory.com/rss
+2025-03-13T14:15:48.283262+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:15:48.283381+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:15:48.283462+09:00 ERROR - 500 Internal servcer Error: /rss/channel?rss_link=http://photohistory.tistory.com/rss
+2025-03-13T14:15:48.283513+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-13T14:16:31.020952+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:16:31.022084+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-13T14:16:34.197318+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:16:34.197587+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-13T14:16:38.380560+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:16:38.380625+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-13T14:16:39.311646+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:16:39.311779+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-13T14:16:39.979283+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:16:39.979354+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-13T14:16:40.615186+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:16:40.615232+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-13T14:17:11.712843+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:17:11.714759+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-13T14:17:20.679092+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:17:20.679396+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-13T14:17:21.448829+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:17:21.448923+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-13T14:17:23.117883+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:17:23.117956+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-13T14:26:46.931956+09:00 ERROR - [Service] Not found url : developer-talk.tistory.com/rss
+2025-03-13T14:26:46.932752+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T14:26:46.932832+09:00 ERROR - 500 Internal servcer Error: /rss/preview?rss_link=developer-talk.tistory.com/rss
+2025-03-13T14:27:07.003243+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 16119
+2025-03-13T14:27:07.938220+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 34508
+2025-03-13T14:27:08.070209+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 26034
+2025-03-13T14:27:08.298203+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12284
+2025-03-13T14:27:08.305342+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 26087
+2025-03-13T14:27:08.500214+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 16900
+2025-03-13T14:27:08.594541+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 8365
+2025-03-13T14:27:08.660774+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12035
+2025-03-13T14:27:08.864570+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 15909
+2025-03-13T14:27:09.038651+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 13172
+2025-03-13T14:27:09.269313+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 20723
+2025-03-13T14:27:09.282733+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 46488
+2025-03-13T14:27:09.286990+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 15082
+2025-03-13T14:27:09.290660+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12671
+2025-03-13T14:27:09.293861+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12467
+2025-03-13T14:27:09.298098+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12954
+2025-03-13T14:27:09.363475+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 8672
+2025-03-13T14:42:26.304997+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-13T14:42:30.771491+09:00 WARN - Rocket has launched from http://0.0.0.0:1027
+2025-03-13T14:43:37.080964+09:00 ERROR - No matching routes for POST /.
+2025-03-13T14:43:37.082700+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-13T14:43:37.082765+09:00 ERROR - 404 Not Found: /
+2025-03-13T15:06:29.198058+09:00 ERROR - [Service] Failed to parse xml: Custom("missing field `channel`")
+2025-03-13T15:06:29.198904+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T15:06:29.198955+09:00 ERROR - 500 Internal servcer Error: /news/api?query=HTML&display=20&sort=pop
+2025-03-13T15:06:30.596549+09:00 ERROR - [Service] Failed to parse xml: Custom("missing field `channel`")
+2025-03-13T15:06:30.596839+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T15:06:30.596924+09:00 ERROR - 500 Internal servcer Error: /news/api?query=HTML&display=20&sort=pop
+2025-03-13T15:08:05.645739+09:00 ERROR - [Service] Failed to parse xml: Custom("missing field `channel`")
+2025-03-13T15:08:05.646530+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T15:08:05.646580+09:00 ERROR - 500 Internal servcer Error: /news/api?query=HTML&display=20&sort=pop
+2025-03-13T15:08:13.394356+09:00 ERROR - [Service] Failed to parse xml: Custom("missing field `channel`")
+2025-03-13T15:08:13.396113+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-13T15:08:13.396172+09:00 ERROR - 500 Internal servcer Error: /news/api?query=HTML&display=20&sort=pop
+2025-03-14T19:31:54.588194+09:00 ERROR - No matching routes for GET /.
+2025-03-14T19:31:54.589176+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-14T19:31:54.589340+09:00 ERROR - 404 Not Found: /
+2025-03-14T19:32:13.215689+09:00 ERROR - No matching routes for GET /favicon.ico text/html.
+2025-03-14T19:32:13.217318+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-14T19:32:13.217498+09:00 ERROR - 404 Not Found: /favicon.ico
+2025-03-14T19:32:13.828564+09:00 ERROR - No matching routes for GET /robots.txt text/html.
+2025-03-14T19:32:13.828683+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-14T19:32:13.828744+09:00 ERROR - 404 Not Found: /robots.txt
+2025-03-14T19:32:14.543389+09:00 ERROR - No matching routes for GET /sitemap.xml text/html.
+2025-03-14T19:32:14.543484+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-14T19:32:14.543529+09:00 ERROR - 404 Not Found: /sitemap.xml
+2025-03-14T19:46:32.259514+09:00 ERROR - No matching routes for GET /.
+2025-03-14T19:46:32.263803+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-14T19:46:32.263938+09:00 ERROR - 404 Not Found: /
+2025-03-15T11:35:48.422498+09:00 ERROR - [Service] Not found url : 한남동 관저에서 침묵 지키는 尹…헌재 선고 앞두고 초긴장[용산NOW]https://n.news.naver.com/mnews/article/081/0003525382
+2025-03-15T11:35:48.423187+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-15T11:35:48.423237+09:00 ERROR - 500 Internal servcer Error: /rss/preview?rss_link=%ED%95%9C%EB%82%A8%EB%8F%99%20%EA%B4%80%EC%A0%80%EC%97%90%EC%84%9C%20%EC%B9%A8%EB%AC%B5%20%EC%A7%80%ED%82%A4%EB%8A%94%20%E5%B0%B9%E2%80%A6%ED%97%8C%EC%9E%AC%20%EC%84%A0%EA%B3%A0%20%EC%95%9E%EB%91%90%EA%B3%A0%20%EC%B4%88%EA%B8%B4%EC%9E%A5%5B%EC%9A%A9%EC%82%B0NOW%5Dhttps://n.news.naver.com/mnews/article/081/0003525382
+2025-03-15T11:36:16.022351+09:00 ERROR - [Service] Not found url : https://2.velog.io/rss/@kmin-283/
+2025-03-15T11:36:16.023237+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-15T11:36:16.023326+09:00 ERROR - 500 Internal servcer Error: /rss/preview?rss_link=https://2.velog.io/rss/@kmin-283/
+2025-03-15T11:36:25.171445+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 7926
+2025-03-15T11:36:25.438730+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 33639
+2025-03-15T11:36:25.452025+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 22192
+2025-03-15T11:36:25.680485+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 20339
+2025-03-15T11:38:14.203673+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 19943
+2025-03-15T11:38:14.358761+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 25747
+2025-03-15T11:38:14.362845+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 20339
+2025-03-15T11:38:14.366256+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 17339
+2025-03-15T11:38:15.038323+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 49522
+2025-03-15T11:38:15.384375+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 27090
+2025-03-15T11:38:22.093939+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 192852
+2025-03-15T11:38:22.876252+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 131596
+2025-03-15T11:38:22.892320+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 57028
+2025-03-15T11:38:50.330529+09:00 WARN - Failed to extract key words
+2025-03-15T11:38:53.377550+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 165532
+2025-03-15T11:38:58.773490+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 28304
+2025-03-15T11:39:00.505050+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 33685
+2025-03-15T11:39:00.615072+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 16785
+2025-03-15T11:39:05.893050+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 82706
+2025-03-15T11:39:05.916308+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 105217
+2025-03-15T11:39:06.967694+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 38367
+2025-03-15T11:39:07.679271+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 76171
+2025-03-15T11:39:07.693242+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 75056
+2025-03-15T11:39:07.707261+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 89692
+2025-03-15T11:39:12.083610+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 38960
+2025-03-15T11:39:12.816894+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 608
+2025-03-15T11:39:14.101019+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 18881
+2025-03-15T11:39:14.534442+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 68083
+2025-03-15T11:39:14.559736+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 80869
+2025-03-15T11:39:21.300484+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 50171
+2025-03-15T11:39:22.632647+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 55092
+2025-03-15T11:39:24.161294+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 81918
+2025-03-15T11:39:27.441223+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 21524
+2025-03-15T11:39:28.829049+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 16283
+2025-03-15T11:39:30.996702+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 31308
+2025-03-15T11:39:31.018625+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 36617
+2025-03-15T11:39:31.454153+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 50761
+2025-03-15T11:39:31.767904+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 62759
+2025-03-15T11:39:32.768897+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 78227
+2025-03-15T11:39:33.270972+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 17776
+2025-03-15T11:39:34.464346+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 70665
+2025-03-15T11:39:35.280238+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 115441
+2025-03-15T11:39:38.439760+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 133308
+2025-03-15T11:39:40.555452+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 17938
+2025-03-15T11:39:40.575908+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 10932
+2025-03-15T11:39:42.738341+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 291704
+2025-03-15T11:39:43.302396+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 26989
+2025-03-15T11:39:43.310647+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 13208
+2025-03-15T11:39:43.516853+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 29508
+2025-03-15T11:39:43.522266+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 24359
+2025-03-15T11:39:43.526483+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 15769
+2025-03-15T11:39:43.702598+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 9839
+2025-03-15T11:39:44.359920+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 14327
+2025-03-15T11:39:45.330048+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 16890
+2025-03-15T11:39:45.339392+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12897
+2025-03-15T11:39:45.740926+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 9119
+2025-03-15T11:39:47.470389+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 11910
+2025-03-15T11:39:48.327719+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 25643
+2025-03-15T11:39:49.913952+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 11077
+2025-03-15T11:39:49.923769+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 8385
+2025-03-15T11:39:50.338778+09:00 WARN - Failed to extract key words
+2025-03-15T11:39:54.963563+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 10580
+2025-03-15T11:39:56.323168+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 27553
+2025-03-15T11:39:57.998078+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12777
+2025-03-15T11:39:58.010682+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 26156
+2025-03-15T11:39:58.625531+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 19660
+2025-03-15T11:39:59.626312+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 22956
+2025-03-15T11:40:00.280074+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 20013
+2025-03-15T11:40:01.211183+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 24952
+2025-03-15T11:40:01.222291+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 26701
+2025-03-15T11:40:01.230964+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 23295
+2025-03-15T11:40:03.883164+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 16145
+2025-03-15T11:40:04.795047+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 18430
+2025-03-15T11:40:05.001037+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 13303
+2025-03-15T11:40:05.012404+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 9573
+2025-03-15T11:40:05.173682+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 10772
+2025-03-15T11:40:05.184364+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 14035
+2025-03-15T11:40:05.311680+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 7098
+2025-03-15T11:40:05.319451+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 9305
+2025-03-15T11:40:05.581416+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 16392
+2025-03-15T11:40:05.739959+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 7500
+2025-03-15T11:40:07.432905+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 20738
+2025-03-15T11:40:08.084793+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 24091
+2025-03-15T11:40:17.005331+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 69659
+2025-03-15T11:40:18.319433+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 56562
+2025-03-15T11:40:22.812879+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 12991
+2025-03-15T11:40:22.822980+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 19967
+2025-03-15T11:40:23.007543+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 18638
+2025-03-15T11:40:25.282103+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 9416
+2025-03-15T11:41:11.501319+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 20071
+2025-03-15T11:41:12.347657+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 137898
+2025-03-15T11:41:12.370898+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 149613
+2025-03-15T11:41:12.396640+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 198971
+2025-03-15T11:41:15.884425+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 4919
+2025-03-15T11:41:15.924111+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 80279
+2025-03-15T11:41:15.938013+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 62836
+2025-03-15T11:41:19.597101+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 236949
+2025-03-15T11:41:50.843518+09:00 WARN - Failed to extract key words
+2025-03-15T11:41:53.280874+09:00 WARN - Failed to extract key words
+2025-03-15T11:42:10.111539+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 89148
+2025-03-15T11:42:11.170892+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 91042
+2025-03-15T11:42:16.736687+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 2 bytes from index 73138
+2025-03-15T11:42:17.903785+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 92086
+2025-03-15T11:42:25.191442+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 107117
+2025-03-15T11:42:27.791657+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 67010
+2025-03-15T11:42:31.144307+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 80757
+2025-03-15T11:42:31.161920+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 84904
+2025-03-15T11:42:36.734093+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 88367
+2025-03-15T11:42:40.033082+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 70629
+2025-03-15T11:42:45.038406+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 83452
+2025-03-15T11:42:45.058223+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 68485
+2025-03-15T11:42:45.062181+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 42323
+2025-03-15T11:42:47.365616+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 57404
+2025-03-15T11:42:47.423404+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 110860
+2025-03-15T11:42:49.864892+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 141266
+2025-03-15T11:42:53.163178+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 129549
+2025-03-15T11:42:54.520376+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 70450
+2025-03-15T11:42:54.537151+09:00 WARN - Failed to convert Mecab result to UTF-8: invalid utf-8 sequence of 1 bytes from index 80666
+2025-03-15T11:43:34.779394+09:00 WARN - Failed to extract key words
+2025-03-15T11:44:02.762779+09:00 WARN - Remote left: client disconnect before response started.
+2025-03-15T12:50:37.782254+09:00 ERROR - [Service] Not found url : https://rss/donga.com/travel.xml
+2025-03-15T12:50:37.782759+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-15T12:50:37.782823+09:00 ERROR - 500 Internal servcer Error: /rss/preview?rss_link=https://rss/donga.com/travel.xml
+2025-03-15T12:56:43.124215+09:00 ERROR - [Service] Failed to parse xml: Custom("missing field `item`")
+2025-03-15T12:56:43.127679+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-15T12:56:43.127770+09:00 ERROR - 500 Internal servcer Error: /news/api?query=readerasdfasfabhwek&display=20&sort=sim
+2025-03-15T12:56:49.522950+09:00 ERROR - [Service] Failed to parse xml: Custom("missing field `item`")
+2025-03-15T12:56:49.523140+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-15T12:56:49.523178+09:00 ERROR - 500 Internal servcer Error: /news/api?query=readerasdfasfabhwek&display=20&sort=sim
+2025-03-15T12:56:50.106989+09:00 ERROR - [Service] Failed to parse xml: Custom("missing field `item`")
+2025-03-15T12:56:50.107128+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-15T12:56:50.107177+09:00 ERROR - 500 Internal servcer Error: /news/api?query=readerasdfasfabhwek&display=20&sort=date
+2025-03-15T12:56:53.715854+09:00 ERROR - [Service] Failed to parse xml: Custom("missing field `item`")
+2025-03-15T12:56:53.715972+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-15T12:56:53.716024+09:00 ERROR - 500 Internal servcer Error: /news/api?query=readerasdfasfabhwek&display=20&sort=sim
+2025-03-15T16:06:24.208216+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-15T16:06:24.208964+09:00 ERROR - 500 Internal servcer Error: /subscribe/items
+2025-03-16T17:06:13.787244+09:00 WARN - Failed to extract key words
+2025-03-16T17:06:13.787998+09:00 WARN - Failed to extract key words
+2025-03-16T17:06:13.788056+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-16T17:06:13.788095+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-16T17:06:13.788116+09:00 ERROR - 500 Internal servcer Error: /search/rss?search_value=3&search_type=Accuracy
+2025-03-16T17:06:13.788782+09:00 ERROR - 500 Internal servcer Error: /search/channel?search_value=3&search_type=Accuracy
+2025-03-16T17:26:42.168810+09:00 WARN - Received SIGINT. Requesting shutdown.
