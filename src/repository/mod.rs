@@ -1,3 +1,4 @@
+pub mod feedback_repository;
 pub mod morpheme_link_mapping_repository;
 pub mod morpheme_repository;
 pub mod news_repository;

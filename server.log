@@ -5579,3 +5579,66 @@
 2025-03-16T17:06:13.788116+09:00 ERROR - 500 Internal servcer Error: /search/rss?search_value=3&search_type=Accuracy
 2025-03-16T17:06:13.788782+09:00 ERROR - 500 Internal servcer Error: /search/channel?search_value=3&search_type=Accuracy
 2025-03-16T17:26:42.168810+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-23T15:03:12.313927+09:00 WARN - Rocket has launched from http://0.0.0.0:1027
+2025-03-23T15:39:42.709984+09:00 WARN - Failed to extract key words
+2025-03-23T15:39:42.710931+09:00 WARN - Failed to extract key words
+2025-03-23T15:39:42.711135+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-23T15:39:42.711185+09:00 ERROR - 500 Internal servcer Error: /search/channel?search_value=0.2&search_type=Accuracy
+2025-03-23T15:39:42.711991+09:00 WARN - Responding with registered (internal_error) 500 catcher.
+2025-03-23T15:39:42.712175+09:00 ERROR - 500 Internal servcer Error: /search/rss?search_value=0.2&search_type=Accuracy
+2025-03-24T04:38:35.059268+09:00 ERROR - No matching routes for GET /.
+2025-03-24T04:38:35.060559+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-24T04:38:35.060713+09:00 ERROR - 404 Not Found: /
+2025-03-27T11:33:19.741536+09:00 ERROR - No matching routes for GET / text/html.
+2025-03-27T11:33:19.742358+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-27T11:33:19.742427+09:00 ERROR - 404 Not Found: /
+2025-03-27T13:54:05.771733+09:00 ERROR - No matching routes for GET /.
+2025-03-27T13:54:05.772376+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-27T13:54:05.772442+09:00 ERROR - 404 Not Found: /
+2025-03-29T12:31:08.831434+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-29T12:32:16.445069+09:00 WARN - Rocket has launched from http://0.0.0.0:1027
+2025-03-29T12:32:17.609692+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-29T12:33:40.619163+09:00 WARN - Rocket has launched from http://0.0.0.0:1027
+2025-03-29T12:33:41.135218+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-03-29T12:48:48.472531+09:00 WARN - Rocket has launched from http://0.0.0.0:1027
+2025-03-29T15:53:48.206529+09:00 ERROR - No matching routes for GET /.
+2025-03-29T15:53:48.207252+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-29T15:53:48.207389+09:00 ERROR - 404 Not Found: /
+2025-03-29T15:54:06.617190+09:00 ERROR - No matching routes for GET /favicon.ico text/html.
+2025-03-29T15:54:06.617903+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-29T15:54:06.617961+09:00 ERROR - 404 Not Found: /favicon.ico
+2025-03-29T15:54:07.022031+09:00 ERROR - No matching routes for GET /robots.txt text/html.
+2025-03-29T15:54:07.022214+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-29T15:54:07.022280+09:00 ERROR - 404 Not Found: /robots.txt
+2025-03-29T15:54:07.433539+09:00 ERROR - No matching routes for GET /sitemap.xml text/html.
+2025-03-29T15:54:07.433621+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-29T15:54:07.433649+09:00 ERROR - 404 Not Found: /sitemap.xml
+2025-03-30T06:13:57.675953+09:00 ERROR - No matching routes for GET /.
+2025-03-30T06:13:57.677029+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-03-30T06:13:57.677102+09:00 ERROR - 404 Not Found: /
+2025-04-01T20:44:40.217515+09:00 ERROR - No matching routes for GET /.
+2025-04-01T20:44:40.218334+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-04-01T20:44:40.218431+09:00 ERROR - 404 Not Found: /
+2025-04-01T20:44:40.598045+09:00 ERROR - No matching routes for OPTIONS /.
+2025-04-01T20:44:40.598122+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-04-01T20:44:40.598155+09:00 ERROR - 404 Not Found: /
+2025-04-01T20:44:44.734969+09:00 ERROR - No matching routes for GET /nice%20ports%2C/Tri%6Eity.txt%2ebak.
+2025-04-01T20:44:44.735069+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-04-01T20:44:44.735113+09:00 ERROR - 404 Not Found: /nice%20ports%2C/Tri%6Eity.txt%2ebak
+2025-04-02T08:42:18.316381+09:00 ERROR - No matching routes for GET /.
+2025-04-02T08:42:18.317130+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-04-02T08:42:18.317255+09:00 ERROR - 404 Not Found: /
+2025-04-03T22:05:29.618080+09:00 ERROR - No matching routes for GET /.
+2025-04-03T22:05:29.619023+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-04-03T22:05:29.619105+09:00 ERROR - 404 Not Found: /
+2025-04-03T22:05:48.247980+09:00 ERROR - No matching routes for GET /favicon.ico text/html.
+2025-04-03T22:05:48.248255+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-04-03T22:05:48.248308+09:00 ERROR - 404 Not Found: /favicon.ico
+2025-04-03T22:05:48.804135+09:00 ERROR - No matching routes for GET /robots.txt text/html.
+2025-04-03T22:05:48.804198+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-04-03T22:05:48.804221+09:00 ERROR - 404 Not Found: /robots.txt
+2025-04-03T22:05:49.372665+09:00 ERROR - No matching routes for GET /sitemap.xml text/html.
+2025-04-03T22:05:49.372791+09:00 WARN - Responding with registered (not_found) 404 catcher.
+2025-04-03T22:05:49.372855+09:00 ERROR - 404 Not Found: /sitemap.xml
+2025-04-04T11:26:02.616814+09:00 WARN - Received SIGINT. Requesting shutdown.
+2025-04-04T11:26:04.733367+09:00 WARN - Rocket has launched from http://0.0.0.0:1027
