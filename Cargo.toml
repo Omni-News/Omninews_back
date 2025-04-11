@@ -19,9 +19,9 @@ thiserror = "2.0.11"
 
 # db, sql
 mysql = "*"
-#r2d2 = "0.8.10"
-#r2d2_mysql = "25.0.0"
 sqlx = { version = "0.8", features = ["chrono", "mysql", "runtime-tokio"] }
+
+# crawl
 scraper = "0.22.0"
 
 # DateTime
@@ -34,9 +34,6 @@ dotenv = "0.15"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
-# morpheme, mecab
-libc = "0.2.169"
-
 # rss parsing
 reqwest = { version = "*", features = ["json"] }
 rss = "2.0"
@@ -45,10 +42,14 @@ rss = "2.0"
 quick-xml = { version = "*", features = ["serialize"] }
 
 # random
-rand = "0.8.4"
+rand = "0.9.0"
 
-# encoding
-percent-encoding = "2.3.1"
+# Sentence embedding
+rust-bert = "0.23.0"
+
+# annoy(Approximate Nearest Neighbors Oh Yeah)
+rannoy = { git = "https://github.com/uzushino/rs-annoy" }
+
 
 [build-dependencies]
 bindgen = "0.71.1"

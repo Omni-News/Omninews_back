@@ -12,7 +12,7 @@ pub async fn fetch_news_scheduler(pool: &MySqlPool) {
     loop {
         interval.tick().await;
 
-        if !*FETCH_FLAG.lock().await {
+        if !*FETCH_FLAG.lock().unwrap() {
             info!("[Scheduler] Stop fetching news");
             continue;
         }

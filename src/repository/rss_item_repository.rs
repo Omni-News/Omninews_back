@@ -2,7 +2,7 @@ use rocket::State;
 use sqlx::{query, query_as, MySqlPool};
 
 use crate::{
-    db::get_db,
+    db_util::get_db,
     model::rss::{NewRssItem, RssItem},
 };
 
@@ -25,70 +25,21 @@ pub async fn select_item_by_link(
     }
 }
 
-pub async fn select_rss_items_by_morpheme_id_order_by_source_rank(
+pub async fn select_rss_item_by_embedding_id(
     pool: &State<MySqlPool>,
-    morpheme_id: i32,
-) -> Result<Vec<RssItem>, sqlx::Error> {
+    embedding_id: i32,
+) -> Result<RssItem, sqlx::Error> {
     let mut conn = get_db(pool).await?;
     let result = query_as!(
         RssItem,
         "SELECT r.* 
         FROM rss_item r 
-        JOIN morpheme_link_mapping m 
-        ON r.rss_id = m.rss_id
-        WHERE m.morpheme_id=?
-        ORDER BY m.source_rank DESC;",
-        morpheme_id as i32,
+        JOIN embedding e 
+        ON r.rss_id = e.rss_id
+        WHERE e.embedding_id=?;",
+        embedding_id as i32,
     )
-    .fetch_all(&mut *conn)
-    .await;
-
-    match result {
-        Ok(res) => Ok(res),
-        Err(e) => Err(e),
-    }
-}
-
-pub async fn select_rss_items_by_morpheme_id_order_by_rss_rank(
-    pool: &State<MySqlPool>,
-    morpheme_id: i32,
-) -> Result<Vec<RssItem>, sqlx::Error> {
-    let mut conn = get_db(pool).await?;
-    let result = query_as!(
-        RssItem,
-        "SELECT r.* 
-        FROM rss_item r 
-        JOIN morpheme_link_mapping m 
-        ON r.rss_id = m.rss_id
-        WHERE m.morpheme_id=?
-        ORDER BY r.rss_rank DESC;",
-        morpheme_id as i32,
-    )
-    .fetch_all(&mut *conn)
-    .await;
-
-    match result {
-        Ok(res) => Ok(res),
-        Err(e) => Err(e),
-    }
-}
-
-pub async fn select_rss_items_by_morpheme_id_order_by_pub_date(
-    pool: &State<MySqlPool>,
-    morpheme_id: i32,
-) -> Result<Vec<RssItem>, sqlx::Error> {
-    let mut conn = get_db(pool).await?;
-    let result = query_as!(
-        RssItem,
-        "SELECT r.* 
-        FROM rss_item r 
-        JOIN morpheme_link_mapping m 
-        ON r.rss_id = m.rss_id
-        WHERE m.morpheme_id=?
-        ORDER BY r.rss_pub_date DESC;",
-        morpheme_id as i32,
-    )
-    .fetch_all(&mut *conn)
+    .fetch_one(&mut *conn)
     .await;
 
     match result {

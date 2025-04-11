@@ -1,22 +1,24 @@
 use crate::{
     model::{
+        embedding::NewEmbedding,
         error::OmniNewsError,
-        rss::{NewRssItem, Newticle, NewticleType, RssItem},
+        rss::{NewRssItem, RssItem},
         search::{SearchRequest, SearchType},
     },
-    morpheme::analyze::analyze_morpheme,
     repository::rss_item_repository,
-    service::morpheme_service::{self, create_morpheme_by_newticle},
+    service::embedding_service,
+    utils::{annoy_util::load_rss_annoy, embedding_util::EmbeddingService},
 };
 use chrono::{DateTime, NaiveDateTime};
-use rand::{seq::SliceRandom, thread_rng};
+use rand::{rng, seq::SliceRandom};
 use rocket::State;
 use rss::{Channel, Item};
 use scraper::{Html, Selector};
 use sqlx::MySqlPool;
 
-pub async fn crate_rss_item_and_morpheme(
+pub async fn crate_rss_item_and_embedding(
     pool: &State<MySqlPool>,
+    embedding_service: &State<EmbeddingService>,
     mut channel: Channel,
     channel_id: i32,
 ) -> Result<(), OmniNewsError> {
@@ -28,17 +30,26 @@ pub async fn crate_rss_item_and_morpheme(
         let description = rss_item.description().unwrap_or("None");
         let (extracted_description, item_image_link) =
             extract_html_to_passage_and_image_link(description);
-        rss_item.set_description(extracted_description);
-
+        rss_item.set_description(extracted_description.clone());
         let item_image_link = use_channel_url_if_none(item_image_link, channel_image_url.clone());
 
         let item = make_rss_item(channel_id, rss_item, item_image_link);
+        let item_id = store_rss_item(pool, item.clone()).await.unwrap();
 
-        let item_id = store_rss_item_and_morpheme(pool, item.clone())
-            .await
-            .unwrap();
+        let sentence = format!(
+            "{}\n{}",
+            item.rss_title.clone().unwrap_or_default(),
+            extracted_description
+        );
+        let embedding = NewEmbedding {
+            embedding_value: None,
+            channel_id: None,
+            rss_id: Some(item_id),
+            news_id: None,
+            embedding_source_rank: Some(0),
+        };
 
-        create_morpheme_by_newticle(pool, Newticle::NewRssItem(item), NewticleType::Rss, item_id)
+        let _ = embedding_service::create_embedding(pool, embedding_service, sentence, embedding)
             .await?;
     }
     Ok(())
@@ -103,7 +114,7 @@ fn parse_pub_date(pub_date_str: Option<&str>) -> Option<NaiveDateTime> {
         })
 }
 
-async fn store_rss_item_and_morpheme(
+async fn store_rss_item(
     pool: &State<MySqlPool>,
     mut rss_item: NewRssItem,
 ) -> Result<i32, OmniNewsError> {
@@ -114,7 +125,14 @@ async fn store_rss_item_and_morpheme(
     };
 
     match rss_item_repository::select_item_by_link(pool, item_link).await {
-        Ok(item) => Ok(item.rss_id.unwrap()),
+        Ok(item) => {
+            warn!(
+                "[Service] Item already exists with link: {}",
+                item.rss_link.clone().unwrap_or_default()
+            );
+            Err(OmniNewsError::AlreadyExists)
+        }
+
         Err(_) => rss_item_repository::insert_rss_item(pool, rss_item)
             .await
             .map_err(|e| {
@@ -126,63 +144,59 @@ async fn store_rss_item_and_morpheme(
 
 pub async fn get_rss_list(
     pool: &State<MySqlPool>,
-    search_value: SearchRequest,
+    embedding_service: &State<EmbeddingService>,
+    value: SearchRequest,
 ) -> Result<Vec<RssItem>, OmniNewsError> {
-    let search_morphemes =
-        analyze_morpheme(search_value.search_value.unwrap()).map_err(OmniNewsError::Morpheme)?;
+    let load_annoy = load_rss_annoy(embedding_service, value.search_value.unwrap()).await?;
 
-    let morphemes_sources =
-        morpheme_service::get_morphemes_sources_by_search_value(pool, search_morphemes).await?;
-
-    let mut result: Vec<RssItem> = Vec::new();
-    for morpheme_source in morphemes_sources {
-        if let Some(morpheme_id) = morpheme_source.morpheme_id {
-            result = match search_value.search_type.clone().unwrap() {
-                SearchType::Accuracy => {
-                    rss_item_repository::select_rss_items_by_morpheme_id_order_by_source_rank(
-                        pool,
-                        morpheme_id,
-                    )
-                    .await
-                    .map_err(|e| {
-                        error!(
-                            "[Service] Faild to select items by morpheme id order by source rank: {}",
-                            e
-                        );
-                        OmniNewsError::Database(e)
-                    })?
+    let result = match value.search_type.clone().unwrap() {
+        SearchType::Accuracy => {
+            let mut res = Vec::new();
+            for id in load_annoy.0.iter() {
+                info!("[Service] Get rss item by embedding id: {}", id);
+                if let Ok(item) =
+                    rss_item_repository::select_rss_item_by_embedding_id(pool, *id).await
+                {
+                    res.push(item);
                 }
-                SearchType::Popularity => {
-                    rss_item_repository::select_rss_items_by_morpheme_id_order_by_rss_rank(
-                        pool,
-                        morpheme_id,
-                    )
-                    .await
-                    .map_err(|e| {
-                        error!(
-                            "[Service] Failed to select items by morpheme id order by rss rank: {}",
-                            e
-                        );
-                        OmniNewsError::Database(e)
-                    })?
-                }
-                SearchType::Latest => {
-                    rss_item_repository::select_rss_items_by_morpheme_id_order_by_pub_date(
-                        pool,
-                        morpheme_id,
-                    )
-                    .await
-                    .map_err(|e| {
-                        error!(
-                            "[Service] Failed to select items by morpheme id order by pub date: {}",
-                            e
-                        );
-                        OmniNewsError::Database(e)
-                    })?
-                }
-            };
+            }
+            res
         }
-    }
+        SearchType::Popularity => {
+            let mut res = Vec::new();
+            for id in load_annoy.0.iter() {
+                if let Ok(item) =
+                    rss_item_repository::select_rss_item_by_embedding_id(pool, *id).await
+                {
+                    res.push(item);
+                }
+            }
+            res.sort_by(|a, b| {
+                a.rss_rank
+                    .unwrap_or_default()
+                    .cmp(&b.rss_rank.unwrap_or_default())
+            });
+
+            res
+        }
+        SearchType::Latest => {
+            let mut res = Vec::new();
+            for id in load_annoy.0.iter() {
+                if let Ok(item) =
+                    rss_item_repository::select_rss_item_by_embedding_id(pool, *id).await
+                {
+                    res.push(item);
+                }
+            }
+            res.sort_by(|a, b| {
+                a.rss_pub_date
+                    .unwrap_or_default()
+                    .cmp(&b.rss_pub_date.unwrap_or_default())
+            });
+
+            res
+        }
+    };
 
     Ok(result)
 }
@@ -191,7 +205,7 @@ pub async fn get_rss_list(
 pub async fn get_recommend_item(pool: &State<MySqlPool>) -> Result<Vec<RssItem>, OmniNewsError> {
     match rss_item_repository::select_rss_items_order_by_rss_rank(pool).await {
         Ok(mut res) => {
-            let mut rng = thread_rng();
+            let mut rng = rng();
             res.shuffle(&mut rng);
             Ok(res.into_iter().take(50).collect())
         }

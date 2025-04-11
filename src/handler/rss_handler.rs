@@ -4,6 +4,7 @@ use sqlx::MySqlPool;
 
 use crate::model::rss::{RssChannel, RssItem, RssLink, UpdateRssRank};
 use crate::service::rss::{channel_service, item_service};
+use crate::EmbeddingService;
 
 #[get("/rss/channel?<rss_link>")]
 pub async fn get_rss_channel_by_link(
@@ -64,13 +65,14 @@ pub async fn is_rss_exist(pool: &State<MySqlPool>, rss_link: String) -> Result<J
 #[post("/rss", data = "<rss_link>")]
 pub async fn create_rss(
     pool: &State<MySqlPool>,
+    model: &State<EmbeddingService>,
     rss_link: Json<RssLink>,
 ) -> Result<Json<i32>, Status> {
     if rss_link.link.is_empty() {
         return Err(Status::BadRequest);
     }
 
-    match channel_service::create_rss_and_morpheme(pool, rss_link.into_inner()).await {
+    match channel_service::create_rss_and_embedding(pool, model, rss_link.into_inner()).await {
         Ok(channel_id) => Ok(Json(channel_id)),
         Err(_) => Err(Status::InternalServerError),
     }
@@ -79,13 +81,14 @@ pub async fn create_rss(
 #[post("/rss/all", data = "<rss_links>")]
 pub async fn create_rss_all(
     pool: &State<MySqlPool>,
+    model: &State<EmbeddingService>,
     rss_links: Json<Vec<RssLink>>,
 ) -> Result<Json<bool>, Status> {
     if rss_links.is_empty() {
         return Err(Status::BadRequest);
     }
 
-    match channel_service::create_rss_all(pool, rss_links.into_inner()).await {
+    match channel_service::create_rss_all(pool, model, rss_links.into_inner()).await {
         Ok(result) => Ok(Json(result)),
         Err(_) => Err(Status::InternalServerError),
     }

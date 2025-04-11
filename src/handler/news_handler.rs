@@ -28,14 +28,14 @@ pub async fn get_news_by_api(params: NewsParams) -> Result<Json<Vec<NewsItem>>, 
 
 #[get("/fetch_start")]
 pub async fn fetch_start() -> &'static str {
-    let mut fetch_flag = FETCH_FLAG.lock().await;
+    let mut fetch_flag = FETCH_FLAG.lock().unwrap();
     *fetch_flag = true;
     "Fetching started!"
 }
 
 #[get("/fetch_stop")]
 pub async fn fetch_stop() -> &'static str {
-    let mut fetch_flag = FETCH_FLAG.lock().await;
+    let mut fetch_flag = FETCH_FLAG.lock().unwrap();
     *fetch_flag = false;
     "Fetching stopped!"
 }

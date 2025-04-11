@@ -2,7 +2,7 @@ use rocket::State;
 use sqlx::{query, query_as, MySqlPool};
 
 use crate::{
-    db::{get_db, get_db_scheduler},
+    db_util::{get_db, get_db_scheduler},
     model::news::{NewNews, News},
 };
 

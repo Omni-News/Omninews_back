@@ -6,12 +6,7 @@ use sqlx::prelude::FromRow;
 pub enum NewticleType {
     Channel,
     Rss,
-}
-
-#[derive(Debug, Clone)]
-pub enum Newticle {
-    NewRssChannel(NewRssChannel),
-    NewRssItem(NewRssItem),
+    News,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]

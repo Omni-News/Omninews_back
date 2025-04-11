@@ -1,7 +1,7 @@
 use rocket::State;
 use sqlx::{query, query_as, MySqlPool};
 
-use crate::db::get_db;
+use crate::db_util::get_db;
 use crate::model::rss::{NewRssChannel, RssChannel};
 
 pub async fn select_rss_channel_by_link(
@@ -44,22 +44,21 @@ pub async fn select_rss_channel_by_channel_rss_link(
     }
 }
 
-pub async fn select_rss_channels_by_morpheme_id_order_by_source_rank(
+pub async fn select_rss_channel_by_embedding_id(
     pool: &State<MySqlPool>,
-    morpheme_id: i32,
-) -> Result<Vec<RssChannel>, sqlx::Error> {
+    embedding_id: i32,
+) -> Result<RssChannel, sqlx::Error> {
     let mut conn = get_db(pool).await?;
     let result = query_as!(
         RssChannel,
-        "SELECT r.* 
+        "SELECT r.*
         FROM rss_channel r 
-        JOIN morpheme_link_mapping m 
-        ON r.channel_id = m.channel_id
-        WHERE m.morpheme_id=?
-        ORDER BY m.source_rank DESC;",
-        morpheme_id as i32,
+        JOIN embedding e 
+        ON r.channel_id = e.channel_id
+        WHERE e.embedding_id=?;",
+        embedding_id as i32,
     )
-    .fetch_all(&mut *conn)
+    .fetch_one(&mut *conn)
     .await;
 
     match result {
@@ -67,31 +66,6 @@ pub async fn select_rss_channels_by_morpheme_id_order_by_source_rank(
         Err(e) => Err(e),
     }
 }
-
-pub async fn select_rss_channels_by_morpheme_id_order_by_channel_rank(
-    pool: &State<MySqlPool>,
-    morpheme_id: i32,
-) -> Result<Vec<RssChannel>, sqlx::Error> {
-    let mut conn = get_db(pool).await?;
-    let result = query_as!(
-        RssChannel,
-        "SELECT r.* 
-        FROM rss_channel r 
-        JOIN morpheme_link_mapping m 
-        ON r.channel_id = m.channel_id
-        WHERE m.morpheme_id=?
-        ORDER BY r.channel_rank DESC;",
-        morpheme_id as i32,
-    )
-    .fetch_all(&mut *conn)
-    .await;
-
-    match result {
-        Ok(res) => Ok(res),
-        Err(e) => Err(e),
-    }
-}
-
 pub async fn select_rss_channels_order_by_channel_rank(
     pool: &State<MySqlPool>,
 ) -> Result<Vec<RssChannel>, sqlx::Error> {
@@ -99,8 +73,7 @@ pub async fn select_rss_channels_order_by_channel_rank(
     let result = query_as!(
         RssChannel,
         "SELECT * FROM rss_channel
-        ORDER BY channel_rank DESC
-        LIMIT 50;",
+                ORDER BY channel_rank DESC",
     )
     .fetch_all(&mut *conn)
     .await;

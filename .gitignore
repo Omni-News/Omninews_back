@@ -17,4 +17,7 @@ target/
 src/bindings.rs
 
 # log
-.server.log
+*.log
+
+# annoy
+*.ann

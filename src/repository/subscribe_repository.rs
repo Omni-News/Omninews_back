@@ -1,7 +1,7 @@
 use rocket::State;
 use sqlx::{query_as, MySqlPool};
 
-use crate::{db::get_db, model::rss::RssItem};
+use crate::{db_util::get_db, model::rss::RssItem};
 
 pub async fn select_subscribe_items(
     pool: &State<MySqlPool>,

@@ -2,7 +2,7 @@ use rocket::State;
 use sqlx::{query, query_as, MySqlPool};
 
 use crate::{
-    db::get_db,
+    db_util::get_db,
     model::feedback::{Feedback, NewFeedback},
 };
 
