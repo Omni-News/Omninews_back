@@ -16,7 +16,6 @@ use handler::{
     rss_handler::*, search_handler::*, subscribe_handler::*,
 };
 use rocket::routes;
-use scheduler::annoy_scheduler::save_annoy_scheduler;
 use sqlx::MySqlPool;
 use utils::embedding_util::EmbeddingService;
 
@@ -66,10 +65,11 @@ async fn rocket() -> _ {
 }
 
 async fn start_scheduler(pool: &MySqlPool) {
-    use scheduler::news_scheduler::*;
+    use scheduler::{annoy_scheduler::*, news_scheduler::*};
 
-    // TODO annoy save 기준 정해지면 interval 추가
-    save_annoy_scheduler(pool).await.unwrap();
-
-    tokio::join!(delete_old_news_scheduler(pool), fetch_news_scheduler(pool));
+    tokio::join!(
+        delete_old_news_scheduler(pool),
+        fetch_news_scheduler(pool),
+        save_annoy_scheduler(pool)
+    );
 }
