@@ -50,6 +50,8 @@ rust-bert = "0.23.0"
 # annoy(Approximate Nearest Neighbors Oh Yeah)
 rannoy = { git = "https://github.com/uzushino/rs-annoy" }
 
+# JWT
+jsonwebtoken = "9"
 
 [build-dependencies]
 bindgen = "0.71.1"

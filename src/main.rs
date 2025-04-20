@@ -13,7 +13,7 @@ mod utils;
 
 use handler::{
     error_handler::error_catchers, feedback_handler::*, health_handler::*, news_handler::*,
-    rss_handler::*, search_handler::*, subscribe_handler::*,
+    rss_handler::*, search_handler::*, subscribe_handler::*, user_handler::*,
 };
 use rocket::routes;
 use sqlx::MySqlPool;
@@ -59,6 +59,8 @@ async fn rocket() -> _ {
                 update_rss_item_rank,
                 create_feedback,
                 get_feedbacks,
+                create_user,
+                logout,
             ],
         )
         .register("/", error_catchers())
