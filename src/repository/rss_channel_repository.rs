@@ -4,6 +4,25 @@ use sqlx::{query, query_as, MySqlPool};
 use crate::db_util::get_db;
 use crate::model::rss::{NewRssChannel, RssChannel};
 
+pub async fn select_rss_channel_by_id(
+    pool: &State<MySqlPool>,
+    channel_id: i32,
+) -> Result<RssChannel, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+    let result = query_as!(
+        RssChannel,
+        "SELECT * FROM rss_channel
+                WHERE channel_id = ?",
+        channel_id,
+    )
+    .fetch_one(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res),
+        Err(e) => Err(e),
+    }
+}
 pub async fn select_rss_channel_by_link(
     pool: &State<MySqlPool>,
     rss_channel_link: String,
@@ -111,19 +130,19 @@ pub async fn insert_rss_channel(
     }
 }
 
-pub async fn update_rss_channel_rank_by_link(
+pub async fn update_rss_channel_rank_by_id(
     pool: &State<MySqlPool>,
-    rss_link: String,
+    channel_id: i32,
     num: i32,
 ) -> Result<bool, sqlx::Error> {
     let mut conn = get_db(pool).await?;
     let result = query!(
         "UPDATE rss_channel
         SET channel_rank = channel_rank + ?
-        WHERE channel_rss_link = ?;
+        WHERE channel_id = ?;
         ",
         num,
-        rss_link
+        channel_id
     )
     .execute(&mut *conn)
     .await?;

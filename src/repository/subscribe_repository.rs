@@ -1,9 +1,30 @@
 use rocket::State;
-use sqlx::{query_as, MySqlPool};
+use sqlx::{query, query_as, MySqlPool};
 
 use crate::{db_util::get_db, model::rss::RssItem};
 
-pub async fn select_subscribe_items(
+pub async fn insert_user_subscribe_channel(
+    pool: &State<MySqlPool>,
+    user_id: i32,
+    channel_id: i32,
+) -> Result<i32, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!(
+        "INSERT INTO user_subscription_channel(user_id, channel_id) VALUES (?, ?);",
+        user_id,
+        channel_id
+    )
+    .execute(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res.last_insert_id() as i32),
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn select_subscription_items(
     pool: &State<MySqlPool>,
     channels: Vec<i32>,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
@@ -29,6 +50,27 @@ pub async fn select_subscribe_items(
 
     match result {
         Ok(res) => Ok(res),
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn delete_subscribe_channel(
+    pool: &State<MySqlPool>,
+    user_id: i32,
+    channel_id: i32,
+) -> Result<i32, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!(
+        "DELETE FROM user_subscription_channel WHERE user_id = ? AND channel_id = ?",
+        user_id,
+        channel_id
+    )
+    .execute(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res.last_insert_id() as i32),
         Err(e) => Err(e),
     }
 }

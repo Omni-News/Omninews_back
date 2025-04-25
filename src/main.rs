@@ -15,7 +15,7 @@ mod utils;
 use auth_middleware::{AuthCache, AuthMiddleware};
 use handler::{
     error_handler::error_catchers, feedback_handler::*, health_handler::*, news_handler::*,
-    rss_handler::*, search_handler::*, subscribe_handler::*, user_handler::*,
+    rss_handler::*, search_handler::*, subscription_handler::*, user_handler::*,
 };
 use rocket::routes;
 use sqlx::MySqlPool;
@@ -46,7 +46,7 @@ async fn rocket() -> _ {
             "/",
             routes![
                 create_rss_all,
-                create_rss,
+                create_channel,
                 get_rss_list,
                 get_channel_list,
                 fetch_start,
@@ -56,17 +56,20 @@ async fn rocket() -> _ {
                 health_check,
                 get_recommend_channel,
                 get_recommend_item,
-                get_rss_item_by_channel_link,
+                get_rss_item_by_channel_id,
                 get_rss_preview,
                 is_rss_exist,
                 update_rss_channel_rank,
-                get_rss_channel_by_link,
-                get_subscribe_items,
+                get_rss_channel_by_id,
                 update_rss_item_rank,
                 create_feedback,
                 get_feedbacks,
                 login,
                 logout,
+                // Subscription
+                subscribe_channel,
+                get_subscribe_items,
+                unsubscribe_channel,
             ],
         )
         .register("/", error_catchers())

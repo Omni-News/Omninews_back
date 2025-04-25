@@ -20,6 +20,9 @@ pub enum OmniNewsError {
     #[error("Already exists element")]
     AlreadyExists,
 
+    #[error("Element not found: {0}")]
+    NotFound(String),
+
     #[error("Failed to create JWT token")]
     TokenCreateError,
 

@@ -137,26 +137,19 @@ async fn store_rss_channel(
     }
 }
 
-pub async fn update_rss_channel_rank(
+pub async fn get_rss_channel_by_id(
     pool: &State<MySqlPool>,
-    rss_link: String,
-    num: i32,
-) -> Result<bool, OmniNewsError> {
-    match rss_channel_repository::update_rss_channel_rank_by_link(pool, rss_link, num).await {
+    channel_id: i32,
+) -> Result<RssChannel, OmniNewsError> {
+    match rss_channel_repository::select_rss_channel_by_id(pool, channel_id).await {
         Ok(res) => Ok(res),
-        Err(e) => Err(OmniNewsError::Database(e)),
+        Err(e) => {
+            error!("[Service] Failed to select rss channel by id: {:?}", e);
+            Err(OmniNewsError::Database(e))
+        }
     }
 }
 
-pub async fn get_rss_channel_by_link(
-    pool: &State<MySqlPool>,
-    link: String,
-) -> Result<RssChannel, OmniNewsError> {
-    match rss_channel_repository::select_rss_channel_by_channel_rss_link(pool, link).await {
-        Ok(res) => Ok(res),
-        Err(e) => Err(OmniNewsError::Database(e)),
-    }
-}
 pub async fn get_channel_list(
     pool: &State<MySqlPool>,
     embedding_service: &State<EmbeddingService>,
@@ -252,12 +245,36 @@ pub async fn get_rss_preview(rss_link: String) -> Result<RssChannel, OmniNewsErr
     Ok(channel)
 }
 
-pub async fn is_rss_exist(
+pub async fn is_channel_exist_by_link(
     pool: &State<MySqlPool>,
-    rss_link: String,
+    channel_link: String,
 ) -> Result<bool, OmniNewsError> {
-    match rss_channel_repository::select_rss_channel_by_channel_rss_link(pool, rss_link).await {
+    match rss_channel_repository::select_rss_channel_by_channel_rss_link(pool, channel_link).await {
         Ok(_) => Ok(true),
         Err(_) => Ok(false),
+    }
+}
+
+pub async fn is_channel_exist_by_id(
+    pool: &State<MySqlPool>,
+    channel_id: i32,
+) -> Result<bool, OmniNewsError> {
+    match rss_channel_repository::select_rss_channel_by_id(pool, channel_id).await {
+        Ok(_) => Ok(true),
+        Err(_) => Ok(false),
+    }
+}
+
+pub async fn update_rss_channel_rank(
+    pool: &State<MySqlPool>,
+    channel_id: i32,
+    num: i32,
+) -> Result<bool, OmniNewsError> {
+    match rss_channel_repository::update_rss_channel_rank_by_id(pool, channel_id, num).await {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            error!("[Service] Failed to update rss channel rank: {:?}", e);
+            Err(OmniNewsError::Database(e))
+        }
     }
 }

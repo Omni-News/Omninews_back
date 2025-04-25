@@ -7,7 +7,7 @@ use crate::{
     model::{token::JwtToken, user::NewUser},
 };
 
-pub async fn select_user_by_email(
+pub async fn select_user_id_by_email(
     pool: &State<MySqlPool>,
     user_email: String,
 ) -> Result<i32, sqlx::Error> {

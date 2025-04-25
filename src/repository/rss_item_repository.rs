@@ -66,18 +66,18 @@ pub async fn select_rss_items_order_by_rss_rank(
     }
 }
 
-pub async fn select_rss_items_by_channel_link(
+pub async fn select_rss_items_by_channel_id(
     pool: &State<MySqlPool>,
-    channel_link: String,
+    channel_id: i32,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
 
     let result = query_as!(
         RssItem,
         "SELECT * FROM rss_item r
-        WHERE r.channel_id = (SELECT channel_id FROM rss_channel WHERE channel_rss_link=?)
+        WHERE r.channel_id = ?
         ORDER BY r.rss_pub_date DESC;",
-        channel_link,
+        channel_id,
     )
     .fetch_all(&mut *conn)
     .await;
@@ -115,19 +115,19 @@ pub async fn insert_rss_item(
     }
 }
 
-pub async fn update_rss_channel_rank_by_link(
+pub async fn update_rss_channel_rank_by_id(
     pool: &State<MySqlPool>,
-    rss_link: String,
+    rss_id: i32,
     num: i32,
 ) -> Result<bool, sqlx::Error> {
     let mut conn = get_db(pool).await?;
     let result = query!(
         "UPDATE rss_item
         SET rss_rank = rss_rank + ?
-        WHERE rss_link = ?;
+        WHERE rss_id = ?;
         ",
         num,
-        rss_link
+        rss_id
     )
     .execute(&mut *conn)
     .await?;

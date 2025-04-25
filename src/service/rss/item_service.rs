@@ -219,25 +219,24 @@ pub async fn get_recommend_item(pool: &State<MySqlPool>) -> Result<Vec<RssItem>,
     }
 }
 
-pub async fn get_rss_item_by_channel_link(
+pub async fn get_rss_item_by_channel_id(
     pool: &State<MySqlPool>,
-    channel_link: String,
+    channel_id: i32,
 ) -> Result<Vec<RssItem>, OmniNewsError> {
-    info!("[Service] Get rss item by channel link: {}", channel_link);
-    rss_item_repository::select_rss_items_by_channel_link(pool, channel_link)
+    rss_item_repository::select_rss_items_by_channel_id(pool, channel_id)
         .await
         .map_err(|e| {
-            error!("[Service] Failed to select items by channel link: {:?}", e);
+            error!("[Service] Failed to select items by channel id: {:?}", e);
             OmniNewsError::Database(e)
         })
 }
 
-pub async fn update_rss_item_by_rank(
+pub async fn update_rss_item_rank(
     pool: &State<MySqlPool>,
-    rss_link: String,
+    rss_id: i32,
     num: i32,
 ) -> Result<bool, OmniNewsError> {
-    match rss_item_repository::update_rss_channel_rank_by_link(pool, rss_link, num).await {
+    match rss_item_repository::update_rss_channel_rank_by_id(pool, rss_id, num).await {
         Ok(res) => Ok(res),
         Err(e) => Err(OmniNewsError::Database(e)),
     }

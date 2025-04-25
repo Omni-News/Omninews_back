@@ -14,6 +14,16 @@ pub struct RssLink {
     pub link: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct RssId {
+    pub rss_id: i32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ChannelId {
+    pub channel_id: i32,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
 pub struct NewRssChannel {
     pub channel_title: Option<String>,
@@ -65,7 +75,12 @@ pub struct RssItem {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct UpdateChannelRank {
+    pub channel_id: i32,
+    pub num: i32,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UpdateRssRank {
-    pub rss_link: String,
+    pub rss_id: i32,
     pub num: i32,
 }

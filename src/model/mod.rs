@@ -4,6 +4,6 @@ pub mod feedback;
 pub mod news;
 pub mod rss;
 pub mod search;
-pub mod subscribe;
+pub mod subscription;
 pub mod token;
 pub mod user;

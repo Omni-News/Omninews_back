@@ -72,7 +72,8 @@ pub async fn login_or_create_user(
     }
 
     // 3. access token X refresh token X -> create user
-    if (user_repository::select_user_by_email(pool, user.user_email.clone().unwrap()).await).is_ok()
+    if (user_repository::select_user_id_by_email(pool, user.user_email.clone().unwrap()).await)
+        .is_ok()
     {
         // 3-1. reissue both
         info!(
@@ -254,6 +255,19 @@ fn make_token(
                 refresh_token.unwrap_or_default(),
                 refresh_token_expires_at.unwrap_or_default().naive_utc(),
             ))
+        }
+    }
+}
+
+pub async fn find_user_id_by_email(
+    pool: &State<MySqlPool>,
+    user_email: String,
+) -> Result<i32, OmniNewsError> {
+    match user_repository::select_user_id_by_email(pool, user_email).await {
+        Ok(user_id) => Ok(user_id),
+        Err(e) => {
+            error!("[Service] Failed to find user id by email: {}", e);
+            Err(OmniNewsError::Database(e))
         }
     }
 }
