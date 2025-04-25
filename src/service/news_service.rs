@@ -238,7 +238,6 @@ fn make_news(document: Html, news_selector: Selector, subject: &String) -> Vec<N
                     .map(|e| e.inner_html())
                     .unwrap_or_default(),
             ),
-            // TODO pub_date to NaiveTime
             news_pub_date: pub_date_to_naive_time(
                 news.select(&pub_date_selector)
                     .next()

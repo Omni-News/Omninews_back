@@ -21,5 +21,8 @@ pub enum OmniNewsError {
     AlreadyExists,
 
     #[error("Failed to create JWT token")]
-    TokenError,
+    TokenCreateError,
+
+    #[error("Failed to validate JWT token")]
+    TokenValidationError,
 }

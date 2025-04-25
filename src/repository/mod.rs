@@ -4,4 +4,5 @@ pub mod news_repository;
 pub mod rss_channel_repository;
 pub mod rss_item_repository;
 pub mod subscribe_repository;
+pub mod token_repository;
 pub mod user_repository;

@@ -3,10 +3,10 @@ use std::env;
 use chrono::{DateTime, FixedOffset, NaiveDateTime, Utc};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use rocket::State;
-use serde::{Deserialize, Serialize};
 use sqlx::MySqlPool;
 
 use crate::{
+    auth_middleware::Claims,
     model::{
         error::OmniNewsError,
         token::JwtToken,
@@ -15,31 +15,136 @@ use crate::{
     repository::user_repository,
 };
 
-#[derive(Debug, Serialize, Deserialize)]
-struct Claims {
-    aud: String,
-    sub: String,
-    company: String,
-    exp: u64,
-}
-
-pub async fn create_user(
+/// 1. access token O refresh token O ->  ignore request.
+///    ``` return  None ```
+/// 2. access token X refresh token O -> reissue access token
+/// ```
+/// return Some(JwtToken {
+///     access_token: Some(access_token),
+///     access_token_expires_at: Some(access_token_expires_at),
+///     refresh_token: None,
+///     refresh_token_expires_at: None,
+/// })
+/// ```
+/// 3. access token X refresh token X -> Reissue refresh token and access token or Create user
+/// ```
+/// return Some(JwtToken {
+///     access_token: Some(access_token),
+///     access_token_expires_at: Some(access_token_expires_at),
+///     refresh_token: Some(refresh_token),
+///     refresh_token_expires_at: Some(refresh_token_expires_at),
+/// })
+/// ```
+pub async fn login_or_create_user(
     pool: &State<MySqlPool>,
     user: ParamUser,
 ) -> Result<JwtToken, OmniNewsError> {
-    // Validate user already exists
-    if let Ok(res) =
-        user_repository::select_user_by_email(pool, user.user_email.clone().unwrap_or_default())
+    let (is_access_available, is_refresh_available) =
+        user_repository::validate_tokens(pool, user.user_email.clone().unwrap_or_default())
             .await
+            .map_err(|e| {
+                error!(
+                    "[Service] Failed to validate access and refresh token: {}",
+                    e
+                );
+                OmniNewsError::TokenValidationError
+            })?;
+
+    if is_access_available && is_refresh_available {
+        // 1. access token O refresh token O -> ignore
+        info!(
+            "[Service] 1. Success login: {}",
+            user.user_email.clone().unwrap()
+        );
+        return Ok(JwtToken {
+            access_token: None,
+            access_token_expires_at: None,
+            refresh_token: None,
+            refresh_token_expires_at: None,
+        });
+    } else if !is_access_available && is_refresh_available {
+        // 2. access token X refresh token O -> reissue access token
+        info!(
+            "[Service] 2. Success login: {}",
+            user.user_email.clone().unwrap()
+        );
+        return reissue_access_token(pool, user).await;
+    }
+
+    // 3. access token X refresh token X -> create user
+    if (user_repository::select_user_by_email(pool, user.user_email.clone().unwrap()).await).is_ok()
     {
-        error!("[Service] User already exists, user id: {}", res);
-        return Err(OmniNewsError::AlreadyExists);
+        // 3-1. reissue both
+        info!(
+            "[Service] 3-1. Success login: {}",
+            user.user_email.clone().unwrap()
+        );
+        return issue_tokens(pool, user.user_email.clone().unwrap()).await;
+    }
+
+    // 3-2.create user
+    info!(
+        "[Service] 3-2. Success login: {}",
+        user.user_email.clone().unwrap()
+    );
+    create_user(pool, user).await
+}
+
+async fn reissue_access_token(
+    pool: &State<MySqlPool>,
+    user: ParamUser,
+) -> Result<JwtToken, OmniNewsError> {
+    let (access_token, access_token_expires_at) =
+        make_token(TokenType::Access, user.user_email.clone().unwrap())?;
+
+    let _ = user_repository::update_user_access_token(
+        pool,
+        user.user_email.unwrap(),
+        access_token.clone(),
+        access_token_expires_at,
+    )
+    .await?;
+
+    Ok(JwtToken {
+        access_token: Some(access_token),
+        access_token_expires_at: Some(access_token_expires_at),
+        refresh_token: None,
+        refresh_token_expires_at: None,
+    })
+}
+
+async fn issue_tokens(
+    pool: &State<MySqlPool>,
+    user_email: String,
+) -> Result<JwtToken, OmniNewsError> {
+    let (access_token, access_token_expires_at) =
+        make_token(TokenType::Access, user_email.clone())?;
+
+    let (refresh_token, refresh_token_expires_at) =
+        make_token(TokenType::Refresh, user_email.clone())?;
+
+    let tokens = JwtToken {
+        access_token: Some(access_token),
+        access_token_expires_at: Some(access_token_expires_at),
+        refresh_token: Some(refresh_token),
+        refresh_token_expires_at: Some(refresh_token_expires_at),
     };
 
+    match user_repository::update_uesr_tokens(pool, user_email, tokens.clone()).await {
+        Ok(_) => Ok(tokens),
+        Err(e) => {
+            error!("[Service] Failed to update user tokens: {}", e);
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
+
+async fn create_user(pool: &State<MySqlPool>, user: ParamUser) -> Result<JwtToken, OmniNewsError> {
     let (access_token, access_token_expires_at) = make_token(
         TokenType::Access,
         user.user_email.clone().unwrap_or_default(),
     )?;
+
     let (refresh_token, refresh_token_expires_at) = make_token(
         TokenType::Refresh,
         user.user_email.clone().unwrap_or_default(),
@@ -108,7 +213,7 @@ fn make_token(
                 Ok(token) => Some(token),
                 Err(e) => {
                     error!("[Service] Failed to create JWT access token: {}", e);
-                    return Err(OmniNewsError::TokenError);
+                    return Err(OmniNewsError::TokenCreateError);
                 }
             };
 
@@ -139,7 +244,7 @@ fn make_token(
                 Ok(token) => Some(token),
                 Err(e) => {
                     error!("[Service] Failed to create JWT refresh token: {}", e);
-                    return Err(OmniNewsError::TokenError);
+                    return Err(OmniNewsError::TokenCreateError);
                 }
             };
 

@@ -53,5 +53,12 @@ rannoy = { git = "https://github.com/uzushino/rs-annoy" }
 # JWT
 jsonwebtoken = "9"
 
+uuid = "1.16.0"
+
 [build-dependencies]
 bindgen = "0.71.1"
+
+
+[features]
+default = ["proc-macro"]
+proc-macro = []

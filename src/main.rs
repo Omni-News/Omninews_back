@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate rocket;
 
+mod auth_middleware;
 mod config;
 mod db_util;
 mod global;
@@ -11,6 +12,7 @@ mod scheduler;
 mod service;
 mod utils;
 
+use auth_middleware::{AuthCache, AuthMiddleware};
 use handler::{
     error_handler::error_catchers, feedback_handler::*, health_handler::*, news_handler::*,
     rss_handler::*, search_handler::*, subscribe_handler::*, user_handler::*,
@@ -25,17 +27,21 @@ async fn rocket() -> _ {
     config::configure_logging();
 
     let pool = db_util::create_pool().await;
-    let clone_pool = pool.clone();
+    let pool_scheduler = pool.clone();
+    let pool_middleware = pool.clone();
 
     tokio::spawn(async move {
-        start_scheduler(&clone_pool).await;
+        start_scheduler(&pool_scheduler).await;
     });
 
     let embedding_service = EmbeddingService::new();
 
+    let exempt_paths = vec!["/user/login".to_string()];
     rocket::build()
         .manage(pool)
         .manage(embedding_service)
+        .manage(AuthCache::new())
+        .attach(AuthMiddleware::new(exempt_paths, pool_middleware))
         .mount(
             "/",
             routes![
@@ -59,7 +65,7 @@ async fn rocket() -> _ {
                 update_rss_item_rank,
                 create_feedback,
                 get_feedbacks,
-                create_user,
+                login,
                 logout,
             ],
         )
