@@ -85,7 +85,7 @@ async fn store_channel_and_embedding(
     embedding_service: &State<EmbeddingService>,
     rss_channel: NewRssChannel,
 ) -> Result<i32, OmniNewsError> {
-    match rss_channel_repository::select_rss_channel_by_link(
+    match rss_channel_repository::select_rss_channel_by_rss_link(
         pool,
         rss_channel.channel_link.clone().unwrap_or_default(),
     )
@@ -126,7 +126,7 @@ async fn store_rss_channel(
 ) -> Result<i32, OmniNewsError> {
     let channel_link = channel.channel_link.clone().unwrap_or_default();
 
-    match rss_channel_repository::select_rss_channel_by_link(pool, channel_link).await {
+    match rss_channel_repository::select_rss_channel_by_rss_link(pool, channel_link).await {
         Ok(channel) => Ok(channel.channel_id.unwrap()),
         Err(_) => Ok(rss_channel_repository::insert_rss_channel(pool, channel)
             .await
@@ -137,7 +137,7 @@ async fn store_rss_channel(
     }
 }
 
-pub async fn get_rss_channel_by_id(
+pub async fn find_rss_channel_by_id(
     pool: &State<MySqlPool>,
     channel_id: i32,
 ) -> Result<RssChannel, OmniNewsError> {
@@ -145,6 +145,19 @@ pub async fn get_rss_channel_by_id(
         Ok(res) => Ok(res),
         Err(e) => {
             error!("[Service] Failed to select rss channel by id: {:?}", e);
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
+
+pub async fn find_rss_channel_by_rss_link(
+    pool: &State<MySqlPool>,
+    channel_rss_link: String,
+) -> Result<RssChannel, OmniNewsError> {
+    match rss_channel_repository::select_rss_channel_by_rss_link(pool, channel_rss_link).await {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            warn!("[Service] Failed to select rss channel by link: {:?}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -181,9 +194,9 @@ pub async fn get_channel_list(
             }
 
             res.sort_by(|a, b| {
-                a.channel_rank
+                b.channel_rank
                     .unwrap_or_default()
-                    .cmp(&b.channel_rank.unwrap_or_default())
+                    .cmp(&a.channel_rank.unwrap_or_default())
             });
 
             res
@@ -227,22 +240,32 @@ pub async fn get_recommend_channel(
     }
 }
 
-pub async fn get_rss_preview(rss_link: String) -> Result<RssChannel, OmniNewsError> {
-    let rss_channel = parse_rss_link_to_channel(&rss_link).await?;
-    let new_channel = make_rss_channel(rss_channel, rss_link.clone());
-    let channel = RssChannel {
-        channel_id: Some(0),
-        channel_title: Some(new_channel.channel_title.unwrap_or_default()),
-        channel_image_url: Some(new_channel.channel_image_url.unwrap_or_default()),
-        channel_description: Some(new_channel.channel_description.unwrap_or_default()),
-        channel_link: Some(new_channel.channel_link.unwrap_or_default()),
-        channel_language: Some(new_channel.channel_language.unwrap_or_default()),
-        channel_rank: Some(0),
-        rss_generator: Some(new_channel.rss_generator.unwrap_or_default()),
-        channel_rss_link: Some(rss_link),
-    };
+pub async fn get_rss_preview(
+    pool: &State<MySqlPool>,
+    rss_link: String,
+) -> Result<RssChannel, OmniNewsError> {
+    match rss_channel_repository::select_rss_channel_by_channel_rss_link(pool, rss_link.clone())
+        .await
+    {
+        Ok(res) => Ok(res),
+        Err(_) => {
+            let rss_channel = parse_rss_link_to_channel(&rss_link).await?;
+            let new_channel = make_rss_channel(rss_channel, rss_link.clone());
+            let channel = RssChannel {
+                channel_id: Some(0),
+                channel_title: Some(new_channel.channel_title.unwrap_or_default()),
+                channel_image_url: Some(new_channel.channel_image_url.unwrap_or_default()),
+                channel_description: Some(new_channel.channel_description.unwrap_or_default()),
+                channel_link: Some(new_channel.channel_link.unwrap_or_default()),
+                channel_language: Some(new_channel.channel_language.unwrap_or_default()),
+                channel_rank: Some(0),
+                rss_generator: Some(new_channel.rss_generator.unwrap_or_default()),
+                channel_rss_link: Some(rss_link),
+            };
 
-    Ok(channel)
+            Ok(channel)
+        }
+    }
 }
 
 pub async fn is_channel_exist_by_link(

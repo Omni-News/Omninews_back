@@ -1,7 +1,10 @@
 use rocket::State;
 use sqlx::{query, query_as, MySqlPool};
 
-use crate::{db_util::get_db, model::rss::RssItem};
+use crate::{
+    db_util::get_db,
+    model::rss::{RssChannel, RssItem},
+};
 
 pub async fn insert_user_subscribe_channel(
     pool: &State<MySqlPool>,
@@ -20,6 +23,29 @@ pub async fn insert_user_subscribe_channel(
 
     match result {
         Ok(res) => Ok(res.last_insert_id() as i32),
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn select_subscription_channels(
+    pool: &State<MySqlPool>,
+    user_id: i32,
+) -> Result<Vec<RssChannel>, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query_as!(
+        RssChannel,
+        "SELECT rc.*
+            FROM rss_channel rc
+            JOIN user_subscription_channel usc ON rc.channel_id = usc.channel_id
+            WHERE usc.user_id = ?;",
+        user_id
+    )
+    .fetch_all(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res),
         Err(e) => Err(e),
     }
 }
@@ -51,6 +77,30 @@ pub async fn select_subscription_items(
     match result {
         Ok(res) => Ok(res),
         Err(e) => Err(e),
+    }
+}
+
+pub async fn is_already_subscribe_channel(
+    pool: &State<MySqlPool>,
+    user_id: i32,
+    channel_id: i32,
+) -> Result<bool, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!(
+        "SELECT * FROM user_subscription_channel WHERE user_id = ? AND channel_id = ?",
+        user_id,
+        channel_id
+    )
+    .fetch_one(&mut *conn)
+    .await;
+
+    match result {
+        Ok(_) => Ok(true),
+        Err(e) => match e {
+            sqlx::Error::RowNotFound => Ok(false),
+            _ => Err(e),
+        },
     }
 }
 

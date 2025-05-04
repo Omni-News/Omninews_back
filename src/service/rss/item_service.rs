@@ -153,7 +153,6 @@ pub async fn get_rss_list(
         SearchType::Accuracy => {
             let mut res = Vec::new();
             for id in load_annoy.0.iter() {
-                info!("[Service] Get rss item by embedding id: {}", id);
                 if let Ok(item) =
                     rss_item_repository::select_rss_item_by_embedding_id(pool, *id).await
                 {
@@ -171,10 +170,11 @@ pub async fn get_rss_list(
                     res.push(item);
                 }
             }
+            // TODO 정상작동 검증 필요
             res.sort_by(|a, b| {
-                a.rss_rank
+                b.rss_rank
                     .unwrap_or_default()
-                    .cmp(&b.rss_rank.unwrap_or_default())
+                    .cmp(&a.rss_rank.unwrap_or_default())
             });
 
             res
@@ -189,9 +189,9 @@ pub async fn get_rss_list(
                 }
             }
             res.sort_by(|a, b| {
-                a.rss_pub_date
+                b.rss_pub_date
                     .unwrap_or_default()
-                    .cmp(&b.rss_pub_date.unwrap_or_default())
+                    .cmp(&a.rss_pub_date.unwrap_or_default())
             });
 
             res

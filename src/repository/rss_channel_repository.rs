@@ -23,7 +23,7 @@ pub async fn select_rss_channel_by_id(
         Err(e) => Err(e),
     }
 }
-pub async fn select_rss_channel_by_link(
+pub async fn select_rss_channel_by_rss_link(
     pool: &State<MySqlPool>,
     rss_channel_link: String,
 ) -> Result<RssChannel, sqlx::Error> {
@@ -31,7 +31,7 @@ pub async fn select_rss_channel_by_link(
     let result = query_as!(
         RssChannel,
         "SELECT * FROM rss_channel
-                WHERE channel_link = ?",
+                WHERE channel_rss_link = ?",
         rss_channel_link,
     )
     .fetch_one(&mut *conn)

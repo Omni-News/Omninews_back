@@ -2,16 +2,27 @@ use rocket::serde::json::Json;
 use rocket::{http::Status, State};
 use sqlx::MySqlPool;
 
-use crate::model::rss::{RssChannel, RssItem, RssLink, UpdateChannelRank, UpdateRssRank};
+use crate::model::rss::{RssChannel, RssItem, RssLink, UpdateRssRank};
 use crate::service::rss::{channel_service, item_service};
 use crate::EmbeddingService;
+
+#[get("/rss/id?<channel_rss_link>")]
+pub async fn get_channel_id_by_rss_link(
+    pool: &State<MySqlPool>,
+    channel_rss_link: String,
+) -> Result<Json<i32>, Status> {
+    match channel_service::find_rss_channel_by_rss_link(pool, channel_rss_link).await {
+        Ok(res) => Ok(Json(res.channel_id.unwrap())),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
 
 #[get("/rss/channel?<channel_id>")]
 pub async fn get_rss_channel_by_id(
     pool: &State<MySqlPool>,
     channel_id: i32,
 ) -> Result<Json<RssChannel>, Status> {
-    match channel_service::get_rss_channel_by_id(pool, channel_id).await {
+    match channel_service::find_rss_channel_by_id(pool, channel_id).await {
         Ok(res) => Ok(Json(res)),
         Err(_) => Err(Status::InternalServerError),
     }
@@ -47,8 +58,11 @@ pub async fn get_recommend_item(pool: &State<MySqlPool>) -> Result<Json<Vec<RssI
 }
 
 #[get("/rss/preview?<rss_link>")]
-pub async fn get_rss_preview(rss_link: String) -> Result<Json<RssChannel>, Status> {
-    match channel_service::get_rss_preview(rss_link).await {
+pub async fn get_rss_preview(
+    pool: &State<MySqlPool>,
+    rss_link: String,
+) -> Result<Json<RssChannel>, Status> {
+    match channel_service::get_rss_preview(pool, rss_link).await {
         Ok(res) => Ok(Json(res)),
         Err(_) => Err(Status::InternalServerError),
     }
@@ -94,24 +108,24 @@ pub async fn create_rss_all(
     }
 }
 
-#[put("/rss/channel/rank", data = "<update_rss_rank>")]
-pub async fn update_rss_channel_rank(
-    pool: &State<MySqlPool>,
-    update_rss_rank: Json<UpdateChannelRank>,
-) -> Result<&str, Status> {
-    let update_rss_rank = update_rss_rank.into_inner();
-
-    match channel_service::update_rss_channel_rank(
-        pool,
-        update_rss_rank.channel_id,
-        update_rss_rank.num,
-    )
-    .await
-    {
-        Ok(_) => Ok("Success"),
-        Err(_) => Err(Status::InternalServerError),
-    }
-}
+//#[put("/rss/channel/rank", data = "<update_rss_rank>")]
+//pub async fn update_rss_channel_rank(
+//    pool: &State<MySqlPool>,
+//    update_rss_rank: Json<UpdateChannelRank>,
+//) -> Result<&str, Status> {
+//    let update_rss_rank = update_rss_rank.into_inner();
+//
+//    match channel_service::update_rss_channel_rank(
+//        pool,
+//        update_rss_rank.channel_id,
+//        update_rss_rank.num,
+//    )
+//    .await
+//    {
+//        Ok(_) => Ok("Success"),
+//        Err(_) => Err(Status::InternalServerError),
+//    }
+//}
 
 #[put("/rss/item/rank", data = "<update_rss_rank>")]
 pub async fn update_rss_item_rank(

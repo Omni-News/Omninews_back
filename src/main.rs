@@ -59,17 +59,19 @@ async fn rocket() -> _ {
                 get_rss_item_by_channel_id,
                 get_rss_preview,
                 is_rss_exist,
-                update_rss_channel_rank,
                 get_rss_channel_by_id,
                 update_rss_item_rank,
                 create_feedback,
                 get_feedbacks,
                 login,
                 logout,
+                get_channel_id_by_rss_link,
                 // Subscription
                 subscribe_channel,
                 get_subscribe_items,
                 unsubscribe_channel,
+                validate_already_subscribe_channel,
+                get_subscribe_channels,
             ],
         )
         .register("/", error_catchers())

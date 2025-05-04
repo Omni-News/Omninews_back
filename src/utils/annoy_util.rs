@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{collections::HashSet, path::PathBuf};
 
 use rocket::State;
 use sqlx::MySqlPool;
@@ -90,6 +90,7 @@ async fn save_news_annoy(embeddings: Vec<Embedding>) -> Result<(), OmniNewsError
     Ok(())
 }
 
+// TODO 지금은 10개 조회지만, 상황에 맞춰 더많이 추가 가능하도록 수정
 pub async fn load_channel_annoy(
     service: &State<EmbeddingService>,
     search_value: String,
@@ -100,7 +101,14 @@ pub async fn load_channel_annoy(
     let embedding_search_text = embedding_sentence(service, search_value).await?;
 
     let (result_ids, distances) = annoy.get_nns_by_vector(embedding_search_text, 10, -1);
-    Ok((result_ids, distances))
+    // remove duplicate ids
+    let unique_ids = result_ids
+        .into_iter()
+        .collect::<HashSet<_>>()
+        .into_iter()
+        .collect::<Vec<_>>();
+
+    Ok((unique_ids, distances))
 }
 
 pub async fn load_rss_annoy(
