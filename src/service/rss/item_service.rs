@@ -170,7 +170,6 @@ pub async fn get_rss_list(
                     res.push(item);
                 }
             }
-            // TODO 정상작동 검증 필요
             res.sort_by(|a, b| {
                 b.rss_rank
                     .unwrap_or_default()
