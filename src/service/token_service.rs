@@ -15,6 +15,7 @@ pub async fn validate_token_user(
             Ok(false)
         }
         Err(_) => {
+            // TODO 프론트에서 앱 실행 못하도록 막기
             error!("Token validation failed");
             Err(OmniNewsError::TokenValidationError)
         }

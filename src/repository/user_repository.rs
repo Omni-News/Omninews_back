@@ -23,6 +23,32 @@ pub async fn select_user_id_by_email(
     }
 }
 
+pub async fn select_tokens_by_email(
+    pool: &State<MySqlPool>,
+    user_email: String,
+) -> Result<JwtToken, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!(
+        "SELECT user_access_token, user_access_token_expires_at, 
+                user_refresh_token, user_refresh_token_expires_at
+         FROM user WHERE user_email = ?",
+        user_email
+    )
+    .fetch_one(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(JwtToken {
+            access_token: res.user_access_token,
+            access_token_expires_at: res.user_access_token_expires_at,
+            refresh_token: res.user_refresh_token,
+            refresh_token_expires_at: res.user_refresh_token_expires_at,
+        }),
+        Err(e) => Err(e),
+    }
+}
+
 pub async fn insert_user(pool: &State<MySqlPool>, user: NewUser) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await?;
 

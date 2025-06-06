@@ -2,7 +2,10 @@ use std::time::Duration;
 
 use chrono::{Datelike, Utc};
 use sqlx::MySqlPool;
-use tokio::time::{interval_at, Instant};
+use tokio::{
+    task,
+    time::{interval_at, Instant},
+};
 
 use crate::global::FETCH_FLAG;
 
@@ -17,8 +20,20 @@ pub async fn fetch_news_scheduler(pool: &MySqlPool) {
             continue;
         }
 
+        // 뉴스 패치 중에는 fetch_flag를 false로 설정
+        // 비동기 함수에 Send 트레이트가 필요하므로, task::spawn_blocking을 사용하여 처리
+        task::spawn_blocking(move || {
+            let mut fetch_flag = FETCH_FLAG.lock().unwrap();
+            *fetch_flag = false;
+            info!("[Scheduler] Fetching news, fetch_flag set to false");
+        })
+        .await
+        .unwrap();
+
         match crate::service::news_service::crawl_news_and_store_every_5_minutes(pool).await {
-            Ok(_) => info!("[Scheduler] Successfully fetched news"),
+            Ok(_) => {
+                info!("[Scheduler] Successfully fetched news");
+            }
             Err(e) => error!("[Scheduler] Failed to fetch news: {:?}", e),
         };
     }

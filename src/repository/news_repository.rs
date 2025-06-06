@@ -52,11 +52,12 @@ pub async fn insert_news(pool: &MySqlPool, news: NewNews) -> Result<i32, sqlx::E
 
     let result = query!(
         r#"
-        INSERT INTO news (news_title, news_description, news_link, news_source, news_pub_date, news_image_link, news_category)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO news (news_title, news_description, news_summary, news_link, news_source, news_pub_date, news_image_link, news_category)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         "#,
         news.news_title,
         news.news_description,
+        news.news_summary,
         news.news_link,
         news.news_source,
         news.news_pub_date,

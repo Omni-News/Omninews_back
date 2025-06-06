@@ -40,6 +40,7 @@ CREATE TABLE `News` (
 	`news_id`	INT	NOT NULL AUTO_INCREMENT,
 	`news_title`	VARCHAR(200)	NULL,
 	`news_description`	VARCHAR(1000)	NULL,
+  `news_summary` VARCHAR(1000) NULL,
 	`news_link`	VARCHAR(1000)	NULL,
 	`news_source`	VARCHAR(50)	NULL,
 	`news_pub_date`	DATETIME	NULL,

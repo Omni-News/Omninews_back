@@ -15,18 +15,10 @@ use crate::{
     repository::user_repository,
 };
 
-/// 1. access token O refresh token O ->  ignore request.
-///    ``` return  None ```
+/// 1. access token O refresh token O ->  return tokens.
 /// 2. access token X refresh token O -> reissue access token
-/// ```
-/// return Some(JwtToken {
-///     access_token: Some(access_token),
-///     access_token_expires_at: Some(access_token_expires_at),
-///     refresh_token: None,
-///     refresh_token_expires_at: None,
-/// })
-/// ```
 /// 3. access token X refresh token X -> Reissue refresh token and access token or Create user
+///
 /// ```
 /// return Some(JwtToken {
 ///     access_token: Some(access_token),
@@ -51,17 +43,17 @@ pub async fn login_or_create_user(
             })?;
 
     if is_access_available && is_refresh_available {
-        // 1. access token O refresh token O -> ignore
+        // 1. access token O refresh token O -> return tokens
         info!(
             "[Service] 1. Success login: {}",
             user.user_email.clone().unwrap()
         );
-        return Ok(JwtToken {
-            access_token: None,
-            access_token_expires_at: None,
-            refresh_token: None,
-            refresh_token_expires_at: None,
-        });
+        return user_repository::select_tokens_by_email(pool, user.user_email.clone().unwrap())
+            .await
+            .map_err(|e| {
+                error!("[Service] Failed to select tokens by email: {}", e);
+                OmniNewsError::Database(e)
+            });
     } else if !is_access_available && is_refresh_available {
         // 2. access token X refresh token O -> reissue access token
         info!(
