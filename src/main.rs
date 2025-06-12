@@ -14,8 +14,8 @@ mod utils;
 
 use auth_middleware::{AuthCache, AuthMiddleware};
 use handler::{
-    error_handler::error_catchers, health_handler::*, news_handler::*, rss_handler::*,
-    search_handler::*, subscription_handler::*, user_handler::*,
+    error_handler::error_catchers, folder_handler::*, health_handler::*, news_handler::*,
+    rss_handler::*, search_handler::*, subscription_handler::*, user_handler::*,
 };
 use rocket::routes;
 use sqlx::MySqlPool;
@@ -36,7 +36,7 @@ async fn rocket() -> _ {
 
     let embedding_service = EmbeddingService::new();
 
-    let exempt_paths = vec!["/user/login".to_string()];
+    let exempt_paths = vec!["/user/login".to_string(), "/rss/all".to_string()];
     rocket::build()
         .manage(pool)
         .manage(embedding_service)
@@ -70,6 +70,13 @@ async fn rocket() -> _ {
                 unsubscribe_channel,
                 validate_already_subscribe_channel,
                 get_subscribe_channels,
+                // folder
+                create_folder,
+                add_channel_to_folder,
+                find_folders,
+                update_folder,
+                delete_folder,
+                delete_channel_from_folder,
             ],
         )
         .register("/", error_catchers())

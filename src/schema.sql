@@ -7,6 +7,8 @@ drop table if exists feedback;
 drop table if exists morpheme_link_mapping;
 drop table if exists morpheme;
 drop table if exists user_subscription_channel;
+drop table if exists rss_folder;
+drop table if exists channels_in_folder;
 
 CREATE TABLE `user` (
 	`user_id` INT NOT NULL AUTO_INCREMENT  ,
@@ -101,4 +103,17 @@ CREATE TABLE `user_subscription_channel` (
     PRIMARY KEY (user_sub_channel_id)
 );
 
+CREATE TABLE `rss_folder` (
+	`folder_id`	INT	NOT NULL AUTO_INCREMENT,
+	`folder_name`	VARCHAR(50)	NULL,
+  `user_id` INT NULL DEFAULT 0,
+  PRIMARY KEY (folder_id)
+);
+
+CREATE TABLE `channels_in_folder` (
+  `channels_in_folder_id` INT NOT NULL AUTO_INCREMENT,
+  `folder_id` INT NULL DEFAULT 0,
+  `channel_id` INT NULL DEFAULT 0,
+  PRIMARY KEY (channels_in_folder_id)
+)
 

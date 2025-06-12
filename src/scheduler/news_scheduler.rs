@@ -61,7 +61,7 @@ pub async fn delete_old_news_scheduler(pool: &MySqlPool) {
         let today = Utc::now().weekday();
         if today == chrono::Weekday::Sun {
             match crate::service::news_service::delete_old_news(pool).await {
-                Ok(_) => info!("Successfully deleted old news"),
+                Ok(_) => warn!("Successfully deleted old news"),
                 Err(e) => error!("Failed to delete old news: {:?}", e),
             }
         }
