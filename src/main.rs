@@ -45,15 +45,11 @@ async fn rocket() -> _ {
         .mount(
             "/",
             routes![
+                // rss
                 create_rss_all,
                 create_channel,
                 get_rss_list,
                 get_channel_list,
-                fetch_start,
-                fetch_stop,
-                get_news,
-                get_news_by_api,
-                health_check,
                 get_recommend_channel,
                 get_recommend_item,
                 get_rss_item_by_channel_id,
@@ -61,9 +57,16 @@ async fn rocket() -> _ {
                 is_rss_exist,
                 get_rss_channel_by_id,
                 update_rss_item_rank,
+                get_channel_id_by_rss_link,
+                // news
+                get_news,
+                get_news_by_api,
+                // news fetch
+                fetch_start,
+                fetch_stop,
+                // account
                 login,
                 logout,
-                get_channel_id_by_rss_link,
                 // Subscription
                 subscribe_channel,
                 get_subscribe_items,
@@ -77,6 +80,8 @@ async fn rocket() -> _ {
                 update_folder,
                 delete_folder,
                 delete_channel_from_folder,
+                // system
+                health_check,
             ],
         )
         .register("/", error_catchers())
