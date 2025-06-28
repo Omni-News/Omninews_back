@@ -44,10 +44,9 @@ pub async fn login_or_create_user(
         OmniNewsError::TokenValidationError
     })?;
 
-    // 1 or 2
+    // 1 or 2 -> new login
     if is_access_available || is_refresh_available {
-        error!("[Service] Failed to login");
-        return Err(OmniNewsError::TokenValidationError);
+        warn!("[Service] Access or refresh token is already alived ailed to login");
     }
 
     // 3. access token X refresh token X -> reissue both token or create user
@@ -59,7 +58,11 @@ pub async fn login_or_create_user(
             "[Service] 3-1. Success login: {}",
             user.user_email.clone().unwrap()
         );
-        return issue_tokens(pool, user.user_email.clone().unwrap()).await;
+        let tokens = issue_tokens(pool, user.user_email.clone().unwrap()).await?;
+
+        info!("{:?}", tokens);
+
+        return Ok(tokens);
     }
 
     // 3-2.create user
