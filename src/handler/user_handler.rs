@@ -3,9 +3,29 @@ use sqlx::MySqlPool;
 
 use crate::{
     auth_middleware::AuthenticatedUser,
-    model::{token::JwtToken, user::ParamUser},
+    model::{
+        token::{AccessToken, JwtToken, RefreshTokenAndUserEmail},
+        user::ParamUser,
+    },
     service::user_service,
 };
+
+// auth middleware에서 access token을 검증하고, 유효한 경우 Status::Ok를 반환합니다.
+#[get("/user/access-token")]
+pub async fn verify_access_token() -> Result<Status, Status> {
+    Ok(Status::Ok)
+}
+
+#[post("/user/refresh-token", data = "<refresh_token>")]
+pub async fn verify_refresh_token(
+    pool: &State<MySqlPool>,
+    refresh_token: Json<RefreshTokenAndUserEmail>,
+) -> Result<Json<AccessToken>, Status> {
+    match user_service::validate_refresh_token(pool, refresh_token.into_inner()).await {
+        Ok(token) => Ok(Json(token)),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
 
 #[post("/user/login", data = "<user_data>")]
 pub async fn login(

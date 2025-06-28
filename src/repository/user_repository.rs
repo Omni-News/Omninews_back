@@ -3,7 +3,7 @@ use rocket::State;
 use sqlx::{query, MySqlPool};
 
 use crate::{
-    db_util::get_db,
+    db_util::{get_db, get_db_without_state},
     model::{token::JwtToken, user::NewUser},
 };
 
@@ -23,7 +23,7 @@ pub async fn select_user_id_by_email(
     }
 }
 
-pub async fn select_tokens_by_email(
+pub async fn select_tokens_by_user_email(
     pool: &State<MySqlPool>,
     user_email: String,
 ) -> Result<JwtToken, sqlx::Error> {
@@ -104,7 +104,7 @@ pub async fn delete_user_token_by_email(
     }
 }
 
-pub async fn validate_tokens(
+pub async fn validate_users_all_tokens(
     pool: &State<MySqlPool>,
     user_email: String,
 ) -> Result<(bool, bool), sqlx::Error> {
@@ -131,6 +131,55 @@ pub async fn validate_tokens(
         (Ok(_), Err(_)) => Ok((true, false)),
         (Err(_), Ok(_)) => Ok((false, true)),
         (Err(_), Err(_)) => Ok((false, false)),
+    }
+}
+
+pub async fn validate_access_token_by_user_email(
+    pool: &MySqlPool,
+    token: String,
+    email: String,
+) -> Result<String, sqlx::Error> {
+    let mut conn = get_db_without_state(pool).await?;
+
+    let result = query!(
+        "SELECT user_email FROM user
+        WHERE user_access_token = ? AND user_email = ?",
+        token,
+        email
+    )
+    .fetch_one(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res.user_email),
+        Err(_) => Err(sqlx::Error::RowNotFound),
+    }
+}
+
+pub async fn validate_refresh_token_by_user_email(
+    pool: &State<MySqlPool>,
+    token: String,
+    email: String,
+) -> Result<JwtToken, sqlx::Error> {
+    let mut conn = get_db_without_state(pool).await?;
+
+    let result = query!(
+        "SELECT * FROM user
+        WHERE user_refresh_token = ? AND user_email = ? AND user_refresh_token_expires_at > NOW();",
+        token,
+        email
+    )
+    .fetch_one(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(JwtToken {
+            access_token: res.user_access_token,
+            access_token_expires_at: res.user_access_token_expires_at,
+            refresh_token: res.user_refresh_token,
+            refresh_token_expires_at: res.user_refresh_token_expires_at,
+        }),
+        Err(_) => Err(sqlx::Error::RowNotFound),
     }
 }
 

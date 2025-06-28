@@ -11,7 +11,7 @@ use std::{collections::HashMap, env, io::Cursor};
 use std::{collections::HashSet, sync::RwLock};
 use uuid::Uuid;
 
-use crate::service::token_service;
+use crate::service::user_service;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
@@ -137,10 +137,10 @@ impl Fairing for AuthMiddleware {
                 let user_email = token_data.claims.sub;
 
                 // 토큰 DB 검증
-                match token_service::validate_token_user(
+                match user_service::vliadate_access_token(
                     &self.pool,
                     token.to_string(),
-                    user_email.as_str(),
+                    user_email.clone(),
                 )
                 .await
                 {

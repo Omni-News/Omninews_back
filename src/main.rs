@@ -36,7 +36,11 @@ async fn rocket() -> _ {
 
     let embedding_service = EmbeddingService::new();
 
-    let exempt_paths = vec!["/user/login".to_string(), "/rss/all".to_string()];
+    let exempt_paths = vec![
+        "/user/login".to_string(),
+        "/rss/all".to_string(),
+        "/user/refresh-token".to_string(),
+    ];
     rocket::build()
         .manage(pool)
         .manage(embedding_service)
@@ -67,6 +71,8 @@ async fn rocket() -> _ {
                 // account
                 login,
                 logout,
+                verify_access_token,
+                verify_refresh_token,
                 // Subscription
                 subscribe_channel,
                 get_subscribe_items,
