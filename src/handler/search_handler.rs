@@ -1,19 +1,30 @@
+use okapi::openapi3::OpenApi;
 use rocket::http::Status;
 use rocket::serde::json::Json;
 use rocket::State;
+use rocket_okapi::settings::OpenApiSettings;
+use rocket_okapi::{openapi, openapi_get_routes_spec};
 use sqlx::MySqlPool;
 
-use crate::model::rss::{RssChannel, RssItem};
-use crate::model::search::SearchRequest;
+use crate::dto::rss::response::{RssChannelResponseDto, RssItemResponseDto};
+use crate::dto::search::request::SearchRequestDto;
 use crate::service::rss::{channel_service, item_service};
 use crate::EmbeddingService;
 
-#[get("/search/rss?<request..>")]
+pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
+    openapi_get_routes_spec![settings: get_rss_list, get_channel_list ]
+}
+
+/// # get_rss_list
+///
+/// Returns a list of RSS items based on the search request.
+#[openapi(tag = "Search")]
+#[get("/item?<request..>")]
 pub async fn get_rss_list(
     pool: &State<MySqlPool>,
     model: &State<EmbeddingService>,
-    request: SearchRequest,
-) -> Result<Json<Vec<RssItem>>, Status> {
+    request: SearchRequestDto,
+) -> Result<Json<Vec<RssItemResponseDto>>, Status> {
     if request.search_value.is_none() {
         return Err(Status::BadRequest);
     }
@@ -24,12 +35,16 @@ pub async fn get_rss_list(
     }
 }
 
-#[get("/search/channel?<request..>")]
+/// # get_channel_list
+///
+/// Returns a list of RSS channels based on the search request.
+#[openapi(tag = "Search")]
+#[get("/channels?<request..>")]
 pub async fn get_channel_list(
     pool: &State<MySqlPool>,
     model: &State<EmbeddingService>,
-    request: SearchRequest,
-) -> Result<Json<Vec<RssChannel>>, Status> {
+    request: SearchRequestDto,
+) -> Result<Json<Vec<RssChannelResponseDto>>, Status> {
     if request.search_value.is_none() {
         return Err(Status::BadRequest);
     }

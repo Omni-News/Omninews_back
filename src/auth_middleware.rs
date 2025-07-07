@@ -5,6 +5,8 @@ use rocket::{
     request::{self, FromRequest, Outcome},
     Data, Request, Response,
 };
+use rocket_okapi::OpenApiFromRequest;
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use sqlx::MySqlPool;
 use std::{collections::HashMap, env, io::Cursor};
@@ -48,12 +50,13 @@ impl AuthMiddleware {
 
     // 주어진 경로가 인증 면제 대상인지 확인
     fn is_exempt(&self, path: &str) -> bool {
-        for exempt_path in &self.exempt_paths {
-            if path.starts_with(exempt_path) {
-                return true;
+        self.exempt_paths.iter().any(|exempt| {
+            if exempt.ends_with('/') {
+                path.starts_with(exempt)
+            } else {
+                path == exempt
             }
-        }
-        false
+        })
     }
 }
 
@@ -227,6 +230,7 @@ impl Fairing for AuthMiddleware {
 }
 
 // 인증된 사용자 정보를 간편하게 가져오는 Request Guard
+#[derive(JsonSchema, OpenApiFromRequest)]
 pub struct AuthenticatedUser {
     pub user_email: String,
 }

@@ -1,15 +1,18 @@
 use log::{info, warn};
-use rand::{rng, seq::SliceRandom};
 use rocket::State;
 use rss::Channel;
 use sqlx::MySqlPool;
 
 use crate::{
+    dto::{
+        rss::{request::CreateRssRequestDto, response::RssChannelResponseDto},
+        search::request::SearchRequestDto,
+    },
     model::{
         embedding::NewEmbedding,
         error::OmniNewsError,
-        rss::{NewRssChannel, RssChannel, RssLink},
-        search::{SearchRequest, SearchType},
+        rss::{NewRssChannel, RssChannel},
+        search::SearchType,
     },
     repository::rss_channel_repository,
     service::embedding_service,
@@ -21,10 +24,10 @@ use super::item_service;
 pub async fn create_rss_all(
     pool: &State<MySqlPool>,
     model: &State<EmbeddingService>,
-    links: Vec<RssLink>,
+    links: Vec<CreateRssRequestDto>,
 ) -> Result<bool, OmniNewsError> {
     for link in links {
-        info!("[Service] Add : {}", link.link);
+        info!("[Service] Add : {}", link.rss_link);
         create_rss_and_embedding(pool, model, link).await?;
     }
     Ok(true)
@@ -33,11 +36,11 @@ pub async fn create_rss_all(
 pub async fn create_rss_and_embedding(
     pool: &State<MySqlPool>,
     embedding_service: &State<EmbeddingService>,
-    rss_link: RssLink,
+    link: CreateRssRequestDto,
 ) -> Result<i32, OmniNewsError> {
-    let rss_channel = parse_rss_link_to_channel(&rss_link.link).await?;
+    let rss_channel = parse_rss_link_to_channel(&link.rss_link).await?;
 
-    let channel = make_rss_channel(rss_channel.clone(), rss_link.link);
+    let channel = make_rss_channel(rss_channel.clone(), link.rss_link);
     let channel_id = store_channel_and_embedding(pool, embedding_service, channel).await?;
 
     let _ = item_service::crate_rss_item_and_embedding(
@@ -68,16 +71,16 @@ async fn parse_rss_link_to_channel(link: &str) -> Result<Channel, OmniNewsError>
 }
 
 fn make_rss_channel(channel: Channel, rss_link: String) -> NewRssChannel {
-    NewRssChannel {
-        channel_title: Some(channel.title().to_string()),
-        channel_link: Some(channel.link().to_string()),
-        channel_description: Some(channel.description().to_string()),
-        channel_image_url: channel.image().map(|e| e.url().to_string()),
-        channel_language: Some(channel.language().unwrap_or("None").to_string()),
-        rss_generator: Some(channel.generator().unwrap_or("None").to_string()),
-        channel_rank: Some(0),
-        channel_rss_link: Some(rss_link),
-    }
+    NewRssChannel::new(
+        channel.title().to_string(),
+        channel.link().to_string(),
+        channel.description().to_string(),
+        channel.image().map(|e| e.url().to_string()),
+        channel.language().unwrap_or("None").to_string(),
+        channel.generator().unwrap_or("None").to_string(),
+        0,
+        rss_link,
+    )
 }
 
 async fn store_channel_and_embedding(
@@ -140,9 +143,9 @@ async fn store_rss_channel(
 pub async fn find_rss_channel_by_id(
     pool: &State<MySqlPool>,
     channel_id: i32,
-) -> Result<RssChannel, OmniNewsError> {
+) -> Result<RssChannelResponseDto, OmniNewsError> {
     match rss_channel_repository::select_rss_channel_by_id(pool, channel_id).await {
-        Ok(res) => Ok(res),
+        Ok(res) => Ok(RssChannelResponseDto::from_model(res)),
         Err(e) => {
             error!("[Service] Failed to select rss channel by id: {:?}", e);
             Err(OmniNewsError::Database(e))
@@ -166,8 +169,8 @@ pub async fn find_rss_channel_by_rss_link(
 pub async fn get_channel_list(
     pool: &State<MySqlPool>,
     embedding_service: &State<EmbeddingService>,
-    value: SearchRequest,
-) -> Result<Vec<RssChannel>, OmniNewsError> {
+    value: SearchRequestDto,
+) -> Result<Vec<RssChannelResponseDto>, OmniNewsError> {
     let load_annoy = load_channel_annoy(embedding_service, value.search_value.unwrap()).await?;
 
     let result = match value.search_type.clone().unwrap() {
@@ -217,18 +220,19 @@ pub async fn get_channel_list(
         }
     };
 
-    Ok(result)
+    Ok(RssChannelResponseDto::from_model_list(result))
 }
 
-// 랭크 50순위 채널에서 20개 랜덤 반환
+// TODO 랭크 50순위 채널에서 20개 랜덤 반환
 pub async fn get_recommend_channel(
     pool: &State<MySqlPool>,
-) -> Result<Vec<RssChannel>, OmniNewsError> {
+) -> Result<Vec<RssChannelResponseDto>, OmniNewsError> {
     match rss_channel_repository::select_rss_channels_order_by_channel_rank(pool).await {
-        Ok(mut res) => {
-            let mut rng = rng();
-            res.shuffle(&mut rng);
-            Ok(res.into_iter().take(20).collect())
+        Ok(res) => {
+            //            let mut rng = rng();
+            //            res.shuffle(&mut rng);
+            //            Ok(res.into_iter().take(20).collect())
+            Ok(RssChannelResponseDto::from_model_list(res))
         }
         Err(e) => {
             error!(
@@ -243,27 +247,16 @@ pub async fn get_recommend_channel(
 pub async fn get_rss_preview(
     pool: &State<MySqlPool>,
     rss_link: String,
-) -> Result<RssChannel, OmniNewsError> {
+) -> Result<RssChannelResponseDto, OmniNewsError> {
     match rss_channel_repository::select_rss_channel_by_channel_rss_link(pool, rss_link.clone())
         .await
     {
-        Ok(res) => Ok(res),
+        Ok(res) => Ok(RssChannelResponseDto::from_model(res)),
         Err(_) => {
             let rss_channel = parse_rss_link_to_channel(&rss_link).await?;
             let new_channel = make_rss_channel(rss_channel, rss_link.clone());
-            let channel = RssChannel {
-                channel_id: Some(0),
-                channel_title: Some(new_channel.channel_title.unwrap_or_default()),
-                channel_image_url: Some(new_channel.channel_image_url.unwrap_or_default()),
-                channel_description: Some(new_channel.channel_description.unwrap_or_default()),
-                channel_link: Some(new_channel.channel_link.unwrap_or_default()),
-                channel_language: Some(new_channel.channel_language.unwrap_or_default()),
-                channel_rank: Some(0),
-                rss_generator: Some(new_channel.rss_generator.unwrap_or_default()),
-                channel_rss_link: Some(rss_link),
-            };
-
-            Ok(channel)
+            let channel = RssChannel::new(new_channel, rss_link);
+            Ok(RssChannelResponseDto::from_model(channel))
         }
     }
 }

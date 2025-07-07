@@ -1,11 +1,12 @@
 use std::{collections::HashMap, env};
 
 use crate::{
-    global::FETCH_FLAG,
-    model::{
-        error::OmniNewsError,
-        news::{NewNews, News, NewsItem, NewsParams},
+    dto::news::{
+        request::NewsRequestDto,
+        response::{NewsApiResponseDto, NewsResponseDto},
     },
+    global::FETCH_FLAG,
+    model::{error::OmniNewsError, news::NewNews},
     repository::news_repository,
     utils::llama_util::query_llama_summarize,
 };
@@ -21,9 +22,9 @@ type NewsType = HashMap<String, i32>;
 pub async fn get_news(
     pool: &State<MySqlPool>,
     category: String,
-) -> Result<Vec<News>, OmniNewsError> {
+) -> Result<Vec<NewsResponseDto>, OmniNewsError> {
     match news_repository::select_news_by_category(pool, category).await {
-        Ok(news) => Ok(news),
+        Ok(news) => Ok(NewsResponseDto::from_model_list(news)),
         Err(e) => {
             error!("[Service] Failed to fetch news: {:?}", e);
             Err(OmniNewsError::Database(e))
@@ -31,7 +32,9 @@ pub async fn get_news(
     }
 }
 
-pub async fn get_news_by_api(params: NewsParams) -> Result<Vec<NewsItem>, OmniNewsError> {
+pub async fn get_news_by_api(
+    params: NewsRequestDto,
+) -> Result<Vec<NewsApiResponseDto>, OmniNewsError> {
     let res = request_naver_news_api(params).await?;
 
     let xml_data = res.text().await.map_err(|e| {
@@ -42,7 +45,7 @@ pub async fn get_news_by_api(params: NewsParams) -> Result<Vec<NewsItem>, OmniNe
     get_news_items_by_xml(xml_data)
 }
 
-async fn request_naver_news_api(params: NewsParams) -> Result<Response, OmniNewsError> {
+async fn request_naver_news_api(params: NewsRequestDto) -> Result<Response, OmniNewsError> {
     let client = reqwest::Client::new();
 
     let mut head = HeaderMap::new();
@@ -74,18 +77,18 @@ async fn request_naver_news_api(params: NewsParams) -> Result<Response, OmniNews
     })
 }
 
-fn get_news_items_by_xml(xml_data: String) -> Result<Vec<NewsItem>, OmniNewsError> {
+fn get_news_items_by_xml(xml_data: String) -> Result<Vec<NewsApiResponseDto>, OmniNewsError> {
     use quick_xml::de::from_str;
     use serde::{Deserialize, Serialize};
 
     #[derive(Debug, Serialize, Deserialize)]
-    pub struct NewsRss {
+    struct NewsRss {
         channel: Channel,
     }
 
     #[derive(Debug, Serialize, Deserialize)]
     #[allow(non_snake_case)]
-    pub struct Channel {
+    struct Channel {
         title: String,
         link: String,
         description: String,
@@ -98,7 +101,7 @@ fn get_news_items_by_xml(xml_data: String) -> Result<Vec<NewsItem>, OmniNewsErro
 
     #[derive(Debug, Serialize, Deserialize)]
     #[allow(non_snake_case)]
-    pub struct NewsItemAPI {
+    struct NewsItemAPI {
         title: String,
         originallink: String,
         link: String,
@@ -113,18 +116,16 @@ fn get_news_items_by_xml(xml_data: String) -> Result<Vec<NewsItem>, OmniNewsErro
 
     let items = rss.channel.item;
 
-    let mut result: Vec<NewsItem> = Vec::new();
+    let mut result: Vec<NewsApiResponseDto> = Vec::new();
     for item in items {
-        result.push(NewsItem {
-            news_title: Some(item.title),
-            news_original_link: Some(item.originallink),
-            news_link: Some(item.link),
-            news_description: Some(item.description),
-            news_pub_date: Some(
-                NaiveDateTime::parse_from_str(&item.pubDate, "%a, %d %b %Y %H:%M:%S %z")
-                    .unwrap_or_default(),
-            ),
-        });
+        result.push(NewsApiResponseDto::new(
+            item.title,
+            item.originallink,
+            item.link,
+            item.description,
+            NaiveDateTime::parse_from_str(&item.pubDate, "%a, %d %b %Y %H:%M:%S %z")
+                .unwrap_or_default(),
+        ));
     }
 
     Ok(result)

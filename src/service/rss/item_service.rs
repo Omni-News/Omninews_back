@@ -1,16 +1,14 @@
 use crate::{
-    model::{
-        embedding::NewEmbedding,
-        error::OmniNewsError,
-        rss::{NewRssItem, RssItem},
-        search::{SearchRequest, SearchType},
+    dto::{
+        rss::{request::UpdateRssRankRequestDto, response::RssItemResponseDto},
+        search::request::SearchRequestDto,
     },
+    model::{embedding::NewEmbedding, error::OmniNewsError, rss::NewRssItem, search::SearchType},
     repository::rss_item_repository,
     service::embedding_service,
     utils::{annoy_util::load_rss_annoy, embedding_util::EmbeddingService},
 };
 use chrono::{DateTime, NaiveDateTime};
-use rand::{rng, seq::SliceRandom};
 use rocket::State;
 use rss::{Channel, Item};
 use scraper::{Html, Selector};
@@ -84,21 +82,8 @@ fn use_channel_url_if_none(link: Option<String>, channel_image_url: String) -> S
 }
 
 fn make_rss_item(channel_id: i32, item: &Item, item_image_link: String) -> NewRssItem {
-    NewRssItem {
-        channel_id: Some(channel_id),
-        rss_title: Some(
-            item.title()
-                .filter(|title| title.len() <= 200)
-                .unwrap_or_default()
-                .to_string(),
-        ),
-        rss_description: Some(item.description().unwrap_or("None").to_string()),
-        rss_link: Some(item.link().unwrap_or("None").to_string()),
-        rss_author: Some(item.author().unwrap_or("None").to_string()),
-        rss_pub_date: parse_pub_date(item.pub_date()),
-        rss_rank: Some(0),
-        rss_image_link: Some(item_image_link),
-    }
+    let rss_pub_date = parse_pub_date(item.pub_date());
+    NewRssItem::new(channel_id, item, rss_pub_date, item_image_link)
 }
 
 fn parse_pub_date(pub_date_str: Option<&str>) -> Option<NaiveDateTime> {
@@ -145,8 +130,8 @@ async fn store_rss_item(
 pub async fn get_rss_list(
     pool: &State<MySqlPool>,
     embedding_service: &State<EmbeddingService>,
-    value: SearchRequest,
-) -> Result<Vec<RssItem>, OmniNewsError> {
+    value: SearchRequestDto,
+) -> Result<Vec<RssItemResponseDto>, OmniNewsError> {
     let load_annoy = load_rss_annoy(embedding_service, value.search_value.unwrap()).await?;
 
     let result = match value.search_type.clone().unwrap() {
@@ -197,16 +182,19 @@ pub async fn get_rss_list(
         }
     };
 
-    Ok(result)
+    Ok(RssItemResponseDto::from_model_list(result))
 }
 
-// 상위 100개 중 50개 랜덤 반환
-pub async fn get_recommend_item(pool: &State<MySqlPool>) -> Result<Vec<RssItem>, OmniNewsError> {
+// TODO 상위 100개 중 50개 랜덤 반환
+pub async fn get_recommend_item(
+    pool: &State<MySqlPool>,
+) -> Result<Vec<RssItemResponseDto>, OmniNewsError> {
     match rss_item_repository::select_rss_items_order_by_rss_rank(pool).await {
-        Ok(mut res) => {
-            let mut rng = rng();
-            res.shuffle(&mut rng);
-            Ok(res.into_iter().take(50).collect())
+        Ok(res) => {
+            //            let mut rng = rng();
+            //            res.shuffle(&mut rng);
+            //            Ok(res.into_iter().take(50).collect())
+            Ok(RssItemResponseDto::from_model_list(res))
         }
         Err(e) => {
             error!(
@@ -221,21 +209,27 @@ pub async fn get_recommend_item(pool: &State<MySqlPool>) -> Result<Vec<RssItem>,
 pub async fn get_rss_item_by_channel_id(
     pool: &State<MySqlPool>,
     channel_id: i32,
-) -> Result<Vec<RssItem>, OmniNewsError> {
-    rss_item_repository::select_rss_items_by_channel_id(pool, channel_id)
-        .await
-        .map_err(|e| {
+) -> Result<Vec<RssItemResponseDto>, OmniNewsError> {
+    match rss_item_repository::select_rss_items_by_channel_id(pool, channel_id).await {
+        Ok(res) => Ok(RssItemResponseDto::from_model_list(res)),
+        Err(e) => {
             error!("[Service] Failed to select items by channel id: {:?}", e);
-            OmniNewsError::Database(e)
-        })
+            Err(OmniNewsError::Database(e))
+        }
+    }
 }
 
 pub async fn update_rss_item_rank(
     pool: &State<MySqlPool>,
-    rss_id: i32,
-    num: i32,
+    update_rss_rank: UpdateRssRankRequestDto,
 ) -> Result<bool, OmniNewsError> {
-    match rss_item_repository::update_rss_channel_rank_by_id(pool, rss_id, num).await {
+    match rss_item_repository::update_rss_channel_rank_by_id(
+        pool,
+        update_rss_rank.rss_id,
+        update_rss_rank.num,
+    )
+    .await
+    {
         Ok(res) => Ok(res),
         Err(e) => Err(OmniNewsError::Database(e)),
     }
