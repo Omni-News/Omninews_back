@@ -1,11 +1,15 @@
 use jsonwebtoken::{decode, DecodingKey, Validation};
+use okapi::openapi3::{Object, SecurityRequirement, SecurityScheme, SecuritySchemeData};
 use rocket::{
     fairing::{Fairing, Info, Kind},
-    http::{ContentType, Method, Status},
+    http::{ContentType, Header, Method, Status},
     request::{self, FromRequest, Outcome},
     Data, Request, Response,
 };
-use rocket_okapi::OpenApiFromRequest;
+use rocket_okapi::{
+    r#gen::OpenApiGenerator,
+    request::{OpenApiFromRequest, RequestHeaderInput},
+};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use sqlx::MySqlPool;
@@ -67,6 +71,42 @@ struct ErrorResponse {
     message: String,
 }
 
+#[allow(clippy::upper_case_acronyms)]
+pub struct CORS;
+
+#[rocket::async_trait]
+impl Fairing for CORS {
+    fn info(&self) -> Info {
+        Info {
+            name: "Add CORS headers to responses",
+            kind: Kind::Response,
+        }
+    }
+
+    async fn on_request(&self, request: &mut Request<'_>, _data: &mut Data<'_>) {
+        // OPTIONS 요청 처리
+        if request.method() == Method::Options {
+            // OPTIONS 요청은 요청 처리 중단하고 즉시 응답 반환
+            request.set_method(Method::Get);
+        }
+    }
+
+    async fn on_response<'r>(&self, request: &'r Request<'_>, response: &mut Response<'r>) {
+        // OPTIONS 요청 응답 처리
+        if request.method() == Method::Options {
+            response.set_status(Status::NoContent);
+        }
+
+        response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
+        response.set_header(Header::new(
+            "Access-Control-Allow-Methods",
+            "POST, GET, PATCH, OPTIONS",
+        ));
+        response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
+        response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
+    }
+}
+
 #[rocket::async_trait]
 impl Fairing for AuthMiddleware {
     fn info(&self) -> Info {
@@ -99,7 +139,7 @@ impl Fairing for AuthMiddleware {
         let auth_cache = match req.rocket().state::<AuthCache>() {
             Some(cache) => cache,
             None => {
-                error!("AuthCache not found");
+                error!("Error: AuthCache not found");
                 return;
             }
         };
@@ -230,14 +270,14 @@ impl Fairing for AuthMiddleware {
 }
 
 // 인증된 사용자 정보를 간편하게 가져오는 Request Guard
-#[derive(JsonSchema, OpenApiFromRequest)]
+#[derive(JsonSchema)]
 pub struct AuthenticatedUser {
     pub user_email: String,
 }
 
 #[rocket::async_trait]
 impl<'r> FromRequest<'r> for AuthenticatedUser {
-    type Error = ();
+    type Error = &'static str;
 
     #[allow(clippy::redundant_closure)]
     async fn from_request(req: &'r Request<'_>) -> request::Outcome<Self, Self::Error> {
@@ -246,7 +286,7 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
 
         // request_id가 비어있다면 권한 없음
         if request_id.is_empty() {
-            return Outcome::Error((Status::Unauthorized, ()));
+            return Outcome::Error((Status::Unauthorized, "인증되지 않은 요청입니다."));
         }
 
         if let Some(auth_cache) = req.rocket().state::<AuthCache>() {
@@ -258,6 +298,42 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
         }
 
         // 인증 실패
-        Outcome::Error((Status::Unauthorized, ()))
+        Outcome::Error((Status::Unauthorized, "인증되지 않은 요청입니다."))
+    }
+}
+
+// rapidoc, swagger-ui 전용
+#[allow(clippy::needless_lifetimes)]
+impl<'a> OpenApiFromRequest<'a> for AuthenticatedUser {
+    fn from_request_input(
+        _gen: &mut OpenApiGenerator,
+        _name: String,
+        _required: bool,
+    ) -> rocket_okapi::Result<RequestHeaderInput> {
+        // Setup global requirement for Security scheme
+        let security_scheme = SecurityScheme {
+            description: Some(
+                "Requires an Bearer token to access, token is: `mytoken`.".to_owned(),
+            ),
+            // Setup data requirements.
+            // In this case the header `Authorization: mytoken` needs to be set.
+            data: SecuritySchemeData::Http {
+                scheme: "bearer".to_owned(), // `basic`, `digest`, ...
+                // Just gives use a hint to the format used
+                bearer_format: Some("bearer".to_owned()),
+            },
+            extensions: Object::default(),
+        };
+        // Add the requirement for this route/endpoint
+        // This can change between routes.
+        let mut security_req = SecurityRequirement::new();
+        // Each security requirement needs to be met before access is allowed.
+        security_req.insert("HttpAuth".to_owned(), Vec::new());
+        // These vvvvvvv-----^^^^^^^^ values need to match exactly!
+        Ok(RequestHeaderInput::Security(
+            "HttpAuth".to_owned(),
+            security_scheme,
+            security_req,
+        ))
     }
 }

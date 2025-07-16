@@ -9,17 +9,6 @@ pub enum NewticleType {
     News,
 }
 
-// TODO 필요없으면지우기
-//#[derive(Debug, Clone, Serialize, Deserialize)]
-//pub struct RssId {
-//    pub rss_id: i32,
-//}
-//
-//#[derive(Debug, Clone, Serialize, Deserialize)]
-//pub struct ChannelId {
-//    pub channel_id: i32,
-//}
-
 #[derive(Debug, Clone)]
 pub struct NewRssChannel {
     pub channel_title: Option<String>,

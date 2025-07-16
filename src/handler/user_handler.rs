@@ -19,11 +19,12 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
     openapi_get_routes_spec![settings: verify_refresh_token, verify_access_token, login, logout]
 }
 
-/// # Verify refresh token
+/// # 리프레시 토큰 검증 API
 ///
-/// Returns a new access token if the refresh token is valid.
-#[openapi(tag = "User")]
-#[post("/refresh-token", data = "<refresh_token>")]
+/// 유효한 리프레시 토큰으로 새 액세스 토큰을 발급합니다.
+///
+#[openapi(tag = "인증 API")]
+#[post("/user/refresh-token", data = "<refresh_token>")]
 pub async fn verify_refresh_token(
     pool: &State<MySqlPool>,
     refresh_token: Json<VerifyRefreshTokenRequestDto>,
@@ -34,12 +35,12 @@ pub async fn verify_refresh_token(
     }
 }
 
-/// # Login
+/// # 로그인/회원가입 API
 ///
-/// Returns a JWT token if the user credentials are valid or creates a new user and returns a JWT
-/// token.
-#[openapi(tag = "User")]
-#[post("/login", data = "<user_data>")]
+/// 사용자 소셜 로그인 정보로 로그인 또는 신규 가입을 처리합니다.
+///
+#[openapi(tag = "인증 API")]
+#[post("/user/login", data = "<user_data>")]
 pub async fn login(
     pool: &State<MySqlPool>,
     user_data: Json<LoginUserRequestDto>,
@@ -50,12 +51,12 @@ pub async fn login(
     }
 }
 
-/// #Logout
+/// # 로그아웃 API
 ///
-/// Removes the user's token from the database, effectively logging them out.
-/// Returns `Status::Ok` if successful.
-#[openapi(tag = "User")]
-#[post("/logout")]
+/// 현재 로그인된 사용자의 액세스 토큰을 삭제합니다.
+///
+#[openapi(tag = "인증 API")]
+#[post("/user/logout")]
 pub async fn logout(pool: &State<MySqlPool>, user: AuthenticatedUser) -> Result<Status, Status> {
     match user_service::delete_user_token(pool, user.user_email).await {
         Ok(_) => Ok(Status::Ok),
@@ -63,12 +64,12 @@ pub async fn logout(pool: &State<MySqlPool>, user: AuthenticatedUser) -> Result<
     }
 }
 
-// auth_middleware에서 access token은 검증됨.
-/// # Verify access token
+/// # 액세스 토큰 검증 API
 ///
-/// Returns `Status::Ok` if the access token is valid.
-#[openapi(tag = "User")]
-#[get("/access-token")]
+/// 현재 액세스 토큰의 유효성을 확인합니다.
+///
+#[openapi(tag = "인증 API")]
+#[get("/user/access-token")]
 pub async fn verify_access_token() -> Result<Status, Status> {
     Ok(Status::Ok)
 }

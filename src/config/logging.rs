@@ -1,4 +1,3 @@
-use dotenv::dotenv;
 use log::LevelFilter;
 use log4rs::{
     append::{
@@ -16,15 +15,11 @@ use log4rs::{
 };
 use std::env;
 
-pub fn load_env() {
-    dotenv().ok();
-}
-
-pub fn configure_logging() {
+pub fn load_logger() {
     // Disable ANSI colors in log4rs output
     env::set_var("RUST_LOG_STYLE", "never");
     // Disable ANSI colors in Rocket CLI output
-    env::set_var("ROCKET_CLI_COLORS", "false");
+    env::set_var("ROCKET_CLI_COLORS", "true");
     // Set default log level to "info" if RUST_LOG is not already set
     if env::var("RUST_LOG").is_err() {
         env::set_var("RUST_LOG", "info");
