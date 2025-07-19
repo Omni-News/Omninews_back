@@ -212,14 +212,16 @@ pub async fn update_user_notification_setting(
     pool: &State<MySqlPool>,
     user_email: String,
     notification_push: bool,
+    user_fcm_token: String,
 ) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await?;
 
     let result = query!(
         "UPDATE user
-            SET user_notification_push = ?
+            SET user_notification_push = ?, user_fcm_token = ?
         WHERE user_email = ?",
         notification_push,
+        user_fcm_token,
         user_email
     )
     .execute(&mut *conn)

@@ -25,6 +25,7 @@ CREATE TABLE `user` (
 	`user_role`	ENUM('user', 'admin', 'editor')	DEFAULT 'user',
 	`user_theme`	ENUM('white', 'black', 'blue', 'paper')	DEFAULT 'paper',
 	`user_notification_push`	BOOLEAN NOT NULL	DEFAULT FALSE,
+  `user_fcm_token` VARCHAR(255) NULL,
 	`user_articles_read`	INT	DEFAULT 0,
 	`user_last_active_at`	DATETIME    ,
 	`user_subscription_plan`    BOOLEAN	DEFAULT FALSE,

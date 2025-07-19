@@ -38,6 +38,7 @@ pub struct User {
     pub user_role: Option<String>,
     pub user_theme: Option<String>,
     pub user_notification_push: Option<bool>,
+    pub user_fcm_token: Option<String>,
     pub user_articles_read: Option<i32>,
     pub user_last_active_at: Option<String>,
     pub user_subscription_plan: Option<String>,

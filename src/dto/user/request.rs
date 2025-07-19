@@ -19,6 +19,8 @@ pub struct LoginUserRequestDto {
 pub struct UserNotificationRequestDto {
     #[schemars(example = "example_user_notification_push")]
     pub user_notification_push: Option<bool>,
+    #[schemars(example = "example_user_fcm_token")]
+    pub user_fcm_token: Option<String>,
 }
 
 fn example_user_email() -> &'static str {
@@ -43,4 +45,8 @@ fn example_user_social_provider_id() -> &'static str {
 
 fn example_user_notification_push() -> bool {
     true
+}
+
+fn example_user_fcm_token() -> &'static str {
+    "fcm_token_example_1234567890"
 }

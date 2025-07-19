@@ -300,7 +300,8 @@ pub async fn update_user_notification_setting(
     match user_repository::update_user_notification_setting(
         pool,
         user_email,
-        notification_data.user_notification_push,
+        notification_data.user_notification_push.unwrap_or_default(),
+        notification_data.user_fcm_token.unwrap_or_default(),
     )
     .await
     {

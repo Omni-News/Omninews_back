@@ -73,6 +73,8 @@ pub async fn login(
 ///
 /// ### `user_notification_push` : 사용자 알림 푸시 설정 (true/false)
 ///
+/// ### `user_fcm_token` : 사용자 FCM 토큰 (Firebase Cloud Messaging Token)
+///
 #[openapi(tag = "알림 API")]
 #[post("/user/notification", data = "<notification_data>")]
 pub async fn notification_setting(
