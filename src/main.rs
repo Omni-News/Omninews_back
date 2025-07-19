@@ -42,6 +42,7 @@ async fn rocket() -> _ {
     let exempt_paths = vec![
         // omninews
         "/v1/api/user/login".to_string(),
+        "/v1/api/user/apple/login".to_string(),
         "/v1/api/user/refresh-token".to_string(),
         "/v1/api/health".to_string(),
         // openapi

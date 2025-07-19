@@ -10,13 +10,13 @@ use crate::{
             request::VerifyRefreshTokenRequestDto,
             response::{AccessTokenResponseDto, JwtTokenResponseDto},
         },
-        user::request::{LoginUserRequestDto, UserNotificationRequestDto},
+        user::request::{AppleLoginRequestDto, LoginUserRequestDto, UserNotificationRequestDto},
     },
     service::user_service,
 };
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: verify_refresh_token, verify_access_token, login, logout, notification_setting]
+    openapi_get_routes_spec![settings: verify_refresh_token, verify_access_token, login, apple_login, logout, notification_setting]
 }
 
 /// # 리프레시 토큰 검증 API
@@ -67,29 +67,20 @@ pub async fn login(
     }
 }
 
-/// # 사용자 알림 설정 API
+/// # 애플 로그인 API
 ///
-/// 사용자가 알림을 설정했을 때 사용되는 API입니다.
+/// 애플의 최초 회원가입이 아닐 시 사용하는 API입니다.
 ///
-/// ### `user_notification_push` : 사용자 알림 푸시 설정 (true/false)
+/// ### `user_social_provider_id` : 애플에서 발급한 고유 ID (로그인에 사용됩니다.)
 ///
-/// ### `user_fcm_token` : 사용자 FCM 토큰 (Firebase Cloud Messaging Token)
-///
-#[openapi(tag = "알림 API")]
-#[post("/user/notification", data = "<notification_data>")]
-pub async fn notification_setting(
+#[openapi(tag = "인증 API")]
+#[post("/user/apple/login", data = "<user_data>")]
+pub async fn apple_login(
     pool: &State<MySqlPool>,
-    user: AuthenticatedUser,
-    notification_data: Json<UserNotificationRequestDto>,
-) -> Result<Status, Status> {
-    match user_service::update_user_notification_setting(
-        pool,
-        user.user_email,
-        notification_data.into_inner(),
-    )
-    .await
-    {
-        Ok(_) => Ok(Status::Ok),
+    user_data: Json<AppleLoginRequestDto>,
+) -> Result<Json<JwtTokenResponseDto>, Status> {
+    match user_service::apple_login(pool, user_data.into_inner()).await {
+        Ok(token) => Ok(Json(token)),
         Err(_) => Err(Status::InternalServerError),
     }
 }
@@ -119,4 +110,31 @@ pub async fn logout(
 #[get("/user/access-token")]
 pub async fn verify_access_token(_auth: AuthenticatedUser) -> Result<Status, Status> {
     Ok(Status::Ok)
+}
+
+/// # 사용자 알림 설정 API
+///
+/// 사용자가 알림을 설정했을 때 사용되는 API입니다.
+///
+/// ### `user_notification_push` : 사용자 알림 푸시 설정 (true/false)
+///
+/// ### `user_fcm_token` : 사용자 FCM 토큰 (Firebase Cloud Messaging Token)
+///
+#[openapi(tag = "알림 API")]
+#[post("/user/notification", data = "<notification_data>")]
+pub async fn notification_setting(
+    pool: &State<MySqlPool>,
+    user: AuthenticatedUser,
+    notification_data: Json<UserNotificationRequestDto>,
+) -> Result<Status, Status> {
+    match user_service::update_user_notification_setting(
+        pool,
+        user.user_email,
+        notification_data.into_inner(),
+    )
+    .await
+    {
+        Ok(_) => Ok(Status::Ok),
+        Err(_) => Err(Status::InternalServerError),
+    }
 }

@@ -16,7 +16,7 @@ CREATE TABLE `user` (
 	`user_display_name`	VARCHAR(100),
 	`user_photo_url`	TEXT,
 	`user_social_login_provider`	ENUM('google', 'kakao', 'apple') NOT NULL,
-	`user_social_provider_id`	VARCHAR(255) NOT NULL,
+	`user_social_provider_id`	VARCHAR(255) NOT NULL, -- Apple은 로그인 시 이 속성으로 비교해야 함.
 	`user_access_token`	TEXT,
 	`user_refresh_token`	TEXT,
 	`user_access_token_expires_at`	DATETIME,

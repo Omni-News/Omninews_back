@@ -315,9 +315,7 @@ impl<'a> OpenApiFromRequest<'a> for AuthenticatedUser {
     ) -> rocket_okapi::Result<RequestHeaderInput> {
         // Setup global requirement for Security scheme
         let security_scheme = SecurityScheme {
-            description: Some(
-                "Requires an Bearer token to access, token is: `mytoken`.".to_owned(),
-            ),
+            description: Some("Requires an Bearer token to access.".to_owned()),
             // Setup data requirements.
             // In this case the header `Authorization: mytoken` needs to be set.
             data: SecuritySchemeData::Http {

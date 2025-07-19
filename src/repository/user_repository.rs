@@ -7,22 +7,6 @@ use crate::{
     model::{auth::JwtToken, user::NewUser},
 };
 
-pub async fn select_user_id_by_email(
-    pool: &State<MySqlPool>,
-    user_email: String,
-) -> Result<i32, sqlx::Error> {
-    let mut conn = get_db(pool).await?;
-
-    let result = query!("SELECT user_id FROM user WHERE user_email = ?", user_email)
-        .fetch_one(&mut *conn)
-        .await;
-
-    match result {
-        Ok(res) => Ok(res.user_id),
-        Err(e) => Err(e),
-    }
-}
-
 pub async fn insert_user(pool: &State<MySqlPool>, user: NewUser) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await?;
 
@@ -51,6 +35,40 @@ pub async fn insert_user(pool: &State<MySqlPool>, user: NewUser) -> Result<i32, 
 
     match result {
         Ok(res) => Ok(res.last_insert_id() as i32),
+        Err(e) => Err(e),
+    }
+}
+pub async fn select_user_id_by_email(
+    pool: &State<MySqlPool>,
+    user_email: String,
+) -> Result<i32, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!("SELECT user_id FROM user WHERE user_email = ?", user_email)
+        .fetch_one(&mut *conn)
+        .await;
+
+    match result {
+        Ok(res) => Ok(res.user_id),
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn select_user_email_by_social_provider_id(
+    pool: &State<MySqlPool>,
+    user_social_provider_id: String,
+) -> Result<String, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!(
+        "SELECT user_email FROM user WHERE user_social_provider_id = ?",
+        user_social_provider_id
+    )
+    .fetch_one(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res.user_email),
         Err(e) => Err(e),
     }
 }

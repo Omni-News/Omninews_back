@@ -16,6 +16,12 @@ pub struct LoginUserRequestDto {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct AppleLoginRequestDto {
+    #[schemars(example = "example_user_social_provider_id")]
+    pub user_social_provider_id: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct UserNotificationRequestDto {
     #[schemars(example = "example_user_notification_push")]
     pub user_notification_push: Option<bool>,

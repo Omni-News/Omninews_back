@@ -12,7 +12,7 @@ use crate::{
             request::VerifyRefreshTokenRequestDto,
             response::{AccessTokenResponseDto, JwtTokenResponseDto},
         },
-        user::request::{LoginUserRequestDto, UserNotificationRequestDto},
+        user::request::{AppleLoginRequestDto, LoginUserRequestDto, UserNotificationRequestDto},
     },
     model::{
         auth::{AccessToken, JwtToken, TokenType},
@@ -265,6 +265,30 @@ fn make_token(
             ))
         }
     }
+}
+
+pub async fn apple_login(
+    pool: &State<MySqlPool>,
+    apple_login: AppleLoginRequestDto,
+) -> Result<JwtTokenResponseDto, OmniNewsError> {
+    let user_email = user_repository::select_user_email_by_social_provider_id(
+        pool,
+        apple_login.user_social_provider_id.unwrap_or_default(),
+    )
+    .await?;
+
+    // Apple login is not a new user, so we can issue tokens directly
+    login_or_create_user(
+        pool,
+        LoginUserRequestDto {
+            user_email: Some(user_email),
+            user_display_name: None,
+            user_photo_url: None,
+            user_social_login_provider: None,
+            user_social_provider_id: None,
+        },
+    )
+    .await
 }
 
 pub async fn find_user_id_by_email(
