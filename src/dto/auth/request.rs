@@ -10,9 +10,9 @@ pub struct VerifyRefreshTokenRequestDto {
 }
 
 fn example_token() -> &'static str {
-    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUz...    // 클라이언트가 가지고 있는 refresh token"
+    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUz..."
 }
 
 fn example_email() -> &'static str {
-    "hong11@gil.com    // 클라이언트의 email 주소"
+    "hong11@gil.com"
 }

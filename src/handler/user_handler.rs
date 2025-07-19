@@ -23,6 +23,12 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 ///
 /// 유효한 리프레시 토큰으로 새 액세스 토큰을 발급합니다.
 ///
+/// 클라이언트에서 로그인 실패 시 refresh token 재발급 요청
+///
+/// ### `token` : 클라이언트가 가지고 있는 refresh token
+///
+/// ### `email` : 클라이언트의 email 주소
+///
 #[openapi(tag = "인증 API")]
 #[post("/user/refresh-token", data = "<refresh_token>")]
 pub async fn verify_refresh_token(
@@ -38,6 +44,18 @@ pub async fn verify_refresh_token(
 /// # 로그인/회원가입 API
 ///
 /// 사용자 소셜 로그인 정보로 로그인 또는 신규 가입을 처리합니다.
+///
+/// ### `user_email` : 사용자의 이메일 주소
+///
+/// ### `user_display_name` : 사용자의 표시 이름
+///
+/// ### `user_photo_url` : 사용자의 프로필 사진 URL ( 소셜 로그인 제공자에서 제공 )
+///
+/// ### `user_social_login_provider` : 소셜 로그인 제공자 (예: google, kakao 등)
+///
+/// ### `user_social_provider_id` : 소셜 로그인 제공자의 고유 ID ( 소셜 로그인 제공자에서 제공 )
+///
+/// ### `user_notification_push` : 푸시 알림 수신 여부
 ///
 #[openapi(tag = "인증 API")]
 #[post("/user/login", data = "<user_data>")]
@@ -57,7 +75,11 @@ pub async fn login(
 ///
 #[openapi(tag = "인증 API")]
 #[post("/user/logout")]
-pub async fn logout(pool: &State<MySqlPool>, user: AuthenticatedUser) -> Result<Status, Status> {
+pub async fn logout(
+    pool: &State<MySqlPool>,
+    user: AuthenticatedUser,
+    _auth: AuthenticatedUser,
+) -> Result<Status, Status> {
     match user_service::delete_user_token(pool, user.user_email).await {
         Ok(_) => Ok(Status::Ok),
         Err(_) => Err(Status::InternalServerError),
@@ -70,6 +92,6 @@ pub async fn logout(pool: &State<MySqlPool>, user: AuthenticatedUser) -> Result<
 ///
 #[openapi(tag = "인증 API")]
 #[get("/user/access-token")]
-pub async fn verify_access_token() -> Result<Status, Status> {
+pub async fn verify_access_token(_auth: AuthenticatedUser) -> Result<Status, Status> {
     Ok(Status::Ok)
 }

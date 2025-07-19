@@ -2,7 +2,10 @@ use rocket::State;
 use sqlx::MySqlPool;
 
 use crate::{
-    dto::rss::response::{RssChannelResponseDto, RssItemResponseDto},
+    dto::{
+        rss::response::{RssChannelResponseDto, RssItemResponseDto},
+        subscribe::request::SubscribeRequestDto,
+    },
     model::error::OmniNewsError,
     repository::subscribe_repository,
 };
@@ -26,8 +29,9 @@ pub async fn get_subscription_channels(
 pub async fn subscribe_channel(
     pool: &State<MySqlPool>,
     user_email: String,
-    channel_id: i32,
+    channel_id: SubscribeRequestDto,
 ) -> Result<(), OmniNewsError> {
+    let channel_id = channel_id.channel_id.unwrap_or_default();
     let user_id = user_service::find_user_id_by_email(pool, user_email).await?;
 
     if let Ok(res) = channel_service::is_channel_exist_by_id(pool, channel_id).await {

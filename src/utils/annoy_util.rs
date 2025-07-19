@@ -36,7 +36,7 @@ async fn save_channel_annoy(embeddings: Vec<Embedding>) -> Result<(), OmniNewsEr
     annoy.set_seed(123);
 
     for embedding in embeddings.iter() {
-        info!("{}", embedding.embedding_id.unwrap());
+        //info!("{}", embedding.embedding_id.unwrap());
         let decoded_embedding = decode_embedding(embedding.embedding_value.as_ref().unwrap());
         annoy.add_item(embedding.embedding_id.unwrap(), decoded_embedding.as_ref());
     }
@@ -58,7 +58,7 @@ async fn save_rss_annoy(embeddings: Vec<Embedding>) -> Result<(), OmniNewsError>
     annoy.set_seed(123);
 
     for embedding in embeddings.iter() {
-        info!("{}", embedding.embedding_id.unwrap());
+        //info!("{}", embedding.embedding_id.unwrap());
         let decoded_embedding = decode_embedding(embedding.embedding_value.as_ref().unwrap());
         annoy.add_item(embedding.embedding_id.unwrap(), decoded_embedding.as_ref());
     }
@@ -80,7 +80,7 @@ async fn save_news_annoy(embeddings: Vec<Embedding>) -> Result<(), OmniNewsError
     annoy.set_seed(123);
 
     for embedding in embeddings.iter() {
-        info!("{}", embedding.embedding_id.unwrap());
+        //info!("{}", embedding.embedding_id.unwrap());
         let decoded_embedding = decode_embedding(embedding.embedding_value.as_ref().unwrap());
         annoy.add_item(embedding.embedding_id.unwrap(), decoded_embedding.as_ref());
     }

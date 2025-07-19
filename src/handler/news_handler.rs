@@ -4,6 +4,7 @@ use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use sqlx::MySqlPool;
 
 use crate::{
+    auth_middleware::AuthenticatedUser,
     dto::news::{
         request::NewsRequestDto,
         response::{NewsApiResponseDto, NewsResponseDto},
@@ -20,32 +21,14 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 ///
 /// 제공된 카테고리에 해당하는 뉴스 목록을 반환합니다.
 ///
-/// ## 요청 파라미터
-/// - `category`: 조회할 뉴스 카테고리 (예: "business", "technology", "sports")
+/// ### `category` : 뉴스 카테고리 (예: "정치", "경제", "사회", "생활/문화", "세계", "IT/과학")
 ///
-/// ## 성공 응답
-/// ```
-/// [
-///   {
-///     "news_id": 123,
-///     "title": "최신 기술 트렌드 분석",
-///     "description": "올해 주목해야 할 기술 트렌드에 대한 분석...",
-///     "url": "https://example.com/news/123",
-///     "image_url": "https://example.com/images/news123.jpg",
-///     "published_at": "2025-07-09T05:30:00Z",
-///     "source": "Tech Daily",
-///     "category": "technology"
-///   }
-/// ]
-/// ```
-///
-/// ## 실패 응답
-/// - 상태 코드 500: 서버 오류
 #[openapi(tag = "뉴스 API")]
 #[get("/news?<category>")]
 pub async fn get_news(
     pool: &State<MySqlPool>,
     category: String,
+    _auth: AuthenticatedUser,
 ) -> Result<Json<Vec<NewsResponseDto>>, Status> {
     match news_service::get_news(pool, category).await {
         Ok(res) => Ok(Json(res)),
@@ -57,33 +40,17 @@ pub async fn get_news(
 ///
 /// 제공된 파라미터에 따라 외부 API에서 뉴스 목록을 검색하여 반환합니다.
 ///
-/// ## 요청 파라미터
-/// - `q`: 검색어 (예: "climate change")
-/// - `language`: 뉴스 언어 (예: "ko", "en")
-/// - `country`: 뉴스 국가 코드 (예: "kr", "us")
-/// - `category`: 뉴스 카테고리 (예: "business", "technology")
-/// - `page_size`: 페이지당 결과 수 (예: 10)
-/// - `page`: 페이지 번호 (예: 1)
+/// ### `query` : 검색어 (예: "AI", "경제")
 ///
-/// ## 성공 응답
-/// [
-///   {
-///     "title": "기후 변화에 관한 최신 연구",
-///     "description": "세계 과학자들이 발표한 기후 변화 연구 결과...",
-///     "url": "https://example.com/news/climate",
-///     "image_url": "https://example.com/images/climate.jpg",
-///     "published_at": "2025-07-08T14:25:00Z",
-///     "source": "Science Daily",
-///     "category": "environment"
-///   }
-/// ]
+/// ### `display` : 뉴스 개수 (예: 1 ~ 1000)
 ///
-/// ## 실패 응답
-/// - 상태 코드 500: API 호출 실패 또는 서버 오류
+/// ### `sort` : 정렬 기준 (예: sim => 정확도순, date => 날짜순)
+///
 #[openapi(tag = "뉴스 API")]
 #[get("/news/api?<params..>")]
 pub async fn get_news_by_api(
     params: NewsRequestDto,
+    _auth: AuthenticatedUser,
 ) -> Result<Json<Vec<NewsApiResponseDto>>, Status> {
     match news_service::get_news_by_api(params).await {
         Ok(res) => Ok(Json(res)),
@@ -91,19 +58,18 @@ pub async fn get_news_by_api(
     }
 }
 
+// TODO fetch start, stop은 관리자 권한 따로 만들어서 관리하기
 /// # 뉴스 수집 시작 API
 ///
 /// 외부 API에서 뉴스를 자동으로 수집하는 프로세스를 시작합니다.
 ///
-/// ## 성공 응답
-/// - 텍스트 메시지: "Fetching started!"
+/// ### 기능 설명
 ///
-/// ## 사용 시나리오
-/// - 뉴스 수집이 중단된 후 다시 시작하고자 할 때 사용
-/// - 관리자 권한이 필요한 API입니다
+/// fetch 시작 시 5분마다 뉴스 크롤링 및 가공 후 db 저장.
+///
 #[openapi(tag = "뉴스 관리 API")]
 #[get("/news/fetch_start")]
-pub async fn fetch_start() -> &'static str {
+pub async fn fetch_start(_auth: AuthenticatedUser) -> &'static str {
     let mut fetch_flag = FETCH_FLAG.lock().unwrap();
     *fetch_flag = true;
     "Fetching started!"
@@ -113,15 +79,10 @@ pub async fn fetch_start() -> &'static str {
 ///
 /// 외부 API에서 뉴스를 자동으로 수집하는 프로세스를 중지합니다.
 ///
-/// ## 성공 응답
-/// - 텍스트 메시지: "Fetching stopped!"
 ///
-/// ## 사용 시나리오
-/// - 시스템 유지보수나 리소스 관리를 위해 일시적으로 뉴스 수집을 중단할 때 사용
-/// - 관리자 권한이 필요한 API입니다
 #[openapi(tag = "뉴스 관리 API")]
 #[get("/news/fetch_stop")]
-pub async fn fetch_stop() -> &'static str {
+pub async fn fetch_stop(_auth: AuthenticatedUser) -> &'static str {
     let mut fetch_flag = FETCH_FLAG.lock().unwrap();
     *fetch_flag = false;
     "Fetching stopped!"

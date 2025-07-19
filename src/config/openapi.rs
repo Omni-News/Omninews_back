@@ -9,19 +9,18 @@ pub fn custom_openapi_spec() -> OpenApi {
     OpenApi {
         openapi: OpenApi::default_version(),
         info: Info {
-            title: "The z best API ever".to_owned(),
-            description: Some("This is the best API ever, please use me!".to_owned()),
-            terms_of_service: Some(
-                "https://github.com/GREsau/okapi/blob/master/LICENSE".to_owned(),
-            ),
+            title: "The Omninews API specs".to_owned(),
+            description: Some("This is a API specs of Omninews.".to_owned()),
+            terms_of_service: Some("https://github.com/kang1027".to_owned()),
             contact: Some(Contact {
-                name: Some("okapi example".to_owned()),
-                url: Some("https://github.com/GREsau/okapi".to_owned()),
+                name: Some("Omninews".to_owned()),
+                url: Some("https://github.com/kang1027".to_owned()),
                 email: None,
                 ..Default::default()
             }),
             license: Some(License {
                 name: "MIT".to_owned(),
+                // TODO 라이센스 등 버전 수정.
                 url: Some("https://github.com/GREsau/okapi/blob/master/LICENSE".to_owned()),
                 ..Default::default()
             }),
@@ -35,7 +34,7 @@ pub fn custom_openapi_spec() -> OpenApi {
                 ..Default::default()
             },
             Server {
-                url: format!("http://example.com/{}", CURRENT_VERSION).to_owned(),
+                url: format!("http://61.253.113.42:1027/{}", CURRENT_VERSION).to_owned(),
                 description: Some("Possible Remote".to_owned()),
                 ..Default::default()
             },

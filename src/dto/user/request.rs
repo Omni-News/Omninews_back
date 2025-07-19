@@ -18,25 +18,25 @@ pub struct LoginUserRequestDto {
 }
 
 fn example_user_email() -> &'static str {
-    "hong11@gil.com     // user의 email 주소"
+    "hong11@gil.com"
 }
 
 fn example_user_display_name() -> &'static str {
-    "홍길동    // 화면에 표시될 user의 이름"
+    "홍길동"
 }
 
 fn example_user_photo_url() -> &'static str {
-    "https://example.com/photo.jpg    // user의 프로필 사진 url, Oauth로그인 시 각 플랫폼에서 제공됨."
+    "https://example.com/photo.jpg"
 }
 
 fn example_user_social_login_provider() -> &'static str {
-    "google    // user의 소셜 로그인 제공자, ex) google, apple, kakao"
+    "google"
 }
 
 fn example_user_social_provider_id() -> &'static str {
-    "1234567890    // 소셜 로그인 제공자에서 발급한 user의 고유 ID, Oauth 로그인 시 플랫폼에서 제공됨."
+    "1234567890"
 }
 
 fn example_user_notification_push() -> bool {
-    true // user의 푸시 알림 수신 여부, 기본값은 true
+    true
 }

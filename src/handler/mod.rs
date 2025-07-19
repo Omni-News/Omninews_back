@@ -1,8 +1,7 @@
 use okapi::openapi3::OpenApi;
 use rocket_okapi::{get_nested_endpoints_and_docs, settings::OpenApiSettings};
 
-use crate::config;
-
+pub mod config_handler;
 pub mod error_handler;
 pub mod folder_handler;
 pub mod health_handler;
@@ -21,7 +20,5 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         "/" => subscription_handler::get_routes_and_docs(settings),
         "/" => folder_handler::get_routes_and_docs(settings),
         "/" => health_handler::get_routes_and_docs(settings),
-        // Authorization
-        "/" => config::http_auth::get_routes_and_docs(settings),
     }
 }

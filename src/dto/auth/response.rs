@@ -45,17 +45,17 @@ impl AccessTokenResponseDto {
 }
 
 fn example_access_token() -> &'static str {
-    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUz...    // 서버에서 생성한 access token"
+    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUz..."
 }
 
 fn example_access_token_expires() -> &'static str {
-    "2016-07-08 09:10:11    // 서버에서 생성한 access token의 만료 시간"
+    "2016-07-08 09:10:11"
 }
 
 fn example_refresh_token() -> &'static str {
-    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUz...   // 서버에서 생성한 refresh token"
+    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUz..."
 }
 
 fn example_refresh_token_expires() -> &'static str {
-    "2016-07-09 12:30:00    // 서버에서 생성한 refresh token의 만료 시간"
+    "2016-07-09 12:30:00"
 }

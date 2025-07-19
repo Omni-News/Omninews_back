@@ -286,7 +286,10 @@ impl<'r> FromRequest<'r> for AuthenticatedUser {
 
         // request_id가 비어있다면 권한 없음
         if request_id.is_empty() {
-            return Outcome::Error((Status::Unauthorized, "인증되지 않은 요청입니다."));
+            return Outcome::Error((
+                Status::Unauthorized,
+                "requiest_id가 없음. 인증되지 않은 요청입니다.",
+            ));
         }
 
         if let Some(auth_cache) = req.rocket().state::<AuthCache>() {

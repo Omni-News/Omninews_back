@@ -1,20 +1,14 @@
 //! ------ HTTP `Authorization` header ------
 
-use okapi::openapi3::OpenApi;
-use rocket::serde::json::Json;
 use rocket::{
-    get,
     http::Status,
     request::{self, FromRequest, Outcome},
 };
 use rocket_okapi::okapi::openapi3::{
     Object, SecurityRequirement, SecurityScheme, SecuritySchemeData,
 };
-use rocket_okapi::openapi_get_routes_spec;
-use rocket_okapi::settings::OpenApiSettings;
 use rocket_okapi::{
     gen::OpenApiGenerator,
-    openapi,
     request::{OpenApiFromRequest, RequestHeaderInput},
 };
 
@@ -43,6 +37,7 @@ impl<'a> FromRequest<'a> for HttpAuth {
     }
 }
 
+#[allow(clippy::needless_lifetimes)]
 impl<'a> OpenApiFromRequest<'a> for HttpAuth {
     fn from_request_input(
         _gen: &mut OpenApiGenerator,
@@ -75,20 +70,4 @@ impl<'a> OpenApiFromRequest<'a> for HttpAuth {
             security_req,
         ))
     }
-}
-
-pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: http_auth]
-}
-/// # HTTP `Authorization` header
-///
-/// The token is: `mytoken`
-/// This is a common way of checking the authentication.
-/// (make sure this is only sent over HTTPS, don't want secrets to leak)
-#[openapi(tag = "Test")]
-#[get("/http_auth")]
-pub fn http_auth(token: HttpAuth) -> Json<&'static str> {
-    // Use api key
-    let _seems_you_have_access = token;
-    Json("You got access")
 }

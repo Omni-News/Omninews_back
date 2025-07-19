@@ -3,7 +3,10 @@ use sqlx::MySqlPool;
 
 use crate::{
     dto::folder::{
-        request::{ChannelFolderRequestDto, CreateFolderRequestDto, UpdateFolderRequestDto},
+        request::{
+            ChannelFolderRequestDto, CreateFolderRequestDto, DeleteFolderRequestDto,
+            UpdateFolderRequestDto,
+        },
         response::RssFolderResponseDto,
     },
     model::error::OmniNewsError,
@@ -99,7 +102,11 @@ pub async fn update_folder(
     }
 }
 
-pub async fn delete_folder(pool: &State<MySqlPool>, folder_id: i32) -> Result<(), OmniNewsError> {
+pub async fn delete_folder(
+    pool: &State<MySqlPool>,
+    folder_id: DeleteFolderRequestDto,
+) -> Result<(), OmniNewsError> {
+    let folder_id = folder_id.folder_id.unwrap();
     match folder_repository::delete_folder(pool, folder_id).await {
         Ok(_) => Ok(()),
         Err(e) => {

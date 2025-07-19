@@ -17,7 +17,7 @@ use auth_middleware::{AuthCache, AuthMiddleware, CORS};
 use config::{
     env, logging, openapi::custom_openapi_spec, rapidoc::create_rapidoc, swagger::create_swagger_ui,
 };
-use handler::error_handler::error_catchers;
+use handler::{config_handler::options_handler, error_handler::error_catchers};
 use rocket_okapi::mount_endpoints_and_merged_docs;
 use sqlx::MySqlPool;
 use utils::embedding_util::EmbeddingService;
@@ -40,20 +40,24 @@ async fn rocket() -> _ {
     let embedding_service = EmbeddingService::new();
 
     let exempt_paths = vec![
-        "/user/login".to_string(),
+        // omninews
+        "/v1/api/user/login".to_string(),
+        "/v1/api/user/refresh-token".to_string(),
+        "/v1/api/health".to_string(),
+        // openapi
         "/rapidoc/".to_string(),
         "/swagger-ui/".to_string(),
-        // TODO 이거 잘 만들어보기. /aa , /aa/ 이렇게 구분. 끝 슬래시면 하위 포함
-        "/".to_string(),
+        format!("/{}/openapi.json", CURRENT_VERSION).to_owned(),
     ];
     let mut rocket = rocket::build()
         .manage(pool)
         .manage(embedding_service)
         .manage(AuthCache::new())
+        .attach(CORS)
         .attach(AuthMiddleware::new(exempt_paths, pool_middleware))
         .mount("/rapidoc/", create_rapidoc())
         .mount("/swagger-ui/", create_swagger_ui())
-        .attach(CORS)
+        .mount("/", routes![options_handler])
         .register("/", error_catchers());
 
     let openapi_settings = rocket_okapi::settings::OpenApiSettings::default();
@@ -77,9 +81,6 @@ async fn start_scheduler(pool: &MySqlPool) {
         save_annoy_scheduler(pool)
     );
 }
-
-// TODO 테스트 목 데이터는 DTO파일에서 구현 가능, user에서 한개 만들어놨으니까 그거 보고 만들기,
-// 응답도 만들어보기.
 
 // TODO 현재 swerver가 localhost랑 example로 되어있는데, example를 서비스중인 ip로 바꿔서
 // 테스트해보기
