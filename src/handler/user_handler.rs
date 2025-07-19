@@ -10,13 +10,13 @@ use crate::{
             request::VerifyRefreshTokenRequestDto,
             response::{AccessTokenResponseDto, JwtTokenResponseDto},
         },
-        user::request::LoginUserRequestDto,
+        user::request::{LoginUserRequestDto, UserNotificationRequestDto},
     },
     service::user_service,
 };
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: verify_refresh_token, verify_access_token, login, logout]
+    openapi_get_routes_spec![settings: verify_refresh_token, verify_access_token, login, logout, notification_setting]
 }
 
 /// # 리프레시 토큰 검증 API
@@ -55,8 +55,6 @@ pub async fn verify_refresh_token(
 ///
 /// ### `user_social_provider_id` : 소셜 로그인 제공자의 고유 ID ( 소셜 로그인 제공자에서 제공 )
 ///
-/// ### `user_notification_push` : 푸시 알림 수신 여부
-///
 #[openapi(tag = "인증 API")]
 #[post("/user/login", data = "<user_data>")]
 pub async fn login(
@@ -65,6 +63,31 @@ pub async fn login(
 ) -> Result<Json<JwtTokenResponseDto>, Status> {
     match user_service::login_or_create_user(pool, user_data.into_inner()).await {
         Ok(token) => Ok(Json(token)),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
+
+/// # 사용자 알림 설정 API
+///
+/// 사용자가 알림을 설정했을 때 사용되는 API입니다.
+///
+/// ### `user_notification_push` : 사용자 알림 푸시 설정 (true/false)
+///
+#[openapi(tag = "알림 API")]
+#[post("/user/notification", data = "<notification_data>")]
+pub async fn notification_setting(
+    pool: &State<MySqlPool>,
+    user: AuthenticatedUser,
+    notification_data: Json<UserNotificationRequestDto>,
+) -> Result<Status, Status> {
+    match user_service::update_user_notification_setting(
+        pool,
+        user.user_email,
+        notification_data.into_inner(),
+    )
+    .await
+    {
+        Ok(_) => Ok(Status::Ok),
         Err(_) => Err(Status::InternalServerError),
     }
 }

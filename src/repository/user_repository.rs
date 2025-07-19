@@ -30,9 +30,9 @@ pub async fn insert_user(pool: &State<MySqlPool>, user: NewUser) -> Result<i32, 
         "INSERT INTO user 
             (user_email, user_display_name, user_photo_url, user_social_login_provider,
             user_social_provider_id, user_access_token, user_refresh_token, user_access_token_expires_at,
-            user_refresh_token_expires_at, user_notification_push, user_last_active_at,
+            user_refresh_token_expires_at, user_last_active_at,
             user_created_at, user_updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )",
         user.user_email,
         user.user_display_name,
         user.user_photo_url,
@@ -42,7 +42,6 @@ pub async fn insert_user(pool: &State<MySqlPool>, user: NewUser) -> Result<i32, 
         user.user_refresh_token,
         user.user_access_token_expires_at,
         user.user_refresh_token_expires_at,
-        user.user_notification_push,
         user.user_last_active_at,
         user.user_created_at,
         user.user_updated_at,
@@ -198,6 +197,29 @@ pub async fn update_uesr_tokens(
         tokens.refresh_token.unwrap(),
         tokens.access_token_expires_at.unwrap(),
         tokens.refresh_token_expires_at.unwrap(),
+        user_email
+    )
+    .execute(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res.rows_affected() as i32),
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn update_user_notification_setting(
+    pool: &State<MySqlPool>,
+    user_email: String,
+    notification_push: bool,
+) -> Result<i32, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!(
+        "UPDATE user
+            SET user_notification_push = ?
+        WHERE user_email = ?",
+        notification_push,
         user_email
     )
     .execute(&mut *conn)

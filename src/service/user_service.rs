@@ -12,7 +12,7 @@ use crate::{
             request::VerifyRefreshTokenRequestDto,
             response::{AccessTokenResponseDto, JwtTokenResponseDto},
         },
-        user::request::LoginUserRequestDto,
+        user::request::{LoginUserRequestDto, UserNotificationRequestDto},
     },
     model::{
         auth::{AccessToken, JwtToken, TokenType},
@@ -288,6 +288,28 @@ pub async fn delete_user_token(
         Ok(_) => Ok(()),
         Err(e) => {
             error!("[Service] Failed to remove user token: {}", e);
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
+pub async fn update_user_notification_setting(
+    pool: &State<MySqlPool>,
+    user_email: String,
+    notification_data: UserNotificationRequestDto,
+) -> Result<(), OmniNewsError> {
+    match user_repository::update_user_notification_setting(
+        pool,
+        user_email,
+        notification_data.user_notification_push,
+    )
+    .await
+    {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            error!(
+                "[Service] Failed to update user notification setting: {}",
+                e
+            );
             Err(OmniNewsError::Database(e))
         }
     }
