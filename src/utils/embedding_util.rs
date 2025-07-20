@@ -87,8 +87,14 @@ pub async fn embedding_sentence(
         .map_err(|_| OmniNewsError::EmbeddingError)?;
 
     match embedding {
-        Ok(res) => {
-            info!("[Embedding Service] Successfully generated embedding!");
+        Ok(mut res) => {
+            // 벡터 정규화
+            let norm: f32 = res.iter().map(|x| x * x).sum::<f32>().sqrt();
+            if norm > 0.0 {
+                for x in &mut res {
+                    *x /= norm;
+                }
+            }
             Ok(res)
         }
         Err(e) => {
