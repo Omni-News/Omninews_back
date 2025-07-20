@@ -49,6 +49,7 @@ rust-bert = "0.23.0"
 
 # annoy(Approximate Nearest Neighbors Oh Yeah)
 rannoy = { git = "https://github.com/uzushino/rs-annoy" }
+regex = "1.11.0"
 
 # JWT
 jsonwebtoken = "9"

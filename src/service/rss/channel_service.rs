@@ -6,7 +6,7 @@ use sqlx::MySqlPool;
 use crate::{
     dto::{
         rss::{request::CreateRssRequestDto, response::RssChannelResponseDto},
-        search::request::SearchRequestDto,
+        search::{request::SearchRequestDto, response::SearchResponseDto},
     },
     model::{
         embedding::NewEmbedding,
@@ -104,11 +104,11 @@ async fn store_channel_and_embedding(
         Err(_) => {
             let channel_id = store_rss_channel(pool, rss_channel.clone()).await?;
 
-            let sentence = format!(
-                "{}\n{}",
-                rss_channel.channel_title.unwrap_or_default(),
-                rss_channel.channel_description.unwrap_or_default()
+            let embedding_text = prepare_embedding_text(
+                &rss_channel.channel_title.unwrap_or_default(),
+                &rss_channel.channel_description.unwrap_or_default(),
             );
+
             let embedding = NewEmbedding {
                 embedding_value: None,
                 channel_id: Some(channel_id),
@@ -116,7 +116,7 @@ async fn store_channel_and_embedding(
                 news_id: None,
                 embedding_source_rank: Some(0),
             };
-            embedding_service::create_embedding(pool, embedding_service, sentence, embedding)
+            embedding_service::create_embedding(pool, embedding_service, embedding_text, embedding)
                 .await?;
             Ok(channel_id)
         }
@@ -170,59 +170,108 @@ pub async fn get_channel_list(
     pool: &State<MySqlPool>,
     embedding_service: &State<EmbeddingService>,
     value: SearchRequestDto,
-) -> Result<Vec<RssChannelResponseDto>, OmniNewsError> {
+) -> Result<SearchResponseDto, OmniNewsError> {
     let load_annoy = load_channel_annoy(embedding_service, value.search_value.unwrap()).await?;
 
-    let result = match value.search_type.clone().unwrap() {
-        SearchType::Accuracy => {
-            let mut res = Vec::new();
-            for id in load_annoy.0.iter() {
-                if let Ok(channel) =
-                    rss_channel_repository::select_rss_channel_by_embedding_id(pool, *id).await
-                {
-                    res.push(channel);
-                }
-            }
+    let page = value.search_page_size.unwrap_or_default();
 
-            res
+    let mut channel_list = vec![];
+    let total = load_annoy.0.len() as i32;
+    // Provide 20 rss item each select request
+    let offset = (page - 1) * 20;
+    let has_next = total > offset + 20;
+
+    // too long page size
+    if offset > total {
+        return Ok(SearchResponseDto::new(vec![], vec![], total, page, false));
+    }
+
+    match value.search_type.clone().unwrap() {
+        SearchType::Accuracy => {
+            push_rss_channel(pool, &load_annoy, &mut channel_list, total, offset).await;
         }
         SearchType::Popularity => {
-            let mut res = Vec::new();
-            for id in load_annoy.0.iter() {
-                if let Ok(channel) =
-                    rss_channel_repository::select_rss_channel_by_embedding_id(pool, *id).await
-                {
-                    res.push(channel);
-                }
-            }
+            push_rss_channel(pool, &load_annoy, &mut channel_list, total, offset).await;
 
-            res.sort_by(|a, b| {
+            channel_list.sort_by(|a, b| {
                 b.channel_rank
                     .unwrap_or_default()
                     .cmp(&a.channel_rank.unwrap_or_default())
             });
-
-            res
         }
-
         // 스키마에 날짜 컬럼 없어 정확순으로 대체
         SearchType::Latest => {
-            let mut res = Vec::new();
-            for id in load_annoy.0.iter() {
-                if let Ok(channel) =
-                    rss_channel_repository::select_rss_channel_by_embedding_id(pool, *id).await
-                {
-                    res.push(channel);
-                }
-            }
-
-            res
+            push_rss_channel(pool, &load_annoy, &mut channel_list, total, offset).await
         }
     };
 
-    Ok(RssChannelResponseDto::from_model_list(result))
+    Ok(SearchResponseDto::new(
+        RssChannelResponseDto::from_model_list(channel_list),
+        vec![],
+        total,
+        page,
+        has_next,
+    ))
 }
 
+async fn push_rss_channel(
+    pool: &State<MySqlPool>,
+    load_annoy: &(Vec<i32>, Vec<f32>),
+    channel_list: &mut Vec<RssChannel>,
+    total: i32,
+    offset: i32,
+) {
+    for i in 0..20 {
+        if offset + i == total {
+            break;
+        }
+
+        if let Ok(item) = rss_channel_repository::select_rss_channel_by_embedding_id(
+            pool,
+            load_annoy.0[(i + offset) as usize],
+        )
+        .await
+        {
+            channel_list.push(item);
+        }
+    }
+}
+
+fn prepare_embedding_text(title: &str, description: &str) -> String {
+    // 1. HTML 태그 제거
+    let clean_description = remove_html_tags(description);
+
+    // 2. 구조화된 형식으로 정보 표현
+    let mut text = format!("제목: {}. 내용: {}", title, clean_description);
+
+    // 3. 특수문자 정리 및 중복 공백 제거
+    text = text
+        .replace(
+            |c: char| {
+                !c.is_alphanumeric() && !c.is_whitespace() && c != '.' && c != ',' && c != ':'
+            },
+            " ",
+        )
+        .replace("  ", " ")
+        .trim()
+        .to_string();
+
+    // 4. 텍스트 길이 제한 (임베딩 모델의 최대 입력 길이 고려)
+    if text.len() > 512 {
+        text.truncate(512);
+    }
+
+    // 5. 제목 반복으로 중요성 강조 (선택적)
+    text = format!("{}. {}", text, title);
+
+    text
+}
+
+// HTML 태그 제거 함수
+fn remove_html_tags(text: &str) -> String {
+    let re = regex::Regex::new(r"<[^>]*>").unwrap();
+    re.replace_all(text, "").to_string()
+}
 // TODO 랭크 50순위 채널에서 20개 랜덤 반환
 pub async fn get_recommend_channel(
     pool: &State<MySqlPool>,

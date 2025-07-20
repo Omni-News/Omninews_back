@@ -1,9 +1,14 @@
 use crate::{
     dto::{
         rss::{request::UpdateRssRankRequestDto, response::RssItemResponseDto},
-        search::request::SearchRequestDto,
+        search::{request::SearchRequestDto, response::SearchResponseDto},
     },
-    model::{embedding::NewEmbedding, error::OmniNewsError, rss::NewRssItem, search::SearchType},
+    model::{
+        embedding::NewEmbedding,
+        error::OmniNewsError,
+        rss::{NewRssItem, RssItem},
+        search::SearchType,
+    },
     repository::rss_item_repository,
     service::embedding_service,
     utils::{annoy_util::load_rss_annoy, embedding_util::EmbeddingService},
@@ -35,9 +40,10 @@ pub async fn crate_rss_item_and_embedding(
         let item_id = store_rss_item(pool, item.clone()).await.unwrap();
 
         let sentence = format!(
-            "{}\n{}",
-            item.rss_title.clone().unwrap_or_default(),
-            extracted_description
+            "{}\n{}\n{}",
+            item.rss_title.unwrap_or_default(),
+            extracted_description,
+            item.rss_author.unwrap_or_default()
         );
         let embedding = NewEmbedding {
             embedding_value: None,
@@ -131,58 +137,74 @@ pub async fn get_rss_list(
     pool: &State<MySqlPool>,
     embedding_service: &State<EmbeddingService>,
     value: SearchRequestDto,
-) -> Result<Vec<RssItemResponseDto>, OmniNewsError> {
+) -> Result<SearchResponseDto, OmniNewsError> {
     let load_annoy = load_rss_annoy(embedding_service, value.search_value.unwrap()).await?;
+    let page = value.search_page_size.unwrap_or_default();
 
-    let result = match value.search_type.clone().unwrap() {
+    let mut item_list = vec![];
+    let total = load_annoy.0.len() as i32;
+    // Provide 20 rss item each select request
+    let offset = (page - 1) * 20;
+    let has_next = total > offset + 20;
+
+    // too long page size
+    if offset > total {
+        return Ok(SearchResponseDto::new(vec![], vec![], total, page, false));
+    }
+
+    match value.search_type.clone().unwrap() {
         SearchType::Accuracy => {
-            let mut res = Vec::new();
-            for id in load_annoy.0.iter() {
-                if let Ok(item) =
-                    rss_item_repository::select_rss_item_by_embedding_id(pool, *id).await
-                {
-                    res.push(item);
-                }
-            }
-            res
+            push_rss_item(pool, &load_annoy, &mut item_list, total, offset).await;
         }
         SearchType::Popularity => {
-            let mut res = Vec::new();
-            for id in load_annoy.0.iter() {
-                if let Ok(item) =
-                    rss_item_repository::select_rss_item_by_embedding_id(pool, *id).await
-                {
-                    res.push(item);
-                }
-            }
-            res.sort_by(|a, b| {
+            push_rss_item(pool, &load_annoy, &mut item_list, total, offset).await;
+
+            item_list.sort_by(|a, b| {
                 b.rss_rank
                     .unwrap_or_default()
                     .cmp(&a.rss_rank.unwrap_or_default())
             });
-
-            res
         }
         SearchType::Latest => {
-            let mut res = Vec::new();
-            for id in load_annoy.0.iter() {
-                if let Ok(item) =
-                    rss_item_repository::select_rss_item_by_embedding_id(pool, *id).await
-                {
-                    res.push(item);
-                }
-            }
-            res.sort_by(|a, b| {
+            push_rss_item(pool, &load_annoy, &mut item_list, total, offset).await;
+
+            item_list.sort_by(|a, b| {
                 b.rss_pub_date
                     .unwrap_or_default()
                     .cmp(&a.rss_pub_date.unwrap_or_default())
             });
-
-            res
         }
     };
+    Ok(SearchResponseDto::new(
+        vec![],
+        RssItemResponseDto::from_model_list(item_list),
+        total,
+        page,
+        has_next,
+    ))
+}
 
-    Ok(RssItemResponseDto::from_model_list(result))
+async fn push_rss_item(
+    pool: &State<MySqlPool>,
+    load_annoy: &(Vec<i32>, Vec<f32>),
+    item_list: &mut Vec<RssItem>,
+    total: i32,
+    offset: i32,
+) {
+    for i in 0..20 {
+        if offset + i == total {
+            break;
+        }
+
+        if let Ok(item) = rss_item_repository::select_rss_item_by_embedding_id(
+            pool,
+            load_annoy.0[(i + offset) as usize],
+        )
+        .await
+        {
+            item_list.push(item);
+        }
+    }
 }
 
 // TODO 상위 100개 중 50개 랜덤 반환
