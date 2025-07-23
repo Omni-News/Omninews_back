@@ -54,7 +54,7 @@ pub async fn create_folder(
 /// ### `channel_id`: 채널 ID (예: 2)
 ///
 #[openapi(tag = "Folder")]
-#[post("/channel_folder", data = "<channel_folder_id>")]
+#[post("/folder/channel", data = "<channel_folder_id>")]
 pub async fn add_channel_to_folder(
     pool: &State<MySqlPool>,
     channel_folder_id: Json<ChannelFolderRequestDto>,
