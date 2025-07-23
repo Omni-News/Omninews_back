@@ -1,4 +1,3 @@
-use rocket::State;
 use sqlx::{query, query_as, MySqlPool};
 
 use crate::{
@@ -7,7 +6,7 @@ use crate::{
 };
 
 pub async fn select_item_by_link(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     item_link: String,
 ) -> Result<RssItem, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -26,7 +25,7 @@ pub async fn select_item_by_link(
 }
 
 pub async fn select_rss_item_by_embedding_id(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     embedding_id: i32,
 ) -> Result<RssItem, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -49,7 +48,7 @@ pub async fn select_rss_item_by_embedding_id(
 }
 
 pub async fn select_rss_items_order_by_rss_rank(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
     let result = query_as!(
@@ -67,7 +66,7 @@ pub async fn select_rss_items_order_by_rss_rank(
 }
 
 pub async fn select_rss_items_by_channel_id(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     channel_id: i32,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -88,10 +87,7 @@ pub async fn select_rss_items_by_channel_id(
     }
 }
 
-pub async fn insert_rss_item(
-    pool: &State<MySqlPool>,
-    rss_item: NewRssItem,
-) -> Result<i32, sqlx::Error> {
+pub async fn insert_rss_item(pool: &MySqlPool, rss_item: NewRssItem) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await?;
     let result = query!(
         "INSERT INTO rss_item 
@@ -116,7 +112,7 @@ pub async fn insert_rss_item(
 }
 
 pub async fn update_rss_channel_rank_by_id(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     rss_id: i32,
     num: i32,
 ) -> Result<bool, sqlx::Error> {
@@ -136,5 +132,23 @@ pub async fn update_rss_channel_rank_by_id(
         Ok(true)
     } else {
         Ok(false)
+    }
+}
+
+pub async fn select_rss_items_len_by_channel_id(
+    pool: &MySqlPool,
+    channel_id: i32,
+) -> Result<i32, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+    let result = query!(
+        "SELECT COUNT(*) as count FROM rss_item WHERE channel_id = ?;",
+        channel_id,
+    )
+    .fetch_one(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res.count as i32),
+        Err(e) => Err(e),
     }
 }

@@ -1,4 +1,3 @@
-use rocket::State;
 use sqlx::MySqlPool;
 
 use crate::{
@@ -13,7 +12,7 @@ use crate::{
 use super::{rss::channel_service, user_service};
 
 pub async fn get_subscription_channels(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
 ) -> Result<Vec<RssChannelResponseDto>, OmniNewsError> {
     let user_id = user_service::find_user_id_by_email(pool, user_email).await?;
@@ -27,7 +26,7 @@ pub async fn get_subscription_channels(
 }
 
 pub async fn subscribe_channel(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
     channel_id: SubscribeRequestDto,
 ) -> Result<(), OmniNewsError> {
@@ -56,11 +55,12 @@ pub async fn subscribe_channel(
 }
 
 pub async fn unsubscribe_channel(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
-    channel_id: i32,
+    channel_id: SubscribeRequestDto,
 ) -> Result<(), OmniNewsError> {
     let user_id = user_service::find_user_id_by_email(pool, user_email).await?;
+    let channel_id = channel_id.channel_id.unwrap_or_default();
 
     if let Ok(res) = channel_service::is_channel_exist_by_id(pool, channel_id).await {
         if !res {
@@ -84,7 +84,7 @@ pub async fn unsubscribe_channel(
 }
 
 pub async fn get_subscription_items(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     channel_ids: Vec<i32>,
 ) -> Result<Vec<RssItemResponseDto>, OmniNewsError> {
     match subscribe_repository::select_subscription_items(pool, channel_ids).await {
@@ -97,7 +97,7 @@ pub async fn get_subscription_items(
 }
 
 pub async fn is_already_subscribe_channel(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
     channel_rss_link: String,
 ) -> Result<bool, OmniNewsError> {

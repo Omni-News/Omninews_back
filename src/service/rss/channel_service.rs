@@ -1,5 +1,4 @@
 use log::{info, warn};
-use rocket::State;
 use rss::Channel;
 use sqlx::MySqlPool;
 
@@ -22,8 +21,8 @@ use crate::{
 use super::item_service;
 
 pub async fn create_rss_all(
-    pool: &State<MySqlPool>,
-    model: &State<EmbeddingService>,
+    pool: &MySqlPool,
+    model: &EmbeddingService,
     links: Vec<CreateRssRequestDto>,
 ) -> Result<bool, OmniNewsError> {
     for link in links {
@@ -34,8 +33,8 @@ pub async fn create_rss_all(
 }
 
 pub async fn create_rss_and_embedding(
-    pool: &State<MySqlPool>,
-    embedding_service: &State<EmbeddingService>,
+    pool: &MySqlPool,
+    embedding_service: &EmbeddingService,
     link: CreateRssRequestDto,
 ) -> Result<i32, OmniNewsError> {
     let rss_channel = parse_rss_link_to_channel(&link.rss_link).await?;
@@ -43,7 +42,7 @@ pub async fn create_rss_and_embedding(
     let channel = make_rss_channel(rss_channel.clone(), link.rss_link);
     let channel_id = store_channel_and_embedding(pool, embedding_service, channel).await?;
 
-    let _ = item_service::crate_rss_item_and_embedding(
+    let _ = item_service::crate_rss_items_and_embedding(
         pool,
         embedding_service,
         rss_channel,
@@ -58,7 +57,7 @@ pub async fn create_rss_and_embedding(
     Ok(channel_id)
 }
 
-async fn parse_rss_link_to_channel(link: &str) -> Result<Channel, OmniNewsError> {
+pub async fn parse_rss_link_to_channel(link: &str) -> Result<Channel, OmniNewsError> {
     let response = reqwest::get(link).await.map_err(|e| {
         error!("[Service] Not found url : {}", link);
         OmniNewsError::Request(e)
@@ -84,8 +83,8 @@ fn make_rss_channel(channel: Channel, rss_link: String) -> NewRssChannel {
 }
 
 async fn store_channel_and_embedding(
-    pool: &State<MySqlPool>,
-    embedding_service: &State<EmbeddingService>,
+    pool: &MySqlPool,
+    embedding_service: &EmbeddingService,
     rss_channel: NewRssChannel,
 ) -> Result<i32, OmniNewsError> {
     match rss_channel_repository::select_rss_channel_by_rss_link(
@@ -123,10 +122,7 @@ async fn store_channel_and_embedding(
     }
 }
 
-async fn store_rss_channel(
-    pool: &State<MySqlPool>,
-    channel: NewRssChannel,
-) -> Result<i32, OmniNewsError> {
+async fn store_rss_channel(pool: &MySqlPool, channel: NewRssChannel) -> Result<i32, OmniNewsError> {
     let channel_link = channel.channel_link.clone().unwrap_or_default();
 
     match rss_channel_repository::select_rss_channel_by_rss_link(pool, channel_link).await {
@@ -141,7 +137,7 @@ async fn store_rss_channel(
 }
 
 pub async fn find_rss_channel_by_id(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     channel_id: i32,
 ) -> Result<RssChannelResponseDto, OmniNewsError> {
     match rss_channel_repository::select_rss_channel_by_id(pool, channel_id).await {
@@ -154,7 +150,7 @@ pub async fn find_rss_channel_by_id(
 }
 
 pub async fn find_rss_channel_by_rss_link(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     channel_rss_link: String,
 ) -> Result<RssChannel, OmniNewsError> {
     match rss_channel_repository::select_rss_channel_by_rss_link(pool, channel_rss_link).await {
@@ -167,8 +163,8 @@ pub async fn find_rss_channel_by_rss_link(
 }
 
 pub async fn get_channel_list(
-    pool: &State<MySqlPool>,
-    embedding_service: &State<EmbeddingService>,
+    pool: &MySqlPool,
+    embedding_service: &EmbeddingService,
     value: SearchRequestDto,
 ) -> Result<SearchResponseDto, OmniNewsError> {
     let load_annoy = load_channel_annoy(embedding_service, value.search_value.unwrap()).await?;
@@ -215,7 +211,7 @@ pub async fn get_channel_list(
 }
 
 async fn push_rss_channel(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     load_annoy: &(Vec<i32>, Vec<f32>),
     channel_list: &mut Vec<RssChannel>,
     total: i32,
@@ -274,7 +270,7 @@ fn remove_html_tags(text: &str) -> String {
 }
 // TODO 랭크 50순위 채널에서 20개 랜덤 반환
 pub async fn get_recommend_channel(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
 ) -> Result<Vec<RssChannelResponseDto>, OmniNewsError> {
     match rss_channel_repository::select_rss_channels_order_by_channel_rank(pool).await {
         Ok(res) => {
@@ -294,7 +290,7 @@ pub async fn get_recommend_channel(
 }
 
 pub async fn get_rss_preview(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     rss_link: String,
 ) -> Result<RssChannelResponseDto, OmniNewsError> {
     match rss_channel_repository::select_rss_channel_by_channel_rss_link(pool, rss_link.clone())
@@ -311,7 +307,7 @@ pub async fn get_rss_preview(
 }
 
 pub async fn is_channel_exist_by_link(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     channel_link: String,
 ) -> Result<bool, OmniNewsError> {
     match rss_channel_repository::select_rss_channel_by_channel_rss_link(pool, channel_link).await {
@@ -321,7 +317,7 @@ pub async fn is_channel_exist_by_link(
 }
 
 pub async fn is_channel_exist_by_id(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     channel_id: i32,
 ) -> Result<bool, OmniNewsError> {
     match rss_channel_repository::select_rss_channel_by_id(pool, channel_id).await {
@@ -331,7 +327,7 @@ pub async fn is_channel_exist_by_id(
 }
 
 pub async fn update_rss_channel_rank(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     channel_id: i32,
     num: i32,
 ) -> Result<bool, OmniNewsError> {
@@ -339,6 +335,16 @@ pub async fn update_rss_channel_rank(
         Ok(res) => Ok(res),
         Err(e) => {
             error!("[Service] Failed to update rss channel rank: {:?}", e);
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
+
+pub async fn get_all_rss_channels(pool: &MySqlPool) -> Result<Vec<RssChannel>, OmniNewsError> {
+    match rss_channel_repository::select_all_rss_channels(pool).await {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            error!("[Service] Failed to select all rss channels: {:?}", e);
             Err(OmniNewsError::Database(e))
         }
     }

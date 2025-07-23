@@ -114,11 +114,11 @@ pub async fn get_subscribe_items(
 /// ### `channel_id` : 구독 취소할 채널 ID (예: 3)
 ///
 #[openapi(tag = "Subscription")]
-#[delete("/subscription/subscription/channel", data = "<channel_id>")]
+#[delete("/subscription/channel", data = "<channel_id>")]
 pub async fn unsubscribe_channel(
     pool: &State<MySqlPool>,
     user: AuthenticatedUser,
-    channel_id: Json<i32>,
+    channel_id: Json<SubscribeRequestDto>,
 ) -> Result<&str, Status> {
     match subscription_service::unsubscribe_channel(pool, user.user_email, channel_id.into_inner())
         .await

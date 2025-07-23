@@ -36,7 +36,6 @@ async fn save_channel_annoy(embeddings: Vec<Embedding>) -> Result<(), OmniNewsEr
     annoy.set_seed(123);
 
     for embedding in embeddings.iter() {
-        info!("{}", embedding.embedding_id.unwrap());
         let decoded_embedding = decode_embedding(embedding.embedding_value.as_ref().unwrap());
         annoy.add_item(embedding.embedding_id.unwrap(), decoded_embedding.as_ref());
     }
@@ -58,7 +57,6 @@ async fn save_rss_annoy(embeddings: Vec<Embedding>) -> Result<(), OmniNewsError>
     annoy.set_seed(123);
 
     for embedding in embeddings.iter() {
-        info!("{}", embedding.embedding_id.unwrap());
         let decoded_embedding = decode_embedding(embedding.embedding_value.as_ref().unwrap());
         annoy.add_item(embedding.embedding_id.unwrap(), decoded_embedding.as_ref());
     }
@@ -80,7 +78,6 @@ async fn save_news_annoy(embeddings: Vec<Embedding>) -> Result<(), OmniNewsError
     annoy.set_seed(123);
 
     for embedding in embeddings.iter() {
-        info!("{}", embedding.embedding_id.unwrap());
         let decoded_embedding = decode_embedding(embedding.embedding_value.as_ref().unwrap());
         annoy.add_item(embedding.embedding_id.unwrap(), decoded_embedding.as_ref());
     }
@@ -92,7 +89,7 @@ async fn save_news_annoy(embeddings: Vec<Embedding>) -> Result<(), OmniNewsError
 
 // TODO 지금은 10개 조회지만, 상황에 맞춰 더많이 추가 가능하도록 수정
 pub async fn load_channel_annoy(
-    service: &State<EmbeddingService>,
+    service: &EmbeddingService,
     search_value: String,
 ) -> Result<(Vec<i32>, Vec<f32>), OmniNewsError> {
     let annoy = rannoy::Rannoy::new(384);
@@ -112,7 +109,7 @@ pub async fn load_channel_annoy(
 }
 
 pub async fn load_rss_annoy(
-    service: &State<EmbeddingService>,
+    service: &EmbeddingService,
     search_value: String,
 ) -> Result<(Vec<i32>, Vec<f32>), OmniNewsError> {
     let annoy = rannoy::Rannoy::new(384);

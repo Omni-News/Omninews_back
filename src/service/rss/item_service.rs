@@ -14,49 +14,65 @@ use crate::{
     utils::{annoy_util::load_rss_annoy, embedding_util::EmbeddingService},
 };
 use chrono::{DateTime, NaiveDateTime};
-use rocket::State;
 use rss::{Channel, Item};
 use scraper::{Html, Selector};
 use sqlx::MySqlPool;
 
-pub async fn crate_rss_item_and_embedding(
-    pool: &State<MySqlPool>,
-    embedding_service: &State<EmbeddingService>,
+pub async fn crate_rss_items_and_embedding(
+    pool: &MySqlPool,
+    embedding_service: &EmbeddingService,
     mut channel: Channel,
     channel_id: i32,
 ) -> Result<(), OmniNewsError> {
     let channel_image_url = channel
         .image()
         .map_or(String::new(), |image| image.url().to_string()); // TODO rss cateogory 미구현 상태.
-                                                                 //
+
     for rss_item in channel.items_mut() {
-        let description = rss_item.description().unwrap_or("None");
-        let (extracted_description, item_image_link) =
-            extract_html_to_passage_and_image_link(description);
-        rss_item.set_description(extracted_description.clone());
-        let item_image_link = use_channel_url_if_none(item_image_link, channel_image_url.clone());
-
-        let item = make_rss_item(channel_id, rss_item, item_image_link);
-        let item_id = store_rss_item(pool, item.clone()).await.unwrap();
-
-        let sentence = format!(
-            "{}\n{}\n{}",
-            item.rss_title.unwrap_or_default(),
-            extracted_description,
-            item.rss_author.unwrap_or_default()
-        );
-        let embedding = NewEmbedding {
-            embedding_value: None,
-            channel_id: None,
-            rss_id: Some(item_id),
-            news_id: None,
-            embedding_source_rank: Some(0),
-        };
-
-        let _ = embedding_service::create_embedding(pool, embedding_service, sentence, embedding)
-            .await?;
+        create_rss_item_and_embedding(
+            pool,
+            embedding_service,
+            channel_id,
+            channel_image_url.clone(),
+            rss_item,
+        )
+        .await?;
     }
     Ok(())
+}
+pub async fn create_rss_item_and_embedding(
+    pool: &MySqlPool,
+    embedding_service: &EmbeddingService,
+    channel_id: i32,
+    channel_image_url: String,
+    rss_item: &mut Item,
+) -> Result<bool, OmniNewsError> {
+    let description = rss_item.description().unwrap_or("None");
+    let (extracted_description, item_image_link) =
+        extract_html_to_passage_and_image_link(description);
+    rss_item.set_description(extracted_description.clone());
+    let item_image_link = use_channel_url_if_none(item_image_link, channel_image_url.clone());
+
+    let item = make_rss_item(channel_id, rss_item, item_image_link);
+    let item_id = store_rss_item(pool, item.clone()).await.unwrap();
+
+    let sentence = format!(
+        "{}\n{}\n{}",
+        item.rss_title.unwrap_or_default(),
+        extracted_description,
+        item.rss_author.unwrap_or_default()
+    );
+    let embedding = NewEmbedding {
+        embedding_value: None,
+        channel_id: None,
+        rss_id: Some(item_id),
+        news_id: None,
+        embedding_source_rank: Some(0),
+    };
+
+    let _ =
+        embedding_service::create_embedding(pool, embedding_service, sentence, embedding).await?;
+    Ok(true)
 }
 
 fn extract_html_to_passage_and_image_link(html: &str) -> (String, Option<String>) {
@@ -94,9 +110,23 @@ fn make_rss_item(channel_id: i32, item: &Item, item_image_link: String) -> NewRs
 
 fn parse_pub_date(pub_date_str: Option<&str>) -> Option<NaiveDateTime> {
     pub_date_str
-        .and_then(|date_str| DateTime::parse_from_rfc2822(date_str).ok())
-        .map(|dt| dt.naive_utc())
+        .and_then(|date_str| {
+            // 1. RFC2822 형식 파싱 시도
+            if let Ok(dt) = DateTime::parse_from_rfc2822(date_str) {
+                // 타임존이 KST/+09:00 인지 확인 (초 단위로 환산해서 비교)
+                if dt.offset().local_minus_utc() == 9 * 3600 {
+                    // 한국 시간이면 타임존 제거만 하고 값 유지
+                    return Some(dt.naive_local());
+                } else {
+                    // 다른 타임존이면 기존처럼 UTC 변환
+                    return Some(dt.naive_utc());
+                }
+            }
+
+            None
+        })
         .or_else(|| {
+            // 파싱 실패하면 디폴트 시간
             Some(
                 NaiveDateTime::parse_from_str("1970-01-01T00:00:00", "%Y-%m-%dT%H:%M:%S")
                     .ok()
@@ -105,10 +135,7 @@ fn parse_pub_date(pub_date_str: Option<&str>) -> Option<NaiveDateTime> {
         })
 }
 
-async fn store_rss_item(
-    pool: &State<MySqlPool>,
-    mut rss_item: NewRssItem,
-) -> Result<i32, OmniNewsError> {
+async fn store_rss_item(pool: &MySqlPool, mut rss_item: NewRssItem) -> Result<i32, OmniNewsError> {
     let item_link = rss_item.rss_link.clone().unwrap_or_default();
 
     if let Some(str) = rss_item.rss_description.as_mut() {
@@ -134,8 +161,8 @@ async fn store_rss_item(
 }
 
 pub async fn get_rss_list(
-    pool: &State<MySqlPool>,
-    embedding_service: &State<EmbeddingService>,
+    pool: &MySqlPool,
+    embedding_service: &EmbeddingService,
     value: SearchRequestDto,
 ) -> Result<SearchResponseDto, OmniNewsError> {
     let load_annoy = load_rss_annoy(embedding_service, value.search_value.unwrap()).await?;
@@ -185,7 +212,7 @@ pub async fn get_rss_list(
 }
 
 async fn push_rss_item(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     load_annoy: &(Vec<i32>, Vec<f32>),
     item_list: &mut Vec<RssItem>,
     total: i32,
@@ -209,7 +236,7 @@ async fn push_rss_item(
 
 // TODO 상위 100개 중 50개 랜덤 반환
 pub async fn get_recommend_item(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
 ) -> Result<Vec<RssItemResponseDto>, OmniNewsError> {
     match rss_item_repository::select_rss_items_order_by_rss_rank(pool).await {
         Ok(res) => {
@@ -229,7 +256,7 @@ pub async fn get_recommend_item(
 }
 
 pub async fn get_rss_item_by_channel_id(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     channel_id: i32,
 ) -> Result<Vec<RssItemResponseDto>, OmniNewsError> {
     match rss_item_repository::select_rss_items_by_channel_id(pool, channel_id).await {
@@ -242,7 +269,7 @@ pub async fn get_rss_item_by_channel_id(
 }
 
 pub async fn update_rss_item_rank(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     update_rss_rank: UpdateRssRankRequestDto,
 ) -> Result<bool, OmniNewsError> {
     match rss_item_repository::update_rss_channel_rank_by_id(
@@ -254,5 +281,28 @@ pub async fn update_rss_item_rank(
     {
         Ok(res) => Ok(res),
         Err(e) => Err(OmniNewsError::Database(e)),
+    }
+}
+
+pub async fn get_items_len_by_channel_id(
+    pool: &MySqlPool,
+    channel_id: i32,
+) -> Result<i32, OmniNewsError> {
+    match rss_item_repository::select_rss_items_len_by_channel_id(pool, channel_id).await {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            error!("[Service] Failed to select rss channel length: {:?}", e);
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
+
+pub async fn is_exist_rss_item_by_link(
+    pool: &MySqlPool,
+    link: String,
+) -> Result<bool, OmniNewsError> {
+    match rss_item_repository::select_item_by_link(pool, link).await {
+        Ok(_) => Ok(true),
+        Err(_) => Ok(false),
     }
 }

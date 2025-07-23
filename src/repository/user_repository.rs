@@ -1,13 +1,12 @@
 use chrono::NaiveDateTime;
-use rocket::State;
 use sqlx::{query, MySqlPool};
 
 use crate::{
-    db_util::{get_db, get_db_without_state},
+    db_util::get_db,
     model::{auth::JwtToken, user::NewUser},
 };
 
-pub async fn insert_user(pool: &State<MySqlPool>, user: NewUser) -> Result<i32, sqlx::Error> {
+pub async fn insert_user(pool: &MySqlPool, user: NewUser) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await?;
 
     let result = query!(
@@ -39,7 +38,7 @@ pub async fn insert_user(pool: &State<MySqlPool>, user: NewUser) -> Result<i32, 
     }
 }
 pub async fn select_user_id_by_email(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
 ) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -55,7 +54,7 @@ pub async fn select_user_id_by_email(
 }
 
 pub async fn select_user_email_by_social_provider_id(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_social_provider_id: String,
 ) -> Result<String, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -74,7 +73,7 @@ pub async fn select_user_email_by_social_provider_id(
 }
 
 pub async fn delete_user_token_by_email(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
 ) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -96,7 +95,7 @@ pub async fn delete_user_token_by_email(
 }
 
 pub async fn validate_users_all_tokens(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
 ) -> Result<(bool, bool), sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -130,7 +129,7 @@ pub async fn validate_access_token_by_user_email(
     token: String,
     email: String,
 ) -> Result<String, sqlx::Error> {
-    let mut conn = get_db_without_state(pool).await?;
+    let mut conn = get_db(pool).await?;
 
     let result = query!(
         "SELECT user_email FROM user
@@ -148,11 +147,11 @@ pub async fn validate_access_token_by_user_email(
 }
 
 pub async fn validate_refresh_token_by_user_email(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     token: String,
     email: String,
 ) -> Result<JwtToken, sqlx::Error> {
-    let mut conn = get_db_without_state(pool).await?;
+    let mut conn = get_db(pool).await?;
 
     let result = query!(
         "SELECT * FROM user
@@ -175,7 +174,7 @@ pub async fn validate_refresh_token_by_user_email(
 }
 
 pub async fn update_user_access_token(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
     access_token: String,
     access_token_expires_at: NaiveDateTime,
@@ -200,7 +199,7 @@ pub async fn update_user_access_token(
 }
 
 pub async fn update_uesr_tokens(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
     tokens: JwtToken,
 ) -> Result<i32, sqlx::Error> {
@@ -227,7 +226,7 @@ pub async fn update_uesr_tokens(
 }
 
 pub async fn update_user_notification_setting(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
     notification_push: bool,
     user_fcm_token: String,
@@ -247,6 +246,30 @@ pub async fn update_user_notification_setting(
 
     match result {
         Ok(res) => Ok(res.rows_affected() as i32),
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn selsect_users_fcm_token_subscribed_channel_by_channel_id(
+    pool: &MySqlPool,
+    channel_id: i32,
+) -> Result<Vec<String>, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!(
+        "SELECT u.user_fcm_token FROM user u
+        JOIN user_subscription_channel usc ON u.user_id = usc.user_id
+        WHERE usc.channel_id = ? AND u.user_fcm_token IS NOT NULL",
+        channel_id
+    )
+    .fetch_all(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res
+            .into_iter()
+            .map(|r| r.user_fcm_token.unwrap_or_default())
+            .collect()),
         Err(e) => Err(e),
     }
 }

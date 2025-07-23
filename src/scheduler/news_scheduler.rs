@@ -25,7 +25,7 @@ pub async fn fetch_news_scheduler(pool: &MySqlPool) {
         task::spawn_blocking(move || {
             let mut fetch_flag = FETCH_FLAG.lock().unwrap();
             *fetch_flag = false;
-            info!("[Scheduler] Fetching news, fetch_flag set to false");
+            info!("[Scheduler] Fetching news");
         })
         .await
         .unwrap();

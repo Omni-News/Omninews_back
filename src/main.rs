@@ -33,11 +33,12 @@ async fn rocket() -> _ {
     let pool_scheduler = pool.clone();
     let pool_middleware = pool.clone();
 
-    tokio::spawn(async move {
-        start_scheduler(&pool_scheduler).await;
-    });
-
     let embedding_service = EmbeddingService::new();
+    let embedding_service_scheduler = embedding_service.clone();
+
+    tokio::spawn(async move {
+        start_scheduler(&pool_scheduler, &embedding_service_scheduler).await;
+    });
 
     let exempt_paths = vec![
         // omninews
@@ -73,13 +74,14 @@ async fn rocket() -> _ {
     rocket
 }
 
-async fn start_scheduler(pool: &MySqlPool) {
-    use scheduler::{annoy_scheduler::*, news_scheduler::*};
+async fn start_scheduler(pool: &MySqlPool, embedding_service: &EmbeddingService) {
+    use scheduler::{annoy_scheduler::*, news_scheduler::*, rss_scheduler::*};
 
     tokio::join!(
         delete_old_news_scheduler(pool),
         fetch_news_scheduler(pool),
-        save_annoy_scheduler(pool)
+        save_annoy_scheduler(pool),
+        rss_scheduler(pool, embedding_service),
     );
 }
 

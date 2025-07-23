@@ -12,7 +12,6 @@ use crate::{
 };
 use chrono::{Duration, NaiveDateTime};
 use reqwest::{header::HeaderMap, Client, Response};
-use rocket::State;
 use scraper::{Html, Selector};
 use sqlx::MySqlPool;
 use tokio::task;
@@ -20,7 +19,7 @@ use tokio::task;
 type NewsType = HashMap<String, i32>;
 
 pub async fn get_news(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     category: String,
 ) -> Result<Vec<NewsResponseDto>, OmniNewsError> {
     match news_repository::select_news_by_category(pool, category).await {

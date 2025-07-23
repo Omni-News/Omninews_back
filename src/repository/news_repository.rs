@@ -1,13 +1,12 @@
-use rocket::State;
 use sqlx::{query, query_as, MySqlPool};
 
 use crate::{
-    db_util::{get_db, get_db_without_state},
+    db_util::get_db,
     model::news::{NewNews, News},
 };
 
 pub async fn select_news_by_category(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     category: String,
 ) -> Result<Vec<News>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -30,7 +29,7 @@ pub async fn select_news_by_title(
     pool: &MySqlPool,
     news_title: String,
 ) -> Result<Option<i32>, sqlx::Error> {
-    let mut conn = get_db_without_state(pool).await?;
+    let mut conn = get_db(pool).await?;
 
     let result = query!(
         r#"
@@ -48,7 +47,7 @@ pub async fn select_news_by_title(
 }
 
 pub async fn insert_news(pool: &MySqlPool, news: NewNews) -> Result<i32, sqlx::Error> {
-    let mut conn = get_db_without_state(pool).await?;
+    let mut conn = get_db(pool).await?;
 
     let result = query!(
         r#"
@@ -72,7 +71,7 @@ pub async fn insert_news(pool: &MySqlPool, news: NewNews) -> Result<i32, sqlx::E
 }
 
 pub async fn delete_old_news(pool: &MySqlPool) -> Result<i32, sqlx::Error> {
-    let mut conn = get_db_without_state(pool).await?;
+    let mut conn = get_db(pool).await?;
 
     let result = query!(
         r#"

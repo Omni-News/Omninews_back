@@ -1,4 +1,3 @@
-use rocket::State;
 use sqlx::MySqlPool;
 
 use crate::{
@@ -12,8 +11,8 @@ use crate::{
 };
 
 pub async fn create_embedding(
-    pool: &State<MySqlPool>,
-    embedding_service: &State<EmbeddingService>,
+    pool: &MySqlPool,
+    embedding_service: &EmbeddingService,
     sentence: String,
     mut embedding: NewEmbedding,
 ) -> Result<i32, OmniNewsError> {

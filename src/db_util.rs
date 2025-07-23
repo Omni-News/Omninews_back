@@ -1,4 +1,3 @@
-use rocket::State;
 use sqlx::pool::PoolOptions;
 use sqlx::{mysql::MySql, pool::PoolConnection, MySqlPool};
 use std::env;
@@ -13,16 +12,9 @@ pub async fn create_pool() -> MySqlPool {
         .expect("Failed to create MySQL pool")
 }
 
-pub async fn get_db(pool: &State<MySqlPool>) -> Result<PoolConnection<MySql>, sqlx::Error> {
+pub async fn get_db(pool: &MySqlPool) -> Result<PoolConnection<MySql>, sqlx::Error> {
     pool.acquire().await.map_err(|e| {
         error!("[Repository] Failed to acquire DB Connection pool: {:?}", e);
-        e
-    })
-}
-
-pub async fn get_db_without_state(pool: &MySqlPool) -> Result<PoolConnection<MySql>, sqlx::Error> {
-    pool.acquire().await.map_err(|e| {
-        error!("[Scheduler] Failed to acquire DB Connection pool: {:?}", e);
         e
     })
 }

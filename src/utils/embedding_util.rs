@@ -3,7 +3,6 @@ use std::{
     thread,
 };
 
-use rocket::State;
 use rust_bert::pipelines::sentence_embeddings::{
     SentenceEmbeddingsBuilder, SentenceEmbeddingsModelType,
 };
@@ -77,10 +76,10 @@ impl EmbeddingService {
     }
 }
 pub async fn embedding_sentence(
-    embedding_service: &State<EmbeddingService>,
+    embedding_service: &EmbeddingService,
     sentence: String,
 ) -> Result<Vec<f32>, OmniNewsError> {
-    let service = embedding_service.inner().clone();
+    let service = embedding_service.clone();
     // Generate Embeddings
     let embedding = tokio::task::spawn_blocking(move || service.embed_text(sentence))
         .await

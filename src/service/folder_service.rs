@@ -1,4 +1,3 @@
-use rocket::State;
 use sqlx::MySqlPool;
 
 use crate::{
@@ -16,7 +15,7 @@ use crate::{
 use super::user_service;
 
 pub async fn create_folder(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
     folder: CreateFolderRequestDto,
 ) -> Result<i32, OmniNewsError> {
@@ -32,7 +31,7 @@ pub async fn create_folder(
 }
 
 pub async fn add_channel_to_folder(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     channel_folder_id: ChannelFolderRequestDto,
 ) -> Result<(), OmniNewsError> {
     match folder_repository::insert_channel_to_folder(
@@ -51,7 +50,7 @@ pub async fn add_channel_to_folder(
 }
 
 pub async fn fetch_folders(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
 ) -> Result<Vec<RssFolderResponseDto>, OmniNewsError> {
     let user_id = user_service::find_user_id_by_email(pool, user_email).await?;
@@ -84,7 +83,7 @@ pub async fn fetch_folders(
 }
 
 pub async fn update_folder(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     folder: UpdateFolderRequestDto,
 ) -> Result<i32, OmniNewsError> {
     match folder_repository::update_folder(
@@ -103,7 +102,7 @@ pub async fn update_folder(
 }
 
 pub async fn delete_folder(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     folder_id: DeleteFolderRequestDto,
 ) -> Result<(), OmniNewsError> {
     let folder_id = folder_id.folder_id.unwrap();
@@ -117,7 +116,7 @@ pub async fn delete_folder(
 }
 
 pub async fn delete_channel_from_folder(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     channel_folder_id: ChannelFolderRequestDto,
 ) -> Result<(), OmniNewsError> {
     match folder_repository::delete_channel_from_folder(

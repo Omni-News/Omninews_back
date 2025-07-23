@@ -6,9 +6,9 @@ use serde_json::json;
 use super::firebase_util::get_fcm_access_token_with_expiry;
 
 pub async fn send_fcm_message(
-    device_token: &str,
-    title: &str,
-    body: &str,
+    device_token: String,
+    title: String,
+    body: String,
 ) -> Result<(), Box<dyn Error>> {
     let access_token = get_fcm_access_token_with_expiry().await?;
 

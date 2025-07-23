@@ -2,7 +2,6 @@ use std::env;
 
 use chrono::{DateTime, FixedOffset, NaiveDateTime, Utc};
 use jsonwebtoken::{encode, EncodingKey, Header};
-use rocket::State;
 use sqlx::MySqlPool;
 
 use crate::{
@@ -26,7 +25,7 @@ use crate::{
 /// 2. access token X refresh token O -> processed in auto login.
 /// 3. access token X refresh token X -> Reissue refresh token and access token or Create user
 pub async fn login_or_create_user(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user: LoginUserRequestDto,
 ) -> Result<JwtTokenResponseDto, OmniNewsError> {
     let (is_access_available, is_refresh_available) = user_repository::validate_users_all_tokens(
@@ -71,7 +70,7 @@ pub async fn login_or_create_user(
 }
 
 async fn create_user(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user: LoginUserRequestDto,
 ) -> Result<JwtToken, OmniNewsError> {
     let (access_token, access_token_expires_at) = make_token(
@@ -128,7 +127,7 @@ pub async fn vliadate_access_token(
 }
 
 pub async fn validate_refresh_token(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     refresh_token: VerifyRefreshTokenRequestDto,
 ) -> Result<AccessTokenResponseDto, OmniNewsError> {
     let user_email = refresh_token.email.clone().unwrap_or_default();
@@ -155,7 +154,7 @@ pub async fn validate_refresh_token(
 }
 
 async fn reissue_access_token(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
 ) -> Result<AccessToken, OmniNewsError> {
     let (access_token, access_token_expires_at) =
@@ -172,10 +171,7 @@ async fn reissue_access_token(
     Ok(AccessToken::new(access_token, access_token_expires_at))
 }
 
-async fn issue_tokens(
-    pool: &State<MySqlPool>,
-    user_email: String,
-) -> Result<JwtToken, OmniNewsError> {
+async fn issue_tokens(pool: &MySqlPool, user_email: String) -> Result<JwtToken, OmniNewsError> {
     let (access_token, access_token_expires_at) =
         make_token(TokenType::Access, user_email.clone())?;
 
@@ -268,7 +264,7 @@ fn make_token(
 }
 
 pub async fn apple_login(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     apple_login: AppleLoginRequestDto,
 ) -> Result<JwtTokenResponseDto, OmniNewsError> {
     let user_email = user_repository::select_user_email_by_social_provider_id(
@@ -292,7 +288,7 @@ pub async fn apple_login(
 }
 
 pub async fn find_user_id_by_email(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
 ) -> Result<i32, OmniNewsError> {
     match user_repository::select_user_id_by_email(pool, user_email).await {
@@ -304,10 +300,7 @@ pub async fn find_user_id_by_email(
     }
 }
 
-pub async fn delete_user_token(
-    pool: &State<MySqlPool>,
-    user_email: String,
-) -> Result<(), OmniNewsError> {
+pub async fn delete_user_token(pool: &MySqlPool, user_email: String) -> Result<(), OmniNewsError> {
     match user_repository::delete_user_token_by_email(pool, user_email).await {
         Ok(_) => Ok(()),
         Err(e) => {
@@ -317,7 +310,7 @@ pub async fn delete_user_token(
     }
 }
 pub async fn update_user_notification_setting(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
     notification_data: UserNotificationRequestDto,
 ) -> Result<(), OmniNewsError> {
@@ -333,6 +326,26 @@ pub async fn update_user_notification_setting(
         Err(e) => {
             error!(
                 "[Service] Failed to update user notification setting: {}",
+                e
+            );
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
+
+pub async fn get_users_fcm_token_subscribed_channel_by_channel_id(
+    pool: &MySqlPool,
+    channel_id: i32,
+) -> Result<Vec<String>, OmniNewsError> {
+    match user_repository::selsect_users_fcm_token_subscribed_channel_by_channel_id(
+        pool, channel_id,
+    )
+    .await
+    {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            error!(
+                "[Service] Failed to check if user is subscribed to RSS channel: {}",
                 e
             );
             Err(OmniNewsError::Database(e))
