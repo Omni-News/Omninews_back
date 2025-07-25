@@ -273,3 +273,43 @@ pub async fn selsect_users_fcm_token_subscribed_channel_by_channel_id(
         Err(e) => Err(e),
     }
 }
+
+pub async fn get_user_theme(pool: &MySqlPool, user_email: String) -> Result<String, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!(
+        "SELECT user_theme FROM user WHERE user_email = ?",
+        user_email
+    )
+    .fetch_one(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res.user_theme.unwrap_or_else(|| "default".to_string())),
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn update_user_theme(
+    pool: &MySqlPool,
+    user_email: String,
+    theme: String,
+) -> Result<i32, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+    info!("theme: {}, user_email: {}", theme, user_email);
+
+    let result = query!(
+        "UPDATE user
+            SET user_theme = ?
+        WHERE user_email = ?",
+        theme,
+        user_email
+    )
+    .execute(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res.rows_affected() as i32),
+        Err(e) => Err(e),
+    }
+}

@@ -11,7 +11,13 @@ use crate::{
             request::VerifyRefreshTokenRequestDto,
             response::{AccessTokenResponseDto, JwtTokenResponseDto},
         },
-        user::request::{AppleLoginRequestDto, LoginUserRequestDto, UserNotificationRequestDto},
+        user::{
+            request::{
+                AppleLoginRequestDto, LoginUserRequestDto, UserNotificationRequestDto,
+                UserThemeRequestDto,
+            },
+            response::UserThemeResponseDto,
+        },
     },
     model::{
         auth::{AccessToken, JwtToken, TokenType},
@@ -348,6 +354,35 @@ pub async fn get_users_fcm_token_subscribed_channel_by_channel_id(
                 "[Service] Failed to check if user is subscribed to RSS channel: {}",
                 e
             );
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
+
+pub async fn get_user_theme(
+    pool: &MySqlPool,
+    user_email: String,
+) -> Result<UserThemeResponseDto, OmniNewsError> {
+    match user_repository::get_user_theme(pool, user_email).await {
+        Ok(theme) => Ok(UserThemeResponseDto::new(theme)),
+        Err(e) => {
+            error!("[Service] Failed to get user theme: {}", e);
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
+
+pub async fn update_user_theme(
+    pool: &MySqlPool,
+    user_email: String,
+    theme: UserThemeRequestDto,
+) -> Result<(), OmniNewsError> {
+    match user_repository::update_user_theme(pool, user_email, theme.theme.unwrap_or_default())
+        .await
+    {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            error!("[Service] Failed to update user theme: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }

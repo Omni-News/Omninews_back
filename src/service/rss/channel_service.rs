@@ -70,6 +70,7 @@ pub async fn parse_rss_link_to_channel(link: &str) -> Result<Channel, OmniNewsEr
 }
 
 fn make_rss_channel(channel: Channel, rss_link: String) -> NewRssChannel {
+    info!("[Service] Make rss channel from link: {}", rss_link);
     NewRssChannel::new(
         channel.title().to_string(),
         channel.link().to_string(),
@@ -300,7 +301,7 @@ pub async fn get_rss_preview(
         Err(_) => {
             let rss_channel = parse_rss_link_to_channel(&rss_link).await?;
             let new_channel = make_rss_channel(rss_channel, rss_link.clone());
-            let channel = RssChannel::new(new_channel, rss_link);
+            let channel = RssChannel::new(new_channel);
             Ok(RssChannelResponseDto::from_model(channel))
         }
     }

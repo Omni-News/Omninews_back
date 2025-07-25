@@ -29,6 +29,12 @@ pub struct UserNotificationRequestDto {
     pub user_fcm_token: Option<String>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct UserThemeRequestDto {
+    #[schemars(example = "example_theme")]
+    pub theme: Option<String>,
+}
+
 fn example_user_email() -> &'static str {
     "hong11@gil.com"
 }
@@ -55,4 +61,8 @@ fn example_user_notification_push() -> bool {
 
 fn example_user_fcm_token() -> &'static str {
     "fcm_token_example_1234567890"
+}
+
+fn example_theme() -> &'static str {
+    "paper"
 }

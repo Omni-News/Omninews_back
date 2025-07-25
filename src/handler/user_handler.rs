@@ -10,13 +10,19 @@ use crate::{
             request::VerifyRefreshTokenRequestDto,
             response::{AccessTokenResponseDto, JwtTokenResponseDto},
         },
-        user::request::{AppleLoginRequestDto, LoginUserRequestDto, UserNotificationRequestDto},
+        user::{
+            request::{
+                AppleLoginRequestDto, LoginUserRequestDto, UserNotificationRequestDto,
+                UserThemeRequestDto,
+            },
+            response::UserThemeResponseDto,
+        },
     },
     service::user_service,
 };
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: verify_refresh_token, verify_access_token, login, apple_login, logout, notification_setting]
+    openapi_get_routes_spec![settings: verify_refresh_token, verify_access_token, login, apple_login, logout, notification_setting, get_user_theme, user_theme_setting]
 }
 
 /// # 리프레시 토큰 검증 API
@@ -134,6 +140,41 @@ pub async fn notification_setting(
     )
     .await
     {
+        Ok(_) => Ok(Status::Ok),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
+
+/// # 사용자 테마 확인 API
+///
+/// 사용자의 현재 테마를 확인  API입니다.
+///
+#[openapi(tag = " 테마 API")]
+#[get("/user/theme")]
+pub async fn get_user_theme(
+    pool: &State<MySqlPool>,
+    user: AuthenticatedUser,
+) -> Result<Json<UserThemeResponseDto>, Status> {
+    match user_service::get_user_theme(pool, user.user_email).await {
+        Ok(res) => Ok(Json(res)),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
+
+/// # 사용자 테마 설정 API
+///
+/// 사용자의 테마를 변경하는  API입니다.
+///
+/// ### `theme` : 변경할 테마 이름 (예: paper)
+///
+#[openapi(tag = " 테마 API")]
+#[post("/user/theme", data = "<theme_data>")]
+pub async fn user_theme_setting(
+    pool: &State<MySqlPool>,
+    theme_data: Json<UserThemeRequestDto>,
+    user: AuthenticatedUser,
+) -> Result<Status, Status> {
+    match user_service::update_user_theme(pool, user.user_email, theme_data.into_inner()).await {
         Ok(_) => Ok(Status::Ok),
         Err(_) => Err(Status::InternalServerError),
     }

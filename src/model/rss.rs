@@ -85,7 +85,7 @@ impl NewRssChannel {
 }
 
 impl RssChannel {
-    pub fn new(new_channel: NewRssChannel, rss_link: String) -> Self {
+    pub fn new(new_channel: NewRssChannel) -> Self {
         Self {
             channel_id: Some(0),
             channel_title: new_channel.channel_title,
@@ -95,7 +95,7 @@ impl RssChannel {
             channel_language: new_channel.channel_language,
             rss_generator: new_channel.rss_generator,
             channel_rank: new_channel.channel_rank,
-            channel_rss_link: Some(rss_link),
+            channel_rss_link: new_channel.channel_rss_link,
         }
     }
 }

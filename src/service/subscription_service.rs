@@ -102,6 +102,8 @@ pub async fn is_already_subscribe_channel(
     channel_rss_link: String,
 ) -> Result<bool, OmniNewsError> {
     let user_id = user_service::find_user_id_by_email(pool, user_email).await?;
+    info!("User ID: {}", user_id);
+    info!("channel_rss_link: {}", channel_rss_link);
     let channel_id =
         match channel_service::find_rss_channel_by_rss_link(pool, channel_rss_link).await {
             Ok(res) => res.channel_id.unwrap_or_default(),
