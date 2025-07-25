@@ -11,13 +11,8 @@ impl UserThemeResponseDto {
     pub fn new(theme: String) -> Self {
         UserThemeResponseDto { theme: Some(theme) }
     }
-
-    pub fn theme(&self) -> &Option<String> {
-        &self.theme
-    }
 }
 
 fn example_theme() -> &'static str {
     "paper"
 }
-

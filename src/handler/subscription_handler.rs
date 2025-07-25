@@ -8,7 +8,6 @@ use sqlx::MySqlPool;
 use crate::auth_middleware::AuthenticatedUser;
 use crate::dto::rss::response::{RssChannelResponseDto, RssItemResponseDto};
 use crate::dto::subscribe::request::SubscribeRequestDto;
-use crate::repository::folder_repository::insert_folder;
 use crate::service::subscription_service;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
