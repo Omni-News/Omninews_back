@@ -75,13 +75,17 @@ async fn rocket() -> _ {
 }
 
 async fn start_scheduler(pool: &MySqlPool, embedding_service: &EmbeddingService) {
-    use scheduler::{annoy_scheduler::*, news_scheduler::*, rss_scheduler::*};
+    use scheduler::{
+        annoy_scheduler::*, news_scheduler::*, rss_info_update_scheduler::*,
+        rss_notification_scheduler::*,
+    };
 
     tokio::join!(
         delete_old_news_scheduler(pool),
         fetch_news_scheduler(pool),
         save_annoy_scheduler(pool),
-        rss_scheduler(pool, embedding_service),
+        rss_notification_scheduler(pool, embedding_service),
+        rss_info_update_scheduler(pool),
     );
 }
 

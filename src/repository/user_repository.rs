@@ -259,7 +259,7 @@ pub async fn selsect_users_fcm_token_subscribed_channel_by_channel_id(
     let result = query!(
         "SELECT u.user_fcm_token FROM user u
         JOIN user_subscription_channel usc ON u.user_id = usc.user_id
-        WHERE usc.channel_id = ? AND u.user_fcm_token IS NOT NULL",
+        WHERE usc.channel_id = ? AND u.user_fcm_token IS NOT NULL AND u.user_notification_push = true",
         channel_id
     )
     .fetch_all(&mut *conn)

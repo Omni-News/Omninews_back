@@ -30,13 +30,13 @@ use crate::{
 ///
 /// DB에 저장된 Rss Channel 최신화 및 알림 보내기
 ///
-pub async fn rss_scheduler(pool: &MySqlPool, embedding_service: &EmbeddingService) {
+pub async fn rss_notification_scheduler(pool: &MySqlPool, embedding_service: &EmbeddingService) {
     // loop for 10 minutes
     let mut interval = interval_at(Instant::now(), Duration::from_secs(10));
 
     loop {
         interval.tick().await;
-        info!("[Scheduler] Rss Scheduler started");
+        info!("[Scheduler] Rss Notification Scheduler started");
         let channels = get_all_rss_channels(pool).await.unwrap();
 
         for channel in channels {
