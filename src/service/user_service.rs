@@ -29,7 +29,8 @@ use crate::{
 
 /// 1. access token O refresh token O -> processed in auto login.
 /// 2. access token X refresh token O -> processed in auto login.
-/// 3. access token X refresh token X -> Reissue refresh token and access token or Create user
+/// 3. access token X refresh token X -> Reissue refresh token and access token or Create user +
+///    Update User Info
 pub async fn login_or_create_user(
     pool: &MySqlPool,
     user: LoginUserRequestDto,
@@ -62,6 +63,32 @@ pub async fn login_or_create_user(
             user.user_email.clone().unwrap()
         );
         let jwt_token = issue_tokens(pool, user.user_email.clone().unwrap()).await?;
+        // update user info
+        match user_repository::update_user_info(
+            pool,
+            user.user_email.clone(),
+            user.user_display_name,
+            user.user_photo_url,
+            user.user_social_login_provider,
+            user.user_social_provider_id,
+        )
+        .await
+        {
+            Ok(_) => {
+                info!(
+                    "[Service] User info updated for email: {}",
+                    user.user_email.clone().unwrap()
+                );
+            }
+            Err(e) => {
+                error!("[Service] Failed to update user info: {}", e);
+                return Err(OmniNewsError::Database(e));
+            }
+        }
+        info!(
+            "[Service] User info updated for email: {}",
+            user.user_email.clone().unwrap()
+        );
 
         return Ok(JwtTokenResponseDto::from_model(jwt_token));
     }
@@ -275,7 +302,10 @@ pub async fn apple_login(
 ) -> Result<JwtTokenResponseDto, OmniNewsError> {
     let user_email = user_repository::select_user_email_by_social_provider_id(
         pool,
-        apple_login.user_social_provider_id.unwrap_or_default(),
+        apple_login
+            .user_social_provider_id
+            .clone()
+            .unwrap_or_default(),
     )
     .await?;
 
@@ -286,8 +316,8 @@ pub async fn apple_login(
             user_email: Some(user_email),
             user_display_name: None,
             user_photo_url: None,
-            user_social_login_provider: None,
-            user_social_provider_id: None,
+            user_social_login_provider: Some("apple".to_string()),
+            user_social_provider_id: apple_login.user_social_provider_id,
         },
     )
     .await

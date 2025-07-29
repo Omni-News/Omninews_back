@@ -32,7 +32,7 @@ use crate::{
 ///
 pub async fn rss_notification_scheduler(pool: &MySqlPool, embedding_service: &EmbeddingService) {
     // loop for 10 minutes
-    let mut interval = interval_at(Instant::now(), Duration::from_secs(10));
+    let mut interval = interval_at(Instant::now(), Duration::from_secs(60 * 10));
 
     loop {
         interval.tick().await;
