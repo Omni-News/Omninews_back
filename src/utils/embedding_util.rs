@@ -26,10 +26,13 @@ impl EmbeddingService {
 
         thread::spawn(move || {
             info!("[Worker Thread] Initializing worker thread module");
-            let model =
-                SentenceEmbeddingsBuilder::remote(SentenceEmbeddingsModelType::AllMiniLmL12V2)
-                    .create_model()
-                    .expect("[Worker Thread] Error while initalizing model");
+
+            // TOO 다국어 지원 모델로 변경
+            let model = SentenceEmbeddingsBuilder::remote(
+                SentenceEmbeddingsModelType::DistiluseBaseMultilingualCased,
+            )
+            .create_model()
+            .expect("[Worker Thread] Error while initalizing model");
 
             info!("[Worker Thread] Worker thread initialized");
 
@@ -75,6 +78,7 @@ impl EmbeddingService {
             .map_err(|_| "Failed to recieved from worker thread ".to_string())
     }
 }
+
 pub async fn embedding_sentence(
     embedding_service: &EmbeddingService,
     sentence: String,

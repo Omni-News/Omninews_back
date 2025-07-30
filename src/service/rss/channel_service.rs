@@ -27,7 +27,9 @@ pub async fn create_rss_all(
 ) -> Result<bool, OmniNewsError> {
     for link in links {
         info!("[Service] Add : {}", link.rss_link);
-        create_rss_and_embedding(pool, model, link).await?;
+        let _ = create_rss_and_embedding(pool, model, link)
+            .await
+            .unwrap_or_default();
     }
     Ok(true)
 }
@@ -240,11 +242,16 @@ fn prepare_embedding_text(title: &str, description: &str) -> String {
     // 2. 구조화된 형식으로 정보 표현
     let mut text = format!("제목: {}. 내용: {}", title, clean_description);
 
-    // 3. 특수문자 정리 및 중복 공백 제거
+    // 3. 특수문자 정리 및 중복 공백 제거 - 한글 보존 처리 추가
     text = text
         .replace(
             |c: char| {
-                !c.is_alphanumeric() && !c.is_whitespace() && c != '.' && c != ',' && c != ':'
+                !c.is_alphanumeric()
+                    && !c.is_whitespace()
+                    && !is_hangul(c)
+                    && c != '.'
+                    && c != ','
+                    && c != ':'
             },
             " ",
         )
@@ -263,11 +270,22 @@ fn prepare_embedding_text(title: &str, description: &str) -> String {
     text
 }
 
+// 한글 문자 판별 함수 추가
+fn is_hangul(c: char) -> bool {
+    let cp = c as u32;
+    // 한글 유니코드 범위 (가~힣)
+    (0xAC00..=0xD7A3).contains(&cp) ||
+    // 한글 자음/모음
+    (0x1100..=0x11FF).contains(&cp) ||
+    (0x3130..=0x318F).contains(&cp)
+}
+
 // HTML 태그 제거 함수
 fn remove_html_tags(text: &str) -> String {
     let re = regex::Regex::new(r"<[^>]*>").unwrap();
     re.replace_all(text, "").to_string()
 }
+
 // TODO 랭크 50순위 채널에서 20개 랜덤 반환
 pub async fn get_recommend_channel(
     pool: &MySqlPool,
