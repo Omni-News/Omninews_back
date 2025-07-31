@@ -15,7 +15,7 @@ pub async fn load_channel_annoy(
     search_value: String,
 ) -> Result<(Vec<i32>, Vec<f32>), OmniNewsError> {
     let annoy = rannoy::Rannoy::new(384);
-    annoy.load(PathBuf::from("channel_embeddings.ann"));
+    annoy.load(PathBuf::from("../resources/channel_embeddings.ann"));
 
     // 검색어 형식화
     let search_query = format!("제목: {}. 내용: {}", search_value, search_value);
@@ -50,7 +50,7 @@ pub async fn load_rss_annoy(
     search_value: String,
 ) -> Result<(Vec<i32>, Vec<f32>), OmniNewsError> {
     let annoy = rannoy::Rannoy::new(384);
-    annoy.load(PathBuf::from("rss_embeddings.ann"));
+    annoy.load(PathBuf::from("../resources/rss_embeddings.ann"));
 
     // 검색어 형식화
     let search_query = format!("제목: {}. 내용: {}", search_value, search_value);
@@ -79,7 +79,7 @@ pub async fn load_news_annoy(
     search_value: String,
 ) -> Result<(Vec<i32>, Vec<f32>), OmniNewsError> {
     let annoy = rannoy::Rannoy::new(384);
-    annoy.load(PathBuf::from("news_embeddings.ann"));
+    annoy.load(PathBuf::from("../resources/news_embeddings.ann"));
 
     // 검색어 형식화
     let search_query = format!("제목: {}. 내용: {}", search_value, search_value);
