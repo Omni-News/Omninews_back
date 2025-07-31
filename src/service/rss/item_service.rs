@@ -53,7 +53,14 @@ pub async fn create_rss_item_and_embedding(
     rss_item.set_description(extracted_description.clone());
     let item_image_link = use_channel_url_if_none(item_image_link, channel_image_url.clone());
 
-    let item = make_rss_item(channel_id, rss_item, item_image_link);
+    let item = match make_rss_item(channel_id, rss_item, item_image_link) {
+        Ok(item) => item,
+        Err(e) => {
+            error!("[Service] Failed to make rss item: {}", e);
+            return Err(e);
+        }
+    };
+
     let item_id = store_rss_item(pool, item.clone()).await.unwrap();
 
     let sentence = format!(
@@ -103,9 +110,21 @@ fn use_channel_url_if_none(link: Option<String>, channel_image_url: String) -> S
     }
 }
 
-fn make_rss_item(channel_id: i32, item: &Item, item_image_link: String) -> NewRssItem {
+fn make_rss_item(
+    channel_id: i32,
+    item: &Item,
+    item_image_link: String,
+) -> Result<NewRssItem, OmniNewsError> {
     let rss_pub_date = parse_pub_date(item.pub_date());
-    NewRssItem::new(channel_id, item, rss_pub_date, item_image_link)
+    if item.title.is_none() || item.description.is_none() {
+        return Err(OmniNewsError::EmptyRssItem);
+    }
+    Ok(NewRssItem::new(
+        channel_id,
+        item,
+        rss_pub_date,
+        item_image_link,
+    ))
 }
 
 fn parse_pub_date(pub_date_str: Option<&str>) -> Option<NaiveDateTime> {

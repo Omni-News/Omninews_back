@@ -31,4 +31,7 @@ pub enum OmniNewsError {
 
     #[error("Firebase error")]
     FirebaseError,
+
+    #[error("Empty Rss Item")]
+    EmptyRssItem,
 }

@@ -63,7 +63,7 @@ pub async fn rss_notification_scheduler(pool: &MySqlPool, embedding_service: &Em
                     }
                 }
 
-                let _ = create_rss_item_and_embedding(
+                match create_rss_item_and_embedding(
                     pool,
                     embedding_service,
                     channel_id,
@@ -71,7 +71,18 @@ pub async fn rss_notification_scheduler(pool: &MySqlPool, embedding_service: &Em
                     &mut item,
                 )
                 .await
-                .unwrap();
+                {
+                    Ok(res) => {
+                        if !res {
+                            error!("[Scheduler] Failed to create rss item and embedding");
+                            continue;
+                        }
+                    }
+                    Err(e) => {
+                        error!("[Scheduler] Failed to create rss item and embedding: {}", e);
+                        continue;
+                    }
+                }
 
                 // Rss채널 구독한 사람들 토큰 가져와서 뿌리기
                 let users_tokens =
@@ -97,11 +108,15 @@ pub async fn get_rss_item_by_channel_from_scraping(
     let link = channel.channel_rss_link.clone().unwrap_or_default();
 
     let mut channel = parse_rss_link_to_channel(&link).await?;
-    Ok(channel
+
+    let item = channel
         .items_mut()
         .get(index as usize)
         .cloned()
-        .unwrap_or_default())
+        .unwrap_or_default();
+
+    // TODO rss item의 title이  Some("")일 수 있음. 문제 발생 시 추적 및 조치
+    Ok(item)
 }
 
 pub async fn send_notification_each_user(
