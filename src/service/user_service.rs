@@ -369,26 +369,6 @@ pub async fn update_user_notification_setting(
     }
 }
 
-pub async fn get_users_fcm_token_subscribed_channel_by_channel_id(
-    pool: &MySqlPool,
-    channel_id: i32,
-) -> Result<Vec<String>, OmniNewsError> {
-    match user_repository::selsect_users_fcm_token_subscribed_channel_by_channel_id(
-        pool, channel_id,
-    )
-    .await
-    {
-        Ok(res) => Ok(res),
-        Err(e) => {
-            error!(
-                "[Service] Failed to check if user is subscribed to RSS channel: {}",
-                e
-            );
-            Err(OmniNewsError::Database(e))
-        }
-    }
-}
-
 pub async fn get_user_theme(
     pool: &MySqlPool,
     user_email: String,

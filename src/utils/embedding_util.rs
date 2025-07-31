@@ -114,13 +114,3 @@ pub fn encode_embedding(embedding: &[f32]) -> Vec<u8> {
     }
     bytes
 }
-
-pub fn decode_embedding(bytes: &[u8]) -> Vec<f32> {
-    let mut embedding = Vec::with_capacity(bytes.len() / 4);
-    for chunk in bytes.chunks_exact(4) {
-        let mut array = [0u8; 4];
-        array.copy_from_slice(chunk);
-        embedding.push(f32::from_le_bytes(array));
-    }
-    embedding
-}

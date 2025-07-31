@@ -1,11 +1,7 @@
 use sqlx::MySqlPool;
 
 use crate::{
-    model::{
-        embedding::{Embedding, NewEmbedding},
-        error::OmniNewsError,
-        rss::NewticleType,
-    },
+    model::{embedding::NewEmbedding, error::OmniNewsError},
     repository::embedding_repository,
     utils::embedding_util::{embedding_sentence, encode_embedding, EmbeddingService},
 };
@@ -27,36 +23,5 @@ pub async fn create_embedding(
             error!("[Service] Failed to insert embedding: {}", e);
             Err(OmniNewsError::EmbeddingError)
         }
-    }
-}
-
-pub async fn find_all_embeddings_by(
-    pool: &MySqlPool,
-    category: NewticleType,
-) -> Result<Vec<Embedding>, OmniNewsError> {
-    match category {
-        NewticleType::Channel => {
-            match embedding_repository::select_all_channel_embeddings(pool).await {
-                Ok(embeddings) => Ok(embeddings),
-                Err(e) => {
-                    error!("[Service] Failed to select all channel embeddings: {}", e);
-                    Err(OmniNewsError::Database(e))
-                }
-            }
-        }
-        NewticleType::Rss => match embedding_repository::select_all_rss_embeddings(pool).await {
-            Ok(embeddings) => Ok(embeddings),
-            Err(e) => {
-                error!("[Service] Failed to select all rss embeddings: {}", e);
-                Err(OmniNewsError::Database(e))
-            }
-        },
-        NewticleType::News => match embedding_repository::select_all_news_embeddings(pool).await {
-            Ok(embeddings) => Ok(embeddings),
-            Err(e) => {
-                error!("[Service] Failed to select all news embeddings: {}", e);
-                Err(OmniNewsError::Database(e))
-            }
-        },
     }
 }

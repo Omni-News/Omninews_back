@@ -29,9 +29,6 @@ pub enum OmniNewsError {
     #[error("Failed to validate JWT token")]
     TokenValidationError,
 
-    #[error("Firebase error")]
-    FirebaseError,
-
     #[error("Empty Rss Item")]
     EmptyRssItem,
 }

@@ -302,26 +302,3 @@ pub async fn update_rss_item_rank(
         Err(e) => Err(OmniNewsError::Database(e)),
     }
 }
-
-pub async fn get_items_len_by_channel_id(
-    pool: &MySqlPool,
-    channel_id: i32,
-) -> Result<i32, OmniNewsError> {
-    match rss_item_repository::select_rss_items_len_by_channel_id(pool, channel_id).await {
-        Ok(res) => Ok(res),
-        Err(e) => {
-            error!("[Service] Failed to select rss channel length: {:?}", e);
-            Err(OmniNewsError::Database(e))
-        }
-    }
-}
-
-pub async fn is_exist_rss_item_by_link(
-    pool: &MySqlPool,
-    link: String,
-) -> Result<bool, OmniNewsError> {
-    match rss_item_repository::select_item_by_link(pool, link).await {
-        Ok(_) => Ok(true),
-        Err(_) => Ok(false),
-    }
-}

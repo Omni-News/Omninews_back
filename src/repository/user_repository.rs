@@ -250,30 +250,6 @@ pub async fn update_user_notification_setting(
     }
 }
 
-pub async fn selsect_users_fcm_token_subscribed_channel_by_channel_id(
-    pool: &MySqlPool,
-    channel_id: i32,
-) -> Result<Vec<String>, sqlx::Error> {
-    let mut conn = get_db(pool).await?;
-
-    let result = query!(
-        "SELECT u.user_fcm_token FROM user u
-        JOIN user_subscription_channel usc ON u.user_id = usc.user_id
-        WHERE usc.channel_id = ? AND u.user_fcm_token IS NOT NULL AND u.user_notification_push = true",
-        channel_id
-    )
-    .fetch_all(&mut *conn)
-    .await;
-
-    match result {
-        Ok(res) => Ok(res
-            .into_iter()
-            .map(|r| r.user_fcm_token.unwrap_or_default())
-            .collect()),
-        Err(e) => Err(e),
-    }
-}
-
 pub async fn get_user_theme(pool: &MySqlPool, user_email: String) -> Result<String, sqlx::Error> {
     let mut conn = get_db(pool).await?;
 

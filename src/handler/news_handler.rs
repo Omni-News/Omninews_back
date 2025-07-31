@@ -4,12 +4,11 @@ use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use sqlx::MySqlPool;
 
 use crate::{
-    auth_middleware::AuthenticatedUser, dto::news::response::NewsResponseDto, global::FETCH_FLAG,
-    service::news_service,
+    auth_middleware::AuthenticatedUser, dto::news::response::NewsResponseDto, service::news_service,
 };
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: get_news, fetch_start, fetch_stop]
+    openapi_get_routes_spec![settings: get_news]
 }
 
 /// # 뉴스 카테고리별 조회 API
@@ -29,34 +28,4 @@ pub async fn get_news(
         Ok(res) => Ok(Json(res)),
         Err(_) => Err(Status::InternalServerError),
     }
-}
-
-// TODO fetch start, stop은 관리자 권한 따로 만들어서 관리하기
-/// # 뉴스 수집 시작 API
-///
-/// 외부 API에서 뉴스를 자동으로 수집하는 프로세스를 시작합니다.
-///
-/// ### 기능 설명
-///
-/// fetch 시작 시 5분마다 뉴스 크롤링 및 가공 후 db 저장.
-///
-#[openapi(tag = "뉴스 관리 API")]
-#[get("/news/fetch_start")]
-pub async fn fetch_start(_auth: AuthenticatedUser) -> &'static str {
-    let mut fetch_flag = FETCH_FLAG.lock().unwrap();
-    *fetch_flag = true;
-    "Fetching started!"
-}
-
-/// # 뉴스 수집 중지 API
-///
-/// 외부 API에서 뉴스를 자동으로 수집하는 프로세스를 중지합니다.
-///
-///
-#[openapi(tag = "뉴스 관리 API")]
-#[get("/news/fetch_stop")]
-pub async fn fetch_stop(_auth: AuthenticatedUser) -> &'static str {
-    let mut fetch_flag = FETCH_FLAG.lock().unwrap();
-    *fetch_flag = false;
-    "Fetching stopped!"
 }

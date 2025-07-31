@@ -3,13 +3,6 @@ use rss::Item;
 use sqlx::prelude::FromRow;
 
 #[derive(Debug, Clone)]
-pub enum NewticleType {
-    Channel,
-    Rss,
-    News,
-}
-
-#[derive(Debug, Clone)]
 pub struct NewRssChannel {
     pub channel_title: Option<String>,
     pub channel_link: Option<String>,

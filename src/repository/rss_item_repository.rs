@@ -134,21 +134,3 @@ pub async fn update_rss_channel_rank_by_id(
         Ok(false)
     }
 }
-
-pub async fn select_rss_items_len_by_channel_id(
-    pool: &MySqlPool,
-    channel_id: i32,
-) -> Result<i32, sqlx::Error> {
-    let mut conn = get_db(pool).await?;
-    let result = query!(
-        "SELECT COUNT(*) as count FROM rss_item WHERE channel_id = ?;",
-        channel_id,
-    )
-    .fetch_one(&mut *conn)
-    .await;
-
-    match result {
-        Ok(res) => Ok(res.count as i32),
-        Err(e) => Err(e),
-    }
-}

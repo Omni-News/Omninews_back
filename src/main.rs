@@ -5,11 +5,9 @@ mod auth_middleware;
 mod config;
 mod db_util;
 mod dto;
-mod global;
 mod handler;
 mod model;
 mod repository;
-mod scheduler;
 mod service;
 mod utils;
 
@@ -19,7 +17,6 @@ use config::{
 };
 use handler::{config_handler::options_handler, error_handler::error_catchers};
 use rocket_okapi::mount_endpoints_and_merged_docs;
-use sqlx::MySqlPool;
 use utils::embedding_util::EmbeddingService;
 
 pub const CURRENT_VERSION: &str = "v1";
@@ -30,15 +27,9 @@ async fn rocket() -> _ {
     logging::load_logger();
 
     let pool = db_util::create_pool().await;
-    let pool_scheduler = pool.clone();
     let pool_middleware = pool.clone();
 
     let embedding_service = EmbeddingService::new();
-    let embedding_service_scheduler = embedding_service.clone();
-
-    tokio::spawn(async move {
-        start_scheduler(&pool_scheduler, &embedding_service_scheduler).await;
-    });
 
     let exempt_paths = vec![
         // omninews
@@ -72,21 +63,6 @@ async fn rocket() -> _ {
     };
 
     rocket
-}
-
-async fn start_scheduler(pool: &MySqlPool, embedding_service: &EmbeddingService) {
-    use scheduler::{
-        annoy_scheduler::*, news_scheduler::*, rss_info_update_scheduler::*,
-        rss_notification_scheduler::*,
-    };
-
-    tokio::join!(
-        delete_old_news_scheduler(pool),
-        fetch_news_scheduler(pool),
-        save_annoy_scheduler(pool),
-        rss_notification_scheduler(pool, embedding_service),
-        rss_info_update_scheduler(pool),
-    );
 }
 
 // TODO 현재 swerver가 localhost랑 example로 되어있는데, example를 서비스중인 ip로 바꿔서
