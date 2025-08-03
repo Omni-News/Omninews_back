@@ -152,6 +152,7 @@ pub async fn validate_refresh_token_by_user_email(
     email: String,
 ) -> Result<JwtToken, sqlx::Error> {
     let mut conn = get_db(pool).await?;
+    info!("Validating refresh token: {}, for email: {}", token, email);
 
     let result = query!(
         "SELECT * FROM user

@@ -5,6 +5,9 @@ pub enum OmniNewsError {
     #[error("Failed to fetch : {0}")]
     Request(#[from] reqwest::Error),
 
+    #[error("Failed to fetch URL")]
+    FetchUrl,
+
     #[error("Failed to parse RSS feed")]
     Parse,
 
@@ -31,4 +34,10 @@ pub enum OmniNewsError {
 
     #[error("Empty Rss Item")]
     EmptyRssItem,
+
+    #[error("Configuration error: {0}")]
+    Config(String),
+
+    #[error("Failed to parse JSON: {0}")]
+    JsonParseError(String),
 }

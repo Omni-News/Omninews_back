@@ -235,7 +235,7 @@ fn make_token(
 
     match token_type {
         TokenType::Access => {
-            let access_token_exp = Utc::now().timestamp() as u64 + (30 * 60) + (9 * 3600); // 30 min and kst
+            let access_token_exp = Utc::now().timestamp() as u64 + (60 * 60 * 24) + (9 * 3600); // 1 day and kst
             let access_token_claim = Claims {
                 aud: "omninews".to_owned(),
                 sub: sub.clone(),
@@ -264,7 +264,7 @@ fn make_token(
         }
         TokenType::Refresh => {
             let refresh_token_exp =
-                Utc::now().timestamp() as u64 + (60 * 60 * 24 * 14) + (9 * 3600); // 14 days and
+                Utc::now().timestamp() as u64 + (60 * 60 * 24 * 31) + (9 * 3600); // 1 month and
                                                                                   // kst
 
             let refresh_token_claim = Claims {

@@ -6,6 +6,7 @@ pub mod error_handler;
 pub mod folder_handler;
 pub mod health_handler;
 pub mod news_handler;
+pub mod omninews_subscription_handler;
 pub mod rss_handler;
 pub mod search_handler;
 pub mod subscription_handler;
@@ -20,5 +21,6 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         "/" => subscription_handler::get_routes_and_docs(settings),
         "/" => folder_handler::get_routes_and_docs(settings),
         "/" => health_handler::get_routes_and_docs(settings),
+        "/" => omninews_subscription_handler::get_routes_and_docs(settings),
     }
 }
