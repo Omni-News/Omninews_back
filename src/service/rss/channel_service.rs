@@ -1,4 +1,5 @@
-use rss::Channel;
+use chrono::Utc;
+use rss::{Channel, ChannelBuilder, Image, ItemBuilder};
 use sqlx::MySqlPool;
 
 use crate::{
@@ -356,4 +357,27 @@ pub async fn update_rss_channel_rank(
             Err(OmniNewsError::Database(e))
         }
     }
+}
+
+async fn rss_generator() {
+    // 아래는 Rss builder 테스트. 링크에서 요소들 뺴와서 이렇게 만들면 됨.
+    //
+    let mut image = Image::default();
+    image.set_url("https://example.com/image.png");
+    image.set_title("test image");
+    image.set_description(Some("test description".to_string()));
+
+    let channel = ChannelBuilder::default()
+        .title("hi")
+        .description("test")
+        .link("https://example.com")
+        .image(image)
+        .generator("naver".to_string());
+
+    let items = ItemBuilder::default()
+        .title("example item".to_string())
+        .description("This is an example item description.".to_string())
+        .link("https://example.com/item".to_string())
+        .author("kang".to_string())
+        .pub_date("2099-10-10T10:10:10Z".to_string());
 }
