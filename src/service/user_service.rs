@@ -25,6 +25,7 @@ use crate::{
         user::NewUser,
     },
     repository::user_repository,
+    user_error, user_info, user_warn,
 };
 
 /// 1. access token O refresh token O -> processed in auto login.
@@ -41,7 +42,7 @@ pub async fn login_or_create_user(
     )
     .await
     .map_err(|e| {
-        error!(
+        user_error!(
             "[Service] Failed to validate access and refresh token: {}",
             e
         );
@@ -50,7 +51,7 @@ pub async fn login_or_create_user(
 
     // 1 or 2 -> new login
     if is_access_available || is_refresh_available {
-        warn!("[Service] Access or refresh token is already alived ailed to login");
+        user_warn!("[Service] Access or refresh token is already alived ailed to login");
     }
 
     // 3. access token X refresh token X -> reissue both token or create user
@@ -58,7 +59,7 @@ pub async fn login_or_create_user(
         .is_ok()
     {
         // 3-1. reissue both
-        info!(
+        user_info!(
             "[Service] 3-1. Success login: {}",
             user.user_email.clone().unwrap()
         );
@@ -75,17 +76,17 @@ pub async fn login_or_create_user(
         .await
         {
             Ok(_) => {
-                info!(
+                user_info!(
                     "[Service] User info updated for email: {}",
                     user.user_email.clone().unwrap()
                 );
             }
             Err(e) => {
-                error!("[Service] Failed to update user info: {}", e);
+                user_error!("[Service] Failed to update user info: {}", e);
                 return Err(OmniNewsError::Database(e));
             }
         }
-        info!(
+        user_info!(
             "[Service] User info updated for email: {}",
             user.user_email.clone().unwrap()
         );
@@ -93,7 +94,7 @@ pub async fn login_or_create_user(
         return Ok(JwtTokenResponseDto::from_model(jwt_token));
     }
     // 3-2.create user
-    info!(
+    user_info!(
         "[Service] 3-2. Success login: {}",
         user.user_email.clone().unwrap()
     );
@@ -139,7 +140,7 @@ async fn create_user(
         )),
 
         Err(e) => {
-            error!("[Service] Failed to create user: {}", e);
+            user_error!("[Service] Failed to create user: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -153,7 +154,7 @@ pub async fn vliadate_access_token(
     match user_repository::validate_access_token_by_user_email(pool, token, email).await {
         Ok(_) => Ok(true),
         Err(_) => {
-            error!("[Service] Token validation failed");
+            user_error!("[Service] Token validation failed");
             Err(OmniNewsError::TokenValidationError)
         }
     }
@@ -174,13 +175,13 @@ pub async fn validate_refresh_token(
     .await
     {
         Ok(_) => {
-            info!("[Service] Reissue access token.");
+            user_info!("[Service] Reissue access token.");
             let acces_token = reissue_access_token(pool, user_email).await?;
 
             Ok(AccessTokenResponseDto::from_model(acces_token))
         }
         Err(_) => {
-            error!("[Service] Refresh token validation failed");
+            user_error!("[Service] Refresh token validation failed");
             Err(OmniNewsError::TokenValidationError)
         }
     }
@@ -220,7 +221,7 @@ async fn issue_tokens(pool: &MySqlPool, user_email: String) -> Result<JwtToken, 
     match user_repository::update_uesr_tokens(pool, user_email, tokens.clone()).await {
         Ok(_) => Ok(tokens),
         Err(e) => {
-            error!("[Service] Failed to update user tokens: {}", e);
+            user_error!("[Service] Failed to update user tokens: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -250,7 +251,7 @@ fn make_token(
             ) {
                 Ok(token) => Some(token),
                 Err(e) => {
-                    error!("[Service] Failed to create JWT access token: {}", e);
+                    user_error!("[Service] Failed to create JWT access token: {}", e);
                     return Err(OmniNewsError::TokenCreateError);
                 }
             };
@@ -281,7 +282,7 @@ fn make_token(
             ) {
                 Ok(token) => Some(token),
                 Err(e) => {
-                    error!("[Service] Failed to create JWT refresh token: {}", e);
+                    user_error!("[Service] Failed to create JWT refresh token: {}", e);
                     return Err(OmniNewsError::TokenCreateError);
                 }
             };
@@ -330,7 +331,7 @@ pub async fn find_user_id_by_email(
     match user_repository::select_user_id_by_email(pool, user_email).await {
         Ok(user_id) => Ok(user_id),
         Err(e) => {
-            error!("[Service] Failed to find user id by email: {}", e);
+            user_error!("[Service] Failed to find user id by email: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -340,7 +341,7 @@ pub async fn delete_user_token(pool: &MySqlPool, user_email: String) -> Result<(
     match user_repository::delete_user_token_by_email(pool, user_email).await {
         Ok(_) => Ok(()),
         Err(e) => {
-            error!("[Service] Failed to remove user token: {}", e);
+            user_error!("[Service] Failed to remove user token: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -360,7 +361,7 @@ pub async fn update_user_notification_setting(
     {
         Ok(_) => Ok(()),
         Err(e) => {
-            error!(
+            user_error!(
                 "[Service] Failed to update user notification setting: {}",
                 e
             );
@@ -376,7 +377,7 @@ pub async fn get_user_theme(
     match user_repository::get_user_theme(pool, user_email).await {
         Ok(theme) => Ok(UserThemeResponseDto::new(theme)),
         Err(e) => {
-            error!("[Service] Failed to get user theme: {}", e);
+            user_error!("[Service] Failed to get user theme: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -392,7 +393,7 @@ pub async fn update_user_theme(
     {
         Ok(_) => Ok(()),
         Err(e) => {
-            error!("[Service] Failed to update user theme: {}", e);
+            user_error!("[Service] Failed to update user theme: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }

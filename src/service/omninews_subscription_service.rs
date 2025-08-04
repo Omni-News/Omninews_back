@@ -17,6 +17,7 @@ use crate::{
         error::OmniNewsError,
         omninews_subscription::{DecodedReceipt, NewOmniNewsSubscription},
     },
+    omninews_subscription_error, omninews_subscription_info, omninews_subscription_warn,
     repository::omninews_subscription_repository,
 };
 
@@ -29,7 +30,7 @@ struct AppStoreConfig {
 }
 
 fn load_app_store_config() -> Result<AppStoreConfig, OmniNewsError> {
-    info!("App Store Server API 설정 로드 중...");
+    omninews_subscription_info!("App Store Server API 설정 로드 중...");
     // Load the App Store configuration from environment variables or a config file
     let private_key = env::var("APPLE_PRIVATE_KEY")
         .map_err(|_| OmniNewsError::Config("APP_STORE_PRIVATE_KEY not set".into()))?;
@@ -40,7 +41,7 @@ fn load_app_store_config() -> Result<AppStoreConfig, OmniNewsError> {
     let bundle_id = env::var("APPLE_BUNDLE_ID")
         .map_err(|_| OmniNewsError::Config("APP_STORE_BUNDLE_ID not set".into()))?;
 
-    info!("App Store Server API 설정 로드 완료");
+    omninews_subscription_info!("App Store Server API 설정 로드 완료");
     Ok(AppStoreConfig {
         private_key,
         key_id,
@@ -83,19 +84,19 @@ fn generate_app_store_server_jwt(config: &AppStoreConfig) -> Result<String, Omni
         aud: "appstoreconnect-v1".to_string(),
         bid: config.bundle_id.clone(),
     };
-    info!("Claims 생성: {:?}", claims);
+    omninews_subscription_info!("Claims 생성: {:?}", claims);
 
     let encoding_key = EncodingKey::from_ec_pem(config.private_key.as_bytes()).map_err(|e| {
-        error!("Private key 인코딩 오류: {}", e);
+        omninews_subscription_error!("Private key 인코딩 오류: {}", e);
         OmniNewsError::Config("Invalid private key".into())
     })?;
 
     let token = encode(&header, &claims, &encoding_key).map_err(|e| {
-        error!("JWT 생성 오류: {}", e);
+        omninews_subscription_error!("JWT 생성 오류: {}", e);
         OmniNewsError::TokenCreateError
     })?;
 
-    info!("App Store Server JWT 생성 성공: {}", token);
+    omninews_subscription_info!("App Store Server JWT 생성 성공: {}", token);
 
     Ok(token)
 }
@@ -108,7 +109,7 @@ fn extract_transaction_id(
             return Ok(transaction_id);
         }
     }
-    error!("트랜잭션 ID가 제공되지 않았습니다.");
+    omninews_subscription_error!("트랜잭션 ID가 제공되지 않았습니다.");
     Err(OmniNewsError::NotFound("Not FOund Transaction ID".into()))
 }
 
@@ -129,7 +130,7 @@ async fn fetch_subscription_status(
 
     let url = format!("{}/v1/subscriptions/{}", base_url, transaction_id);
 
-    info!("App Store 구독 상태 조회 URL: {}", url);
+    omninews_subscription_info!("App Store 구독 상태 조회 URL: {}", url);
 
     let response = client
         .get(&url)
@@ -137,24 +138,24 @@ async fn fetch_subscription_status(
         .send()
         .await
         .map_err(|e| {
-            error!("App Store 구독 상태 API 호출 오류: {}", e);
+            omninews_subscription_error!("App Store 구독 상태 API 호출 오류: {}", e);
             OmniNewsError::Request(e)
         })?;
-    info!("App Store 구독 상태 응답 코드: {}", response.status());
+    omninews_subscription_info!("App Store 구독 상태 응답 코드: {}", response.status());
 
     if !response.status().is_success() {
         let status = response.status();
         let error_text = response.text().await.unwrap_or_default();
-        error!("App Store 구독 상태 조회 실패: {} - {}", status, error_text);
+        omninews_subscription_error!("App Store 구독 상태 조회 실패: {} - {}", status, error_text);
         return Err(OmniNewsError::FetchUrl);
     }
 
     let data: serde_json::Value = response.json().await.map_err(|e| {
-        error!("App Store 구독 상태 응답 파싱 오류: {}", e);
+        omninews_subscription_error!("App Store 구독 상태 응답 파싱 오류: {}", e);
         OmniNewsError::JsonParseError("Failed to parse response".into())
     })?;
 
-    info!("App Store 구독 상태 응답: {:?}", data);
+    omninews_subscription_info!("App Store 구독 상태 응답: {:?}", data);
 
     parse_subscription_data(&data, transaction_id)
 }
@@ -165,7 +166,7 @@ fn parse_subscription_data(
 ) -> Result<SubscriptionData, OmniNewsError> {
     // 데이터 객체 추출
     let data_obj = data.get("data").ok_or_else(|| {
-        error!("App Store API 응답에 'data' 필드가 없습니다");
+        omninews_subscription_error!("App Store API 응답에 'data' 필드가 없습니다");
         OmniNewsError::JsonParseError("Missing 'data' field".into())
     })?;
 
@@ -267,7 +268,7 @@ pub async fn verify_subscription(
     match omninews_subscription_repository::verify_subscription(pool, user_email).await {
         Ok(res) => Ok(OmninewsSubscriptionResponseDto::from_model(res)),
         Err(_) => {
-            warn!("사용자 {}는 구독 중이지 않습니다.", user_email);
+            omninews_subscription_warn!("사용자 {}는 구독 중이지 않습니다.", user_email);
             Err(OmniNewsError::NotFound("User not found".into()))
         }
     }
@@ -299,9 +300,10 @@ pub async fn register_subscription(
     {
         Ok(response) => Ok(response),
         Err(e) => {
-            error!(
+            omninews_subscription_error!(
                 "Failed to register subscription for user {}: {}",
-                user_email, e
+                user_email,
+                e
             );
             Err(OmniNewsError::Database(e))
         }
@@ -319,7 +321,7 @@ pub async fn validate_receipt(
     } else if platform == "android" {
         return validate_google_receipt(user_email, &receipt).await;
     }
-    error!("Unsupported platform: {}", &platform);
+    omninews_subscription_error!("Unsupported platform: {}", &platform);
     Err(OmniNewsError::NotFound("Unsupported platform".into()))
 }
 
@@ -327,14 +329,14 @@ async fn validate_apple_receipt(
     user_email: &str,
     receipt: &OmninewsReceiptRequestDto,
 ) -> Result<bool, OmniNewsError> {
-    info!(
+    omninews_subscription_info!(
         "IOS 구독 영수증 검증 시작: 사용자={}, 테스트모드={}",
         user_email,
         receipt.is_test.unwrap_or_default()
     );
     if let Some(res) = receipt.is_test {
         if res {
-            info!("[Servie] 테스트 모드로 영수증 검증을 건너뜁니다.");
+            omninews_subscription_info!("[Servie] 테스트 모드로 영수증 검증을 건너뜁니다.");
             return Ok(true);
         }
     }
@@ -352,9 +354,11 @@ async fn validate_apple_receipt(
     )
     .await?;
 
-    info!(
+    omninews_subscription_info!(
         "IOS 구독 영수증 검증 완료: 사용자={}, 트랜잭션 ID={}, 상태={}",
-        user_email, decode_receipt.original_transaction_id, subscription_data.is_active
+        user_email,
+        decode_receipt.original_transaction_id,
+        subscription_data.is_active
     );
     Ok(subscription_data.is_active)
 }

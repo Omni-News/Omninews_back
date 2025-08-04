@@ -1,6 +1,7 @@
 use sqlx::MySqlPool;
 
 use crate::{
+    embedding_error,
     model::{embedding::NewEmbedding, error::OmniNewsError},
     repository::embedding_repository,
     utils::embedding_util::{embedding_sentence, encode_embedding, EmbeddingService},
@@ -20,7 +21,7 @@ pub async fn create_embedding(
     match embedding_repository::insert_embedding(pool, embedding).await {
         Ok(res) => Ok(res),
         Err(e) => {
-            error!("[Service] Failed to insert embedding: {}", e);
+            embedding_error!("[Service] Failed to insert embedding: {}", e);
             Err(OmniNewsError::EmbeddingError)
         }
     }

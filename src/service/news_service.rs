@@ -6,6 +6,7 @@ use crate::{
         response::{NewsApiResponseDto, NewsResponseDto},
     },
     model::error::OmniNewsError,
+    news_error,
     repository::news_repository,
 };
 use chrono::NaiveDateTime;
@@ -19,7 +20,7 @@ pub async fn get_news(
     match news_repository::select_news_by_category(pool, category).await {
         Ok(news) => Ok(NewsResponseDto::from_model_list(news)),
         Err(e) => {
-            error!("[Service] Failed to fetch news: {:?}", e);
+            news_error!("[Service] Failed to fetch news: {:?}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -31,7 +32,7 @@ pub async fn get_news_by_api(
     let res = request_naver_news_api(params).await?;
 
     let xml_data = res.text().await.map_err(|e| {
-        error!("[Service] Failed to fetch news items: {:?}", e);
+        news_error!("[Service] Failed to fetch news items: {:?}", e);
         OmniNewsError::FetchNews
     })?;
 
@@ -65,7 +66,7 @@ async fn request_naver_news_api(params: NewsRequestDto) -> Result<Response, Omni
     );
 
     client.get(url).headers(head).send().await.map_err(|e| {
-        error!("[Service] Failed to fetch news: {:?}", e);
+        news_error!("[Service] Failed to fetch news: {:?}", e);
         OmniNewsError::FetchNews
     })
 }
@@ -103,7 +104,7 @@ fn get_news_items_by_xml(xml_data: String) -> Result<Vec<NewsApiResponseDto>, Om
     }
 
     let rss: NewsRss = from_str(xml_data.as_str()).map_err(|e| {
-        error!("[Service] Failed to parse xml: {:?}", e);
+        news_error!("[Service] Failed to parse xml: {:?}", e);
         OmniNewsError::FetchNews
     })?;
 

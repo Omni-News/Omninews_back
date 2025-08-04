@@ -10,6 +10,7 @@ use crate::{
         search::SearchType,
     },
     repository::rss_item_repository,
+    rss_error, rss_warn,
     service::embedding_service,
     utils::{annoy_util::load_rss_annoy, embedding_util::EmbeddingService},
 };
@@ -56,7 +57,7 @@ pub async fn create_rss_item_and_embedding(
     let item = match make_rss_item(channel_id, rss_item, item_image_link) {
         Ok(item) => item,
         Err(e) => {
-            error!("[Service] Failed to make rss item: {}", e);
+            rss_error!("[Service] Failed to make rss item: {}", e);
             return Err(e);
         }
     };
@@ -163,7 +164,7 @@ async fn store_rss_item(pool: &MySqlPool, mut rss_item: NewRssItem) -> Result<i3
 
     match rss_item_repository::select_item_by_link(pool, item_link).await {
         Ok(item) => {
-            warn!(
+            rss_warn!(
                 "[Service] Item already exists with link: {}",
                 item.rss_link.clone().unwrap_or_default()
             );
@@ -173,7 +174,7 @@ async fn store_rss_item(pool: &MySqlPool, mut rss_item: NewRssItem) -> Result<i3
         Err(_) => rss_item_repository::insert_rss_item(pool, rss_item)
             .await
             .map_err(|e| {
-                error!("[Service] Failed to select item by link : {}", e);
+                rss_error!("[Service] Failed to select item by link : {}", e);
                 OmniNewsError::Database(e)
             }),
     }
@@ -265,7 +266,7 @@ pub async fn get_recommend_item(
             Ok(RssItemResponseDto::from_model_list(res))
         }
         Err(e) => {
-            error!(
+            rss_error!(
                 "[Service] Failed to select items order by rss rank: {:?}",
                 e
             );
@@ -281,7 +282,7 @@ pub async fn get_rss_item_by_channel_id(
     match rss_item_repository::select_rss_items_by_channel_id(pool, channel_id).await {
         Ok(res) => Ok(RssItemResponseDto::from_model_list(res)),
         Err(e) => {
-            error!("[Service] Failed to select items by channel id: {:?}", e);
+            rss_error!("[Service] Failed to select items by channel id: {:?}", e);
             Err(OmniNewsError::Database(e))
         }
     }

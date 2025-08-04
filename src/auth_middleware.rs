@@ -17,7 +17,7 @@ use std::{collections::HashMap, env, io::Cursor};
 use std::{collections::HashSet, sync::RwLock};
 use uuid::Uuid;
 
-use crate::service::user_service;
+use crate::{server_error, server_info, service::user_service};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
@@ -139,7 +139,7 @@ impl Fairing for AuthMiddleware {
         let auth_cache = match req.rocket().state::<AuthCache>() {
             Some(cache) => cache,
             None => {
-                error!("Error: AuthCache not found");
+                server_error!("Error: AuthCache not found");
                 return;
             }
         };
@@ -159,7 +159,7 @@ impl Fairing for AuthMiddleware {
         let jwt_secret = match env::var("JWT_SECRET_KEY") {
             Ok(secret) => secret,
             Err(_) => {
-                error!("JWT_SECRET_KEY environment variable not set");
+                server_error!("JWT_SECRET_KEY environment variable not set");
                 auth_cache.auth_failures.write().unwrap().insert(
                     request_id,
                     "서버 구성 오류: JWT_SECRET_KEY가 설정되지 않았습니다.".to_string(),
@@ -190,7 +190,7 @@ impl Fairing for AuthMiddleware {
                     Ok(res) => {
                         if res {
                             // 토큰 검증 성공
-                            info!("Token validation successful for user: {}", user_email);
+                            server_info!("Token validation successful for user: {}", user_email);
                         } else {
                             auth_cache.auth_failures.write().unwrap().insert(
                                 request_id.clone(),
@@ -215,7 +215,7 @@ impl Fairing for AuthMiddleware {
                     .insert(request_id, user_email);
             }
             Err(e) => {
-                error!("JWT decode error: {}", e);
+                server_error!("JWT decode error: {}", e);
                 auth_cache
                     .auth_failures
                     .write()

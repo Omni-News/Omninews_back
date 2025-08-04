@@ -7,7 +7,7 @@ use rust_bert::pipelines::sentence_embeddings::{
     SentenceEmbeddingsBuilder, SentenceEmbeddingsModelType,
 };
 
-use crate::model::error::OmniNewsError;
+use crate::{embedding_error, embedding_info, model::error::OmniNewsError};
 
 struct EmbeddingRequest {
     text: String,
@@ -25,7 +25,7 @@ impl EmbeddingService {
         let (request_tx, request_rx) = mpsc::channel::<EmbeddingRequest>();
 
         thread::spawn(move || {
-            info!("[Worker Thread] Initializing worker thread module");
+            embedding_info!("[Worker Thread] Initializing worker thread module");
 
             // TOO 다국어 지원 모델로 변경
             let model = SentenceEmbeddingsBuilder::remote(
@@ -34,7 +34,7 @@ impl EmbeddingService {
             .create_model()
             .expect("[Worker Thread] Error while initalizing model");
 
-            info!("[Worker Thread] Worker thread initialized");
+            embedding_info!("[Worker Thread] Worker thread initialized");
 
             // 요청 대기
             while let Ok(request) = request_rx.recv() {
@@ -49,7 +49,7 @@ impl EmbeddingService {
                 }
             }
 
-            info!("[Worker Thread] worker thread terminated");
+            embedding_info!("[Worker Thread] worker thread terminated");
         });
 
         Self {
@@ -101,7 +101,7 @@ pub async fn embedding_sentence(
             Ok(res)
         }
         Err(e) => {
-            error!("[Embedding Service] Failed to generate embedding: {}", e);
+            embedding_error!("[Embedding Service] Failed to generate embedding: {}", e);
             Err(OmniNewsError::EmbeddingError)
         }
     }

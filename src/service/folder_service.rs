@@ -8,6 +8,7 @@ use crate::{
         },
         response::RssFolderResponseDto,
     },
+    folder_error,
     model::error::OmniNewsError,
     repository::folder_repository,
 };
@@ -24,7 +25,7 @@ pub async fn create_folder(
     match folder_repository::insert_folder(pool, user_id, folder.folder_name.unwrap()).await {
         Ok(res) => Ok(res),
         Err(e) => {
-            error!("[Service] Failed to create folder: {}", e);
+            folder_error!("[Service] Failed to create folder: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -43,7 +44,7 @@ pub async fn add_channel_to_folder(
     {
         Ok(_) => Ok(()),
         Err(e) => {
-            error!("[Service] Failed to add channel in folder: {}", e);
+            folder_error!("[Service] Failed to add channel in folder: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -68,7 +69,7 @@ pub async fn fetch_folders(
                         channels,
                     )),
                     Err(e) => {
-                        error!("[Service] Failed to fetch channels in folder: {}", e);
+                        folder_error!("[Service] Failed to fetch channels in folder: {}", e);
                         return Err(OmniNewsError::Database(e));
                     }
                 }
@@ -76,7 +77,7 @@ pub async fn fetch_folders(
             Ok(result)
         }
         Err(e) => {
-            error!("[Service] Failed to fetch folders: {}", e);
+            folder_error!("[Service] Failed to fetch folders: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -95,7 +96,7 @@ pub async fn update_folder(
     {
         Ok(res) => Ok(res),
         Err(e) => {
-            error!("[Service] Failed to update folder: {}", e);
+            folder_error!("[Service] Failed to update folder: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -109,7 +110,7 @@ pub async fn delete_folder(
     match folder_repository::delete_folder(pool, folder_id).await {
         Ok(_) => Ok(()),
         Err(e) => {
-            error!("[Service] Failed to delete folder: {}", e);
+            folder_error!("[Service] Failed to delete folder: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -128,7 +129,7 @@ pub async fn delete_channel_from_folder(
     {
         Ok(_) => Ok(()),
         Err(e) => {
-            error!("[Service] Failed to delete channel from folder: {}", e);
+            folder_error!("[Service] Failed to delete channel from folder: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }

@@ -2,6 +2,8 @@ use sqlx::pool::PoolOptions;
 use sqlx::{mysql::MySql, pool::PoolConnection, MySqlPool};
 use std::env;
 
+use crate::server_error;
+
 pub async fn create_pool() -> MySqlPool {
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     PoolOptions::new()
@@ -14,7 +16,7 @@ pub async fn create_pool() -> MySqlPool {
 
 pub async fn get_db(pool: &MySqlPool) -> Result<PoolConnection<MySql>, sqlx::Error> {
     pool.acquire().await.map_err(|e| {
-        error!("[Repository] Failed to acquire DB Connection pool: {:?}", e);
+        server_error!("[Repository] Failed to acquire DB Connection pool: {:?}", e);
         e
     })
 }

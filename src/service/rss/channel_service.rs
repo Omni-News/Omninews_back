@@ -1,4 +1,3 @@
-use log::{info, warn};
 use rss::Channel;
 use sqlx::MySqlPool;
 
@@ -14,6 +13,7 @@ use crate::{
         search::SearchType,
     },
     repository::rss_channel_repository,
+    rss_error, rss_info, rss_warn,
     service::embedding_service,
     utils::{annoy_util::load_channel_annoy, embedding_util::EmbeddingService},
 };
@@ -26,7 +26,7 @@ pub async fn create_rss_all(
     links: Vec<CreateRssRequestDto>,
 ) -> Result<bool, OmniNewsError> {
     for link in links {
-        info!("[Service] Add : {}", link.rss_link);
+        rss_info!("[Service] Add : {}", link.rss_link);
         let _ = create_rss_and_embedding(pool, model, link)
             .await
             .unwrap_or_default();
@@ -52,7 +52,7 @@ pub async fn create_rss_and_embedding(
     )
     .await
     .map_err(|e| {
-        error!("[Service] Failed to create rss item and embedding: {:?}", e);
+        rss_error!("[Service] Failed to create rss item and embedding: {:?}", e);
         e
     });
 
@@ -61,12 +61,12 @@ pub async fn create_rss_and_embedding(
 
 pub async fn parse_rss_link_to_channel(link: &str) -> Result<Channel, OmniNewsError> {
     let response = reqwest::get(link).await.map_err(|e| {
-        error!("[Service] Not found url : {}", link);
+        rss_error!("[Service] Not found url : {}", link);
         OmniNewsError::Request(e)
     })?;
     let body = response.text().await.map_err(OmniNewsError::Request)?;
     Channel::read_from(body.as_bytes()).map_err(|e| {
-        error!("[Service] Failed to read from rss body: {:?}", e);
+        rss_error!("[Service] Failed to read from rss body: {:?}", e);
         OmniNewsError::Parse
     })
 }
@@ -96,7 +96,7 @@ async fn store_channel_and_embedding(
     .await
     {
         Ok(_) => {
-            warn!(
+            rss_warn!(
                 "[Service] Already exist channel: {}",
                 rss_channel.channel_link.clone().unwrap()
             );
@@ -132,7 +132,7 @@ async fn store_rss_channel(pool: &MySqlPool, channel: NewRssChannel) -> Result<i
         Err(_) => Ok(rss_channel_repository::insert_rss_channel(pool, channel)
             .await
             .map_err(|e| {
-                error!("[Service] Failed to insert rss channel: {:?}", e);
+                rss_error!("[Service] Failed to insert rss channel: {:?}", e);
                 OmniNewsError::Database(e)
             })?),
     }
@@ -145,7 +145,7 @@ pub async fn find_rss_channel_by_id(
     match rss_channel_repository::select_rss_channel_by_id(pool, channel_id).await {
         Ok(res) => Ok(RssChannelResponseDto::from_model(res)),
         Err(e) => {
-            error!("[Service] Failed to select rss channel by id: {:?}", e);
+            rss_error!("[Service] Failed to select rss channel by id: {:?}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -158,7 +158,7 @@ pub async fn find_rss_channel_by_rss_link(
     match rss_channel_repository::select_rss_channel_by_rss_link(pool, channel_rss_link).await {
         Ok(res) => Ok(res),
         Err(e) => {
-            warn!("[Service] Failed to select rss channel by link: {:?}", e);
+            rss_warn!("[Service] Failed to select rss channel by link: {:?}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -298,7 +298,7 @@ pub async fn get_recommend_channel(
             Ok(RssChannelResponseDto::from_model_list(res))
         }
         Err(e) => {
-            error!(
+            rss_error!(
                 "[Service] Failed to select channels order by channel rank: {:?}",
                 e
             );
@@ -352,7 +352,7 @@ pub async fn update_rss_channel_rank(
     match rss_channel_repository::update_rss_channel_rank_by_id(pool, channel_id, num).await {
         Ok(res) => Ok(res),
         Err(e) => {
-            error!("[Service] Failed to update rss channel rank: {:?}", e);
+            rss_error!("[Service] Failed to update rss channel rank: {:?}", e);
             Err(OmniNewsError::Database(e))
         }
     }
