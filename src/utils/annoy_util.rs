@@ -9,7 +9,6 @@ use super::embedding_util::{embedding_sentence, EmbeddingService};
 // 거리 임계값 상수 추가
 const DISTANCE_THRESHOLD: f32 = 0.6;
 
-// TODO 지금은 10개 조회지만, 상황에 맞춰 더많이 추가 가능하도록 수정
 pub async fn load_channel_annoy(
     service: &EmbeddingService,
     search_value: String,

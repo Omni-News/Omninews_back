@@ -3,7 +3,6 @@ extern crate rocket;
 
 mod auth_middleware;
 mod config;
-mod db_util;
 mod dto;
 mod handler;
 mod model;
@@ -19,12 +18,21 @@ use handler::{config_handler::options_handler, error_handler::error_catchers};
 use rocket_okapi::mount_endpoints_and_merged_docs;
 use utils::embedding_util::EmbeddingService;
 
+use crate::{
+    config::webdriver::{DriverPool, DriverPoolConfig},
+    utils::db_util,
+};
+
 pub const CURRENT_VERSION: &str = "v1";
 
 #[launch]
 async fn rocket() -> _ {
     env::load_env();
     logging::load_logger();
+    // setup the webdriver pool
+    let dp_cfg = DriverPoolConfig::default();
+
+    let driver_pool = DriverPool::new(dp_cfg);
 
     let pool = db_util::create_pool().await;
     let pool_middleware = pool.clone();
@@ -42,10 +50,12 @@ async fn rocket() -> _ {
         "/swagger-ui/".to_string(),
         format!("/{}/openapi.json", CURRENT_VERSION).to_owned(),
     ];
+
     let mut rocket = rocket::build()
         .manage(pool)
         .manage(embedding_service)
         .manage(AuthCache::new())
+        .manage(driver_pool)
         .attach(CORS)
         .attach(AuthMiddleware::new(exempt_paths, pool_middleware))
         .mount("/rapidoc/", create_rapidoc())
@@ -64,6 +74,3 @@ async fn rocket() -> _ {
 
     rocket
 }
-
-// TODO 현재 swerver가 localhost랑 example로 되어있는데, example를 서비스중인 ip로 바꿔서
-// 테스트해보기

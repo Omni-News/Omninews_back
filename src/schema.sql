@@ -77,7 +77,7 @@ CREATE TABLE `rss_channel` (
 	`channel_language`	VARCHAR(10)	NULL,
 	`rss_generator`	VARCHAR(300)	NULL,
 	`channel_rank`	INT	NULL,
-    `channel_rss_link` VARCHAR(500) UNIQUE ,
+  `channel_rss_link` VARCHAR(500) UNIQUE ,
 	PRIMARY KEY (`channel_id`)
 );
 

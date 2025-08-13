@@ -8,7 +8,7 @@ use sqlx::MySqlPool;
 use crate::auth_middleware::AuthenticatedUser;
 use crate::dto::rss::request::{CreateRssRequestDto, UpdateRssRankRequestDto};
 use crate::dto::rss::response::{RssChannelResponseDto, RssItemResponseDto};
-use crate::service::rss::{channel_service, item_service};
+use crate::service::{channel_service, item_service};
 use crate::EmbeddingService;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
@@ -36,7 +36,7 @@ pub async fn create_channel(
         return Err(Status::BadRequest);
     }
 
-    match channel_service::create_rss_and_embedding(pool, model, link.into_inner()).await {
+    match channel_service::create_rss_and_embedding(pool, model, link.into_inner().rss_link).await {
         Ok(channel_id) => Ok(Json(channel_id)),
         Err(_) => Err(Status::InternalServerError),
     }

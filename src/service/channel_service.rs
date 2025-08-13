@@ -1,6 +1,8 @@
-use chrono::Utc;
-use rss::{Channel, ChannelBuilder, Image, ItemBuilder};
+use reqwest::Url;
+use rss::Channel;
+use serde_json::Value;
 use sqlx::MySqlPool;
+use thirtyfour::WebDriver;
 
 use crate::{
     dto::{
@@ -28,7 +30,7 @@ pub async fn create_rss_all(
 ) -> Result<bool, OmniNewsError> {
     for link in links {
         rss_info!("[Service] Add : {}", link.rss_link);
-        let _ = create_rss_and_embedding(pool, model, link)
+        let _ = create_rss_and_embedding(pool, model, link.rss_link)
             .await
             .unwrap_or_default();
     }
@@ -38,17 +40,57 @@ pub async fn create_rss_all(
 pub async fn create_rss_and_embedding(
     pool: &MySqlPool,
     embedding_service: &EmbeddingService,
-    link: CreateRssRequestDto,
+    link: String,
 ) -> Result<i32, OmniNewsError> {
-    let rss_channel = parse_rss_link_to_channel(&link.rss_link).await?;
+    let rss_channel = parse_rss_link_to_channel(&link).await?;
+    if &rss_channel.title == "Not Found" || rss_channel.title.is_empty() {
+        error!(
+            "[Service] Failed to parse RSS link: {}, title is empty or not found",
+            link
+        );
+        return Err(OmniNewsError::NotFound(
+            "Failed to parse RSS link".to_string(),
+        ));
+    }
 
-    let channel = make_rss_channel(rss_channel.clone(), link.rss_link);
+    create_rss_and_embedding_by_channel(pool, embedding_service, rss_channel, link, false).await
+}
+
+pub async fn create_rss_and_embedding_with_web_driver(
+    pool: &MySqlPool,
+    embedding_service: &EmbeddingService,
+    link: String,
+    driver: &WebDriver,
+) -> Result<i32, OmniNewsError> {
+    let rss_channel = parse_rss_link_to_channel_with_web_driver(&link, driver).await?;
+
+    if &rss_channel.title == "Not Found" || rss_channel.title.is_empty() {
+        error!(
+            "[Service] Failed to parse RSS link: {}, title is empty or not found",
+            link
+        );
+        return Err(OmniNewsError::NotFound(
+            "Failed to parse RSS link".to_string(),
+        ));
+    }
+    create_rss_and_embedding_by_channel(pool, embedding_service, rss_channel, link, true).await
+}
+
+pub async fn create_rss_and_embedding_by_channel(
+    pool: &MySqlPool,
+    embedding_service: &EmbeddingService,
+    rss_channel: Channel,
+    rss_link: String,
+    is_generated_channel: bool,
+) -> Result<i32, OmniNewsError> {
+    let channel = make_rss_channel(&rss_channel, rss_link, is_generated_channel);
     let channel_id = store_channel_and_embedding(pool, embedding_service, channel).await?;
 
     let _ = item_service::crate_rss_items_and_embedding(
         pool,
         embedding_service,
         rss_channel,
+        None,
         channel_id,
     )
     .await
@@ -65,27 +107,109 @@ pub async fn parse_rss_link_to_channel(link: &str) -> Result<Channel, OmniNewsEr
         rss_error!("[Service] Not found url : {}", link);
         OmniNewsError::Request(e)
     })?;
+
     let body = response.text().await.map_err(OmniNewsError::Request)?;
     Channel::read_from(body.as_bytes()).map_err(|e| {
         rss_error!("[Service] Failed to read from rss body: {:?}", e);
-        OmniNewsError::Parse
+        OmniNewsError::ParseRssChannel
     })
 }
 
-fn make_rss_channel(channel: Channel, rss_link: String) -> NewRssChannel {
+pub async fn parse_rss_link_to_channel_with_web_driver(
+    link: &str,
+    driver: &WebDriver,
+) -> Result<Channel, OmniNewsError> {
+    if let Ok(u) = Url::parse(link) {
+        let origin = format!("{}://{}/", u.scheme(), u.host_str().unwrap_or_default());
+        let _ = driver.goto(&origin).await;
+    }
+    // async script로 fetch → text 본문 받기
+    // file download이므로, 본문을 text로 변환하여 반환
+    let js = r#"
+                const url = arguments[0];
+                const done = arguments[arguments.length - 1];
+                fetch(url, {
+                    method: 'GET',
+                    headers: {
+                    'Accept': 'application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.8, */*;q=0.1',
+                    'Cache-Control': 'no-cache',
+                    },
+                    credentials: 'include'
+                }).then(async (r) => {
+                    const body = await r.text();
+                    done({
+                        ok: r.ok,
+                        status: r.status,
+                        contentType: r.headers.get('content-type'),
+                        body
+                    });
+                }).catch(e => done({ ok: false, status: 0, contentType: null, body: String(e) }));
+            "#;
+
+    let ret = driver
+        .execute_async(js, vec![Value::String(link.to_string())])
+        .await?;
+
+    let obj = ret.json().as_object().unwrap();
+    let ok = obj.get("ok").and_then(|v| v.as_bool()).unwrap_or(false);
+    let status = obj.get("status").and_then(|v| v.as_i64()).unwrap_or(0) as i32;
+    let ctype = obj
+        .get("contentType")
+        .and_then(|v| v.as_str())
+        .unwrap_or("")
+        .to_lowercase();
+    let body = obj
+        .get("body")
+        .and_then(|v| v.as_str())
+        .ok_or("no body")
+        .unwrap()
+        .to_string();
+
+    if !ok || status >= 400 {
+        error!(
+            "[Service] Failed to fetch rss link: {}, status: {}, content-type: {}, body: {}",
+            link, status, ctype, body
+        );
+        return Err(OmniNewsError::WebDriverNotFound);
+    }
+    if ctype.contains("text/html") && body.contains("Attention Required") {
+        error!(
+            "[Service] WebDriver blocked by Cloudflare or similar service for link: {}",
+            link
+        );
+        return Err(OmniNewsError::WebDriverNotFound);
+    }
+    Channel::read_from(body.as_bytes()).map_err(|e| {
+        rss_error!("[Service] Failed to read from rss body: {:?}", e);
+        OmniNewsError::ParseRssChannel
+    })
+}
+
+pub fn make_rss_channel(
+    channel: &Channel,
+    rss_link: String,
+    is_generated_channel: bool,
+) -> NewRssChannel {
     NewRssChannel::new(
         channel.title().to_string(),
         channel.link().to_string(),
         channel.description().to_string(),
         channel.image().map(|e| e.url().to_string()),
         channel.language().unwrap_or("None").to_string(),
-        channel.generator().unwrap_or("None").to_string(),
+        channel
+            .generator()
+            .unwrap_or(if is_generated_channel {
+                "Omninews"
+            } else {
+                "None"
+            })
+            .to_string(),
         0,
         rss_link,
     )
 }
 
-async fn store_channel_and_embedding(
+pub async fn store_channel_and_embedding(
     pool: &MySqlPool,
     embedding_service: &EmbeddingService,
     rss_channel: NewRssChannel,
@@ -159,9 +283,22 @@ pub async fn find_rss_channel_by_rss_link(
     match rss_channel_repository::select_rss_channel_by_rss_link(pool, channel_rss_link).await {
         Ok(res) => Ok(res),
         Err(e) => {
-            rss_warn!("[Service] Failed to select rss channel by link: {:?}", e);
+            rss_warn!(
+                "[Service] Failed to select rss channel by rss link: {:?}",
+                e
+            );
             Err(OmniNewsError::Database(e))
         }
+    }
+}
+
+pub async fn find_rss_channel_by_channel_link(
+    pool: &MySqlPool,
+    channel_link: &str,
+) -> Result<RssChannel, OmniNewsError> {
+    match rss_channel_repository::select_rss_channel_by_channel_link(pool, channel_link).await {
+        Ok(res) => Ok(res),
+        Err(e) => Err(OmniNewsError::Database(e)),
     }
 }
 
@@ -312,13 +449,11 @@ pub async fn get_rss_preview(
     pool: &MySqlPool,
     rss_link: String,
 ) -> Result<RssChannelResponseDto, OmniNewsError> {
-    match rss_channel_repository::select_rss_channel_by_channel_rss_link(pool, rss_link.clone())
-        .await
-    {
+    match rss_channel_repository::select_rss_channel_by_rss_link(pool, rss_link.clone()).await {
         Ok(res) => Ok(RssChannelResponseDto::from_model(res)),
         Err(_) => {
             let rss_channel = parse_rss_link_to_channel(&rss_link).await?;
-            let new_channel = make_rss_channel(rss_channel, rss_link.clone());
+            let new_channel = make_rss_channel(&rss_channel, rss_link.clone(), false);
             let channel = RssChannel::new(new_channel);
             Ok(RssChannelResponseDto::from_model(channel))
         }
@@ -329,7 +464,7 @@ pub async fn is_channel_exist_by_link(
     pool: &MySqlPool,
     channel_link: String,
 ) -> Result<bool, OmniNewsError> {
-    match rss_channel_repository::select_rss_channel_by_channel_rss_link(pool, channel_link).await {
+    match rss_channel_repository::select_rss_channel_by_rss_link(pool, channel_link).await {
         Ok(_) => Ok(true),
         Err(_) => Ok(false),
     }
@@ -357,27 +492,4 @@ pub async fn update_rss_channel_rank(
             Err(OmniNewsError::Database(e))
         }
     }
-}
-
-async fn rss_generator() {
-    // 아래는 Rss builder 테스트. 링크에서 요소들 뺴와서 이렇게 만들면 됨.
-    //
-    let mut image = Image::default();
-    image.set_url("https://example.com/image.png");
-    image.set_title("test image");
-    image.set_description(Some("test description".to_string()));
-
-    let channel = ChannelBuilder::default()
-        .title("hi")
-        .description("test")
-        .link("https://example.com")
-        .image(image)
-        .generator("naver".to_string());
-
-    let items = ItemBuilder::default()
-        .title("example item".to_string())
-        .description("This is an example item description.".to_string())
-        .link("https://example.com/item".to_string())
-        .author("kang".to_string())
-        .pub_date("2099-10-10T10:10:10Z".to_string());
 }

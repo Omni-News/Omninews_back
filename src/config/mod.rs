@@ -4,3 +4,4 @@ pub mod logging;
 pub mod openapi;
 pub mod rapidoc;
 pub mod swagger;
+pub mod webdriver;

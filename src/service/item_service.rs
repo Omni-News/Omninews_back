@@ -23,18 +23,24 @@ pub async fn crate_rss_items_and_embedding(
     pool: &MySqlPool,
     embedding_service: &EmbeddingService,
     mut channel: Channel,
+    item_image_links: Option<Vec<String>>,
     channel_id: i32,
 ) -> Result<(), OmniNewsError> {
     let channel_image_url = channel
         .image()
         .map_or(String::new(), |image| image.url().to_string()); // TODO rss cateogory 미구현 상태.
 
-    for rss_item in channel.items_mut() {
+    for (i, rss_item) in channel.items_mut().iter_mut().enumerate() {
         create_rss_item_and_embedding(
             pool,
             embedding_service,
             channel_id,
             channel_image_url.clone(),
+            if let Some(links) = &item_image_links {
+                links.get(i).cloned()
+            } else {
+                None
+            },
             rss_item,
         )
         .await?;
@@ -46,12 +52,20 @@ pub async fn create_rss_item_and_embedding(
     embedding_service: &EmbeddingService,
     channel_id: i32,
     channel_image_url: String,
+    item_image_link: Option<String>,
     rss_item: &mut Item,
 ) -> Result<bool, OmniNewsError> {
     let description = rss_item.description().unwrap_or("None");
-    let (extracted_description, item_image_link) =
-        extract_html_to_passage_and_image_link(description);
-    rss_item.set_description(extracted_description.clone());
+    let extracted_description = extract_html_passage(description);
+
+    let item_image_link = if let Some(link) = item_image_link {
+        Some(link)
+    } else {
+        extracted_description.1
+    };
+
+    rss_item.set_description(extracted_description.0.clone());
+
     let item_image_link = use_channel_url_if_none(item_image_link, channel_image_url.clone());
 
     let item = match make_rss_item(channel_id, rss_item, item_image_link) {
@@ -67,7 +81,7 @@ pub async fn create_rss_item_and_embedding(
     let sentence = format!(
         "{}\n{}\n{}",
         item.rss_title.unwrap_or_default(),
-        extracted_description,
+        extracted_description.0,
         item.rss_author.unwrap_or_default()
     );
     let embedding = NewEmbedding {
@@ -83,17 +97,31 @@ pub async fn create_rss_item_and_embedding(
     Ok(true)
 }
 
-fn extract_html_to_passage_and_image_link(html: &str) -> (String, Option<String>) {
+// TODO: description 수정하기.
+fn extract_html_passage(html: &str) -> (String, Option<String>) {
     let document = Html::parse_document(html);
 
     let passage_selector = Selector::parse("h3, p").unwrap();
     let image_selector = Selector::parse("img").unwrap();
 
-    let extracted_text: Vec<String> = document
+    let extracted_texts: Vec<String> = document
         .clone()
         .select(&passage_selector)
         .map(|e| e.text().collect::<Vec<_>>().join(" "))
         .collect();
+
+    let extracted_text = if extracted_texts.is_empty() {
+        html.to_string()
+    } else {
+        extracted_texts.join(" ")
+    };
+
+    let extracted_text = extracted_text
+        .chars()
+        .take(200)
+        .collect::<String>()
+        .trim()
+        .to_string();
 
     let image_link = document
         .select(&image_selector)
@@ -101,7 +129,7 @@ fn extract_html_to_passage_and_image_link(html: &str) -> (String, Option<String>
         .and_then(|link| link.attr("src").map(|s| s.to_string()))
         .filter(|link| link.len() <= 1000);
 
-    (extracted_text.join(" "), image_link)
+    (extracted_text, image_link)
 }
 
 fn use_channel_url_if_none(link: Option<String>, channel_image_url: String) -> String {
@@ -111,14 +139,16 @@ fn use_channel_url_if_none(link: Option<String>, channel_image_url: String) -> S
     }
 }
 
-fn make_rss_item(
+pub fn make_rss_item(
     channel_id: i32,
     item: &Item,
     item_image_link: String,
 ) -> Result<NewRssItem, OmniNewsError> {
     let rss_pub_date = parse_pub_date(item.pub_date());
     if item.title.is_none() || item.description.is_none() {
-        return Err(OmniNewsError::EmptyRssItem);
+        return Err(OmniNewsError::NotFound(
+            "RSS item must have a title and description".to_string(),
+        ));
     }
     Ok(NewRssItem::new(
         channel_id,

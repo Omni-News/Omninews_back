@@ -87,7 +87,7 @@ pub async fn embedding_sentence(
     // Generate Embeddings
     let embedding = tokio::task::spawn_blocking(move || service.embed_text(sentence))
         .await
-        .map_err(|_| OmniNewsError::EmbeddingError)?;
+        .map_err(|_| OmniNewsError::Embedding)?;
 
     match embedding {
         Ok(mut res) => {
@@ -102,7 +102,7 @@ pub async fn embedding_sentence(
         }
         Err(e) => {
             embedding_error!("[Embedding Service] Failed to generate embedding: {}", e);
-            Err(OmniNewsError::EmbeddingError)
+            Err(OmniNewsError::Embedding)
         }
     }
 }

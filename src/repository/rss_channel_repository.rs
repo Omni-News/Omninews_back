@@ -42,16 +42,16 @@ pub async fn select_rss_channel_by_rss_link(
     }
 }
 
-pub async fn select_rss_channel_by_channel_rss_link(
+pub async fn select_rss_channel_by_channel_link(
     pool: &MySqlPool,
-    rss_link: String,
+    channel_link: &str,
 ) -> Result<RssChannel, sqlx::Error> {
     let mut conn = get_db(pool).await?;
     let result = query_as!(
         RssChannel,
         "SELECT * FROM rss_channel
-                WHERE channel_rss_link = ?",
-        rss_link,
+                WHERE channel_link LIKE ?",
+        channel_link,
     )
     .fetch_one(&mut *conn)
     .await;

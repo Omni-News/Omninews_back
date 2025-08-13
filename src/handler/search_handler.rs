@@ -11,8 +11,7 @@ use crate::dto::news::request::NewsRequestDto;
 use crate::dto::news::response::NewsApiResponseDto;
 use crate::dto::search::request::SearchRequestDto;
 use crate::dto::search::response::SearchResponseDto;
-use crate::service::news_service;
-use crate::service::rss::{channel_service, item_service};
+use crate::service::{channel_service, item_service, news_service};
 use crate::EmbeddingService;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {

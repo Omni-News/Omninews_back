@@ -1,0 +1,54 @@
+version: "3.9"
+services:
+  selenium1:
+    image: selenium/standalone-chromium:latest
+    container_name: selenium-chromium-1
+    shm_size: 2g
+    restart: always
+    environment:
+      SE_NODE_SESSION_TIMEOUT: 14400
+      SE_SCREEN_WIDTH: 1940
+      SE_SCREEN_HEIGHT: 1120
+      SE_SCREEN_DEPTH: 24
+    ports:
+      - "4444:4444"
+      - "7901:7900"
+    volumes:
+      - selenium-profile-1:/home/selenium/.config/google-chrome
+
+  selenium2:
+    image: selenium/standalone-chromium:latest
+    container_name: selenium-chromium-2
+    shm_size: 2g
+    restart: always
+    environment:
+      SE_NODE_SESSION_TIMEOUT: 14400
+      SE_SCREEN_WIDTH: 1940
+      SE_SCREEN_HEIGHT: 1120
+      SE_SCREEN_DEPTH: 24
+    ports:
+      - "4445:4444"
+      - "7902:7900"
+    volumes:
+      - selenium-profile-2:/home/selenium/.config/google-chrome
+
+  selenium3:
+    image: selenium/standalone-chromium:latest
+    container_name: selenium-chromium-3
+    shm_size: 2g
+    restart: always
+    environment:
+      SE_NODE_SESSION_TIMEOUT: 14400
+      SE_SCREEN_WIDTH: 1940
+      SE_SCREEN_HEIGHT: 1120
+      SE_SCREEN_DEPTH: 24
+    ports:
+      - "4446:4444"
+      - "7903:7900"
+    volumes:
+      - selenium-profile-3:/home/selenium/.config/google-chrome
+
+volumes:
+  selenium-profile-1:
+  selenium-profile-2:
+  selenium-profile-3:

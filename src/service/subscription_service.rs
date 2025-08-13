@@ -10,7 +10,7 @@ use crate::{
     subscription_error, subscription_info,
 };
 
-use super::{rss::channel_service, user_service};
+use super::{channel_service, user_service};
 
 pub async fn get_subscription_channels(
     pool: &MySqlPool,

@@ -1,3 +1,4 @@
+#![allow(unused)]
 use std::{
     env,
     time::{SystemTime, UNIX_EPOCH},
@@ -310,7 +311,7 @@ pub async fn register_subscription(
     }
 }
 
-// TODO receipt같고 애플, 구글에 정상 영수증인지 검증
+// TODO receipt갖고 애플, 구글에 정상 영수증인지 검증
 pub async fn validate_receipt(
     user_email: &str,
     receipt: OmninewsReceiptRequestDto,

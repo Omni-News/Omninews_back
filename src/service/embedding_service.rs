@@ -22,7 +22,7 @@ pub async fn create_embedding(
         Ok(res) => Ok(res),
         Err(e) => {
             embedding_error!("[Service] Failed to insert embedding: {}", e);
-            Err(OmniNewsError::EmbeddingError)
+            Err(OmniNewsError::Embedding)
         }
     }
 }
