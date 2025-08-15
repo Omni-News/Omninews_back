@@ -190,6 +190,20 @@ async fn attempt_login(driver: &WebDriver) -> Result<(), OmniNewsError> {
         btn.click().await.map_err(map_wd_err)?;
     }
 
+    // save login info window
+    sleep(Duration::from_millis(7000)).await;
+    if let Ok(btn) = driver
+        .find(By::XPath(
+            "//button[text()='정보 저장'] | //button[text()='Save info']",
+        ))
+        .await
+    {
+        btn.click().await.map_err(map_wd_err)?;
+        info!("[Instagram] Saved login info.");
+    } else {
+        info!("[Instagram] No save login info button found.");
+    }
+
     // 로그인 처리 대기 (최대 30초)
     for _ in 0..10 {
         if !is_login_page(driver).await? {
@@ -285,6 +299,7 @@ async fn collect_post_links(
                 // 상대경로 -> 절대경로
                 if href.contains("/p/") || href.contains("/reel/") {
                     let full = if href.starts_with("http") {
+                        info!("href: {href}");
                         href
                     } else {
                         format!("https://www.instagram.com{href}")

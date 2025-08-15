@@ -4,10 +4,9 @@ use std::{
     time::{Duration, Instant},
 };
 
-use rand::seq::IndexedRandom;
 use thirtyfour::{
-    error::WebDriverResult, CapabilitiesHelper, ChromeCapabilities, ChromiumLikeCapabilities,
-    PageLoadStrategy, WebDriver,
+    error::{WebDriverError, WebDriverResult},
+    CapabilitiesHelper, ChromeCapabilities, ChromiumLikeCapabilities, PageLoadStrategy, WebDriver,
 };
 use tokio::sync::{Mutex, OwnedSemaphorePermit, RwLock, Semaphore};
 
@@ -25,7 +24,6 @@ pub enum AcquireStrategy {
 pub struct DriverPoolConfig {
     pub max_sessions: usize,
     pub selenium_endpoints: Vec<String>,
-    pub eager_preallocate: bool,
     pub page_load_strategy: PageLoadStrategy,
     pub window_size: (u32, u32),
     pub keepalive_interval: Option<Duration>,
@@ -40,7 +38,6 @@ impl Default for DriverPoolConfig {
                 "http://localhost:4445".into(),
                 "http://localhost:4446".into(),
             ],
-            eager_preallocate: false,
             page_load_strategy: PageLoadStrategy::Eager,
             window_size: (1920, 1080),
             keepalive_interval: Some(Duration::from_secs(180)),
@@ -81,13 +78,11 @@ impl DriverPool {
             last_health: Arc::new(RwLock::new(Instant::now())),
         };
 
-        if pool.cfg.eager_preallocate {
-            // 백그라운드로 미리 생성
-            let clone = pool.clone();
-            tokio::spawn(async move {
-                clone.preallocate_all().await;
-            });
-        }
+        // 백그라운드로 미리 생성
+        let clone = pool.clone();
+        tokio::spawn(async move {
+            clone.preallocate_all().await;
+        });
 
         if let Some(interval) = pool.cfg.keepalive_interval {
             let clone = pool.clone();
@@ -99,8 +94,9 @@ impl DriverPool {
     }
 
     async fn preallocate_all(&self) {
-        for _ in 0..self.cfg.max_sessions {
-            match self.spawn_driver().await {
+        info!("preallocating drivers...");
+        for i in 0..self.cfg.max_sessions {
+            match self.spawn_driver(i).await {
                 Ok(drv) => {
                     {
                         let mut guard = self.inner.lock().await;
@@ -108,6 +104,7 @@ impl DriverPool {
                         guard.total += 1;
                         // 한 세션당 하나의 permit
                         self.semaphore.add_permits(1);
+                        info!("preallocated a driver, total={}", guard.total);
                     }
                 }
                 Err(e) => {
@@ -118,16 +115,9 @@ impl DriverPool {
         info!("[DriverPool] Preallocation done.");
     }
 
-    async fn spawn_driver(&self) -> WebDriverResult<WebDriver> {
-        let endpoint = {
-            // endpoint 라운드로빈/랜덤
-            let mut rng = rand::rng();
-            self.cfg
-                .selenium_endpoints
-                .choose(&mut rng)
-                .cloned()
-                .unwrap_or_else(|| self.cfg.selenium_endpoints[0].clone())
-        };
+    async fn spawn_driver(&self, index: usize) -> WebDriverResult<WebDriver> {
+        let endpoint = self.cfg.selenium_endpoints.get(index).unwrap();
+
         let mut caps = ChromeCapabilities::new();
         caps.add_arg("--disable-dev-shm-usage")?;
         caps.add_arg("--no-sandbox")?;
@@ -136,15 +126,31 @@ impl DriverPool {
             self.cfg.window_size.0, self.cfg.window_size.1
         ))?;
         caps.set_page_load_strategy(self.cfg.page_load_strategy.clone())?;
-        let driver = WebDriver::new(&endpoint, caps).await?;
-        info!("[DriverPool] New session created at {}", endpoint);
-        Ok(driver)
+        info!("endpoint: {}", endpoint);
+        if let Ok(drv) = WebDriver::new(endpoint, caps).await {
+            info!("[DriverPool] New session created at {}", endpoint);
+            return Ok(drv);
+        } else {
+            warn!(
+                "[DriverPool] Failed to create a new WebDriver session at {}",
+                endpoint
+            );
+        }
+
+        Err(WebDriverError::NotFound(
+            "".into(),
+            "Failed to create a new WebDriver session at all endpoints.".into(),
+        ))
     }
 
     pub async fn acquire(&self, strategy: AcquireStrategy) -> Result<DriverHandle, PoolError> {
-        // idle 큐에서 즉시 가져오기
         info!("driver acquire...");
-        info!("status: {:?}", self.stats().await);
+        info!(
+            "stats: idle driver: {}, total driver: {}",
+            self.stats().await.0,
+            self.stats().await.1
+        );
+
         if let Some(drv) = self.try_take_idle().await {
             let permit = self
                 .semaphore
@@ -152,7 +158,7 @@ impl DriverPool {
                 .acquire_owned()
                 .await
                 .expect("Semaphore poisoned");
-            info!("get idle driver from pool. ");
+            info!("get driver from idle pool.");
             return Ok(DriverHandle {
                 driver: Some(drv),
                 pool: self.clone(),
@@ -160,33 +166,39 @@ impl DriverPool {
                 broken: false,
             });
         }
-
-        // 아직 전체 생성 수 < max_sessions이면 새로 만들기
-        {
-            let mut guard = self.inner.lock().await;
-            if guard.total < self.cfg.max_sessions {
-                match self.spawn_driver().await {
-                    Ok(drv) => {
-                        guard.total += 1;
-                        // 새 세션 생겼으니 permit 하나 늘리고 자기 자신 acquire
-                        self.semaphore.add_permits(1);
-                        let permit = self
-                            .semaphore
-                            .clone()
-                            .acquire_owned()
-                            .await
-                            .expect("Semaphore poisoned");
-                        return Ok(DriverHandle {
-                            driver: Some(drv),
-                            pool: self.clone(),
-                            _permit: permit,
-                            broken: false,
-                        });
-                    }
-                    Err(e) => return Err(PoolError::WebDriver(e)),
-                }
-            }
-        }
+        // info!("no idle driver, trying to create a new one...");
+        //        // 아직 전체 생성 수 < max_sessions이면 새로 만들기
+        //        {
+        //            let mut guard = self.inner.lock().await;
+        //            info!("?");
+        //            if guard.total < self.cfg.max_sessions {
+        //                info!("?");
+        //                match self.spawn_driver().await {
+        //                    Ok(drv) => {
+        //                        info!("?");
+        //                        guard.total += 1;
+        //                        info!("?");
+        //                        // 새 세션 생겼으니 permit 하나 늘리고 자기 자신 acquire
+        //                        self.semaphore.add_permits(1);
+        //                        info!("?");
+        //                        let permit = self
+        //                            .semaphore
+        //                            .clone()
+        //                            .acquire_owned()
+        //                            .await
+        //                            .expect("Semaphore poisoned");
+        //                        info!("?");
+        //                        return Ok(DriverHandle {
+        //                            driver: Some(drv),
+        //                            pool: self.clone(),
+        //                            _permit: permit,
+        //                            broken: false,
+        //                        });
+        //                    }
+        //                    Err(e) => return Err(PoolError::WebDriver(e)),
+        //                }
+        //            }
+        //        }
 
         // 이미 풀 다 찼을 경우 전략에 따라 처리
         match strategy {
