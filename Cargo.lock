@@ -19,6 +19,7 @@ dependencies = [
  "log4rs",
  "mysql",
  "okapi",
+ "openssl-sys",
  "quick-xml 0.38.1",
  "rand 0.9.2",
  "rannoy",

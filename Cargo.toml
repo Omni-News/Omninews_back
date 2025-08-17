@@ -74,6 +74,7 @@ indicatif = "0.15"
 
 schemars = { version = "0.8.0", features = ["chrono"] }
 okapi = { version = "0.7.0-rc.1" }
+openssl-sys = "0.9.109"
 [build-dependencies]
 bindgen = "0.72.0"
 
