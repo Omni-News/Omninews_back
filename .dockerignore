@@ -1,0 +1,53 @@
+# Build artifacts
+target/
+**/*.rs.bk
+
+# Logs
+*.log
+logs/*.log
+
+# Environment files (keep .env for Docker build)
+.env.local
+.env.*.local
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# CI/CD
+.github/
+
+# Documentation
+README.md
+*.md
+
+# Test files
+tests/
+
+# Temporary files
+tmp/
+temp/
+
+# Node modules (if any)
+node_modules/
+
+# Coverage reports
+coverage/
+
+# Backup files
+*.bak
+*.backup

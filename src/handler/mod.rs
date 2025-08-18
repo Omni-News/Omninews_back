@@ -25,6 +25,6 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         "/" => omninews_subscription_handler::get_routes_and_docs(settings),
 
         // premium
-        "/" => premium::rss_generate::get_routes_and_docs(settings),
+        //"/" => premium::rss_generate::get_routes_and_docs(settings),
     }
 }
