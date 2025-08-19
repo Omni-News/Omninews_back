@@ -21,3 +21,6 @@ src/bindings.rs
 
 # annoy
 *.ann
+
+# firebase sdk
+*.json
