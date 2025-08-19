@@ -24,4 +24,3 @@ src/bindings.rs
 
 # firebase sdk
 *.json
-
