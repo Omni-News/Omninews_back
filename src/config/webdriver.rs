@@ -35,8 +35,8 @@ impl Default for DriverPoolConfig {
             max_sessions: 3,
             selenium_endpoints: vec![
                 "http://selenium1:4444".into(),
-                "http://selenium2:4445".into(),
-                "http://selenium3:4446".into(),
+                "http://selenium2:4444".into(),
+                "http://selenium3:4444".into(),
             ],
             page_load_strategy: PageLoadStrategy::Eager,
             window_size: (1920, 1080),

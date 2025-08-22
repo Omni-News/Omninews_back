@@ -86,7 +86,7 @@ pub async fn create_rss_and_embedding_by_channel(
     let channel = make_rss_channel(&rss_channel, rss_link, is_generated_channel);
     let channel_id = store_channel_and_embedding(pool, embedding_service, channel).await?;
 
-    let _ = item_service::crate_rss_items_and_embedding(
+    let _ = item_service::create_rss_items_and_embedding(
         pool,
         embedding_service,
         rss_channel,

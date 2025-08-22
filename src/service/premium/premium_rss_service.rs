@@ -91,7 +91,7 @@ pub async fn generate_rss_by_css(
     let items = make_items(data, driver).await?;
 
     rss_channel.set_items(items.0);
-    let _ = item_service::crate_rss_items_and_embedding(
+    let _ = item_service::create_rss_items_and_embedding(
         pool,
         embedding_service,
         rss_channel,

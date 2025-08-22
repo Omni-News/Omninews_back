@@ -1,20 +1,20 @@
-use std::{collections::HashSet, time::Duration};
+use serde_json::Value;
+use std::{env, time::Duration};
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, TimeZone, Utc};
 use rss::{Channel, ChannelBuilder, Image, Item, ItemBuilder};
 use sqlx::MySqlPool;
 use thirtyfour::{error::WebDriverError, By, WebDriver};
 use tokio::time::sleep;
 
 use crate::{
-    config::webdriver::{AcquireStrategy, DriverHandle, DriverPool},
+    config::webdriver::{AcquireStrategy, DriverPool},
     model::error::OmniNewsError,
     service::{
         channel_service::{self},
         item_service::{self},
     },
-    utils::embedding_util::EmbeddingService, // channel_service 등 저장 로직 필요시 import
-                                             // service::channel_service,
+    utils::embedding_util::EmbeddingService,
 };
 
 /// 인스타그램 프로필로부터 RSS 채널 생성 (게시물 12개 수집)
@@ -32,34 +32,207 @@ pub async fn generate_rss(
     })?;
     let driver = driver_handle.driver();
 
-    let (username, rss_channel, channel_id) =
-        generate_rss_channel(pool, embedding_service, link, driver).await?;
+    let username = extract_username(link).ok_or_else(|| OmniNewsError::ExtractLinkError)?;
+    let feeds_graphql_url = format!(
+        r#"
+            http://www.instagram.com/graphql/query?variables={{"data":{{"count":12,"include_relationship_info":false,"latest_besties_reel_media":false,"latest_reel_media":true}},"username":"{}","__relay_internal__pv__PolarisFeedShareMenurelayprovider":false}}&doc_id=7898261790222653&server_timestamps=true
+        "#,
+        username
+    );
 
-    let pool_cl = pool.clone();
-    let emb_cl = embedding_service.clone();
-    // rss item parsing은 시간이 걸림으로 쓰레드로 처리
-    // pool, embedding은 clone, webdriver는 handle 소유권을 넘겨 drop되지 않도록 함.
-    tokio::spawn(async move {
-        match generate_rss_item(
-            &pool_cl,
-            &emb_cl,
-            &username,
-            driver_handle,
-            rss_channel,
-            channel_id,
-        )
+    let _ = driver
+        .goto(feeds_graphql_url.clone())
         .await
-        {
-            Ok(_) => {
-                info!("[Instagram] Successfully generated RSS for {username}.");
-            }
-            Err(e) => {
-                error!("[Instagram] Failed to generate RSS items: {e}");
-            }
-        }
-    });
+        .map_err(map_wd_err);
+    let is_sign_in = is_sign_in_by_graphql(driver).await?;
 
+    let mut channel_id = -1;
+    info!("is_sign_in: {}", is_sign_in);
+    if is_sign_in {
+        channel_id = generate_channel_and_items(
+            pool,
+            embedding_service,
+            driver,
+            link,
+            username,
+            feeds_graphql_url,
+        )
+        .await?;
+    } else {
+        // 로그인
+        info!("[Instagram] Sign in...");
+        let _ = driver
+            .goto("http://www.instagram.com")
+            .await
+            .map_err(map_wd_err);
+        if is_login_page(driver).await? {
+            attempt_login(driver).await?;
+            channel_id = generate_channel_and_items(
+                pool,
+                embedding_service,
+                driver,
+                link,
+                username,
+                feeds_graphql_url,
+            )
+            .await?;
+        } else {
+            // 혹시 로그인 유도 모달(닫기 버튼) 존재시 닫기 (한국어/영어 모두 대응)
+            dismiss_close_overlay(driver).await.ok();
+            generate_channel_and_items(
+                pool,
+                embedding_service,
+                driver,
+                link,
+                username,
+                feeds_graphql_url,
+            )
+            .await?;
+        }
+    }
+    info!("channel id : {}", channel_id);
     Ok(channel_id)
+}
+
+async fn generate_channel_and_items(
+    pool: &MySqlPool,
+    embedding_service: &EmbeddingService,
+    driver: &WebDriver,
+    link: &str,
+    username: String,
+    feeds_graphql_url: String,
+) -> Result<i32, OmniNewsError> {
+    let channel = generate_rss_channel(pool, embedding_service, link, driver, username).await?;
+
+    generate_rss_items(
+        pool,
+        embedding_service,
+        driver,
+        feeds_graphql_url,
+        channel.clone(),
+    )
+    .await
+}
+
+async fn generate_rss_items(
+    pool: &sqlx::Pool<sqlx::MySql>,
+    embedding_service: &EmbeddingService,
+    driver: &WebDriver,
+    feeds_graphql_url: String,
+    mut channel: (Channel, i32),
+) -> Result<i32, OmniNewsError> {
+    let mut items: (Vec<Item>, Vec<String>) = (Vec::new(), Vec::new());
+    let _ = driver.goto(feeds_graphql_url).await.map_err(map_wd_err);
+    let data = driver.find(By::Css("body")).await.map_err(map_wd_err);
+    match data {
+        Ok(res) => {
+            let data_s = res.text().await.map_err(map_wd_err)?;
+            let data_v: Value = serde_json::from_str(data_s.as_str()).unwrap();
+
+            let items_json = data_v
+                .get("data")
+                .and_then(|v| v.get("xdt_api__v1__feed__user_timeline_graphql_connection"))
+                .and_then(|v| v.get("edges"))
+                .and_then(|v| v.as_array())
+                .unwrap();
+
+            for v in items_json {
+                let raw_texts = v
+                    .get("node")
+                    .and_then(|v| v.get("caption"))
+                    .and_then(|v| v.get("text"))
+                    .unwrap_or_default()
+                    .to_string();
+
+                let texts = raw_texts.split("\\n").collect::<Vec<&str>>();
+
+                let title = texts.first().unwrap_or(&"");
+                let description = texts.join(" ");
+                let feed_code = v
+                    .get("node")
+                    .and_then(|v| v.get("code"))
+                    .and_then(|v| v.as_str());
+
+                let link = if let Some(code) = feed_code {
+                    format!("http://instagram.com/p/{}", code)
+                } else {
+                    "".to_string()
+                };
+
+                let author = v
+                    .get("node")
+                    .and_then(|v| v.get("user"))
+                    .and_then(|v| v.get("full_name"))
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("");
+                let pub_date_timestamp = match v
+                    .get("node")
+                    .and_then(|v| v.get("caption"))
+                    .and_then(|v| v.get("created_at"))
+                {
+                    Some(v) => {
+                        // feed
+                        v.as_i64()
+                    }
+                    None => {
+                        // reel
+                        v.get("node")
+                            .and_then(|v| v.get("taken_at"))
+                            .and_then(|v| v.as_i64())
+                    }
+                }
+                .and_then(|v| Some(Utc.timestamp_opt(v, 0)))
+                .unwrap()
+                .unwrap();
+
+                let pub_date_rfc2822 = DateTime::to_rfc2822(&pub_date_timestamp);
+
+                let image_link = v
+                    .get("node")
+                    .and_then(|v| v.get("image_versions2"))
+                    .and_then(|v| v.get("candidates"))
+                    .and_then(|v| v.get(0))
+                    .and_then(|v| v.get("url"))
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("")
+                    .to_string();
+
+                let item = ItemBuilder::default()
+                    .title(title.to_string())
+                    .description(description)
+                    .link(link)
+                    .author(author.to_string())
+                    .pub_date(pub_date_rfc2822)
+                    .build();
+
+                items.0.push(item);
+                items.1.push(image_link);
+            }
+            channel.0.items = items.0;
+            let _ = item_service::create_rss_items_and_embedding(
+                pool,
+                embedding_service,
+                channel.0,
+                Some(items.1),
+                channel.1.clone(),
+            )
+            .await
+            .map_err(|e| {
+                error!(
+                    "[Service-instagram] Failed to create rss item and embedding: {:?}",
+                    e
+                );
+                e
+            });
+            Ok(channel.1)
+        }
+        Err(_) => {
+            error!("[Instagram] Failed to get body in graphql data.");
+            Err(OmniNewsError::NotFound(
+                "Failed to get body in graphql data.".to_string(),
+            ))
+        }
+    }
 }
 
 async fn generate_rss_channel(
@@ -67,20 +240,13 @@ async fn generate_rss_channel(
     embedding_service: &EmbeddingService,
     link: &str,
     driver: &WebDriver,
-) -> Result<(String, Channel, i32), OmniNewsError> {
-    let username = extract_username(link).ok_or_else(|| OmniNewsError::ExtractLinkError)?;
-    driver
-        .goto(format!("https://www.instagram.com/{}/", username))
+    username: String,
+) -> Result<(Channel, i32), OmniNewsError> {
+    let _ = driver
+        .goto(format!("http://instagram.com/{username}"))
         .await
-        .map_err(map_wd_err)?;
-    sleep(Duration::from_secs(4)).await;
-    if is_login_page(driver).await? {
-        attempt_login(driver).await?;
-        wait_until_profile_loaded(driver).await?;
-    } else {
-        // 혹시 로그인 유도 모달(닫기 버튼) 존재시 닫기 (한국어/영어 모두 대응)
-        dismiss_close_overlay(driver).await.ok();
-    }
+        .map_err(map_wd_err);
+
     let (channel_title, channel_description, channel_image_url) =
         extract_profile_meta(driver).await?;
     let mut image = Image::default();
@@ -101,57 +267,7 @@ async fn generate_rss_channel(
     );
     let channel_id =
         channel_service::store_channel_and_embedding(pool, embedding_service, channel).await?;
-    Ok((username, rss_channel, channel_id))
-}
-
-async fn generate_rss_item(
-    pool: &sqlx::Pool<sqlx::MySql>,
-    embedding_service: &EmbeddingService,
-    username: &str,
-    driver_handle: DriverHandle,
-    mut rss_channel: Channel,
-    channel_id: i32,
-) -> Result<(), OmniNewsError> {
-    let driver = driver_handle.driver();
-    let post_links = collect_post_links(driver, 12).await?;
-    let mut items: (Vec<Item>, Vec<String>) = (Vec::new(), Vec::new());
-    for href in post_links {
-        match parse_post_page(driver, &href, username).await {
-            Ok((item, image_link)) => {
-                items.0.push(item);
-                items.1.push(image_link)
-            }
-            Err(e) => {
-                error!("[Instagram] Failed to parse post ({href}): {e}");
-                continue;
-            }
-        }
-        if items.0.len() >= 12 {
-            break;
-        }
-    }
-    if items.0.is_empty() {
-        return Err(OmniNewsError::NotFound(
-            "No Instagram posts could be parsed.".into(),
-        ));
-    }
-    rss_channel.set_items(items.0.clone());
-    let _ = item_service::crate_rss_items_and_embedding(
-        pool,
-        embedding_service,
-        rss_channel,
-        Some(items.1),
-        channel_id,
-    )
-    .await
-    .map_err(|e| {
-        error!(
-            "[Service-instagram] Failed to create rss item and embedding: {:?}",
-            e
-        );
-        e
-    });
-    Ok(())
+    Ok((rss_channel, channel_id))
 }
 
 /* ---------------- Helper Functions ---------------- */
@@ -162,14 +278,21 @@ fn extract_username(link: &str) -> Option<String> {
     trimmed.rsplit('/').next().map(|s| s.to_string())
 }
 
+async fn is_sign_in_by_graphql(driver: &WebDriver) -> Result<bool, OmniNewsError> {
+    let body = driver.find(By::XPath(".//body")).await?;
+    let body_len = body.text().await.unwrap().len();
+    Ok(if body_len > 200 { true } else { false })
+}
+
 async fn is_login_page(driver: &WebDriver) -> Result<bool, OmniNewsError> {
     Ok(driver.find(By::Name("username")).await.is_ok()
-        && driver.find(By::Name("password")).await.is_ok())
+        || driver.find(By::Name("password")).await.is_ok())
 }
 
 async fn attempt_login(driver: &WebDriver) -> Result<(), OmniNewsError> {
-    let username = "omninews1027@gmail.com";
-    let password = "Kk2167512##";
+    let username = env::var("INSTAGRAM_ID").expect("INSTAGRAM_ID is must be set.");
+
+    let password = env::var("INSTAGRAM_PW").expect("INSTAGRAM_PW is must be set.");
 
     info!("[Instagram] Attempting login...");
 
@@ -192,16 +315,19 @@ async fn attempt_login(driver: &WebDriver) -> Result<(), OmniNewsError> {
 
     // save login info window
     sleep(Duration::from_millis(7000)).await;
-    if let Ok(btn) = driver
+    let save_info_el = driver
         .find(By::XPath(
             "//button[text()='정보 저장'] | //button[text()='Save info']",
         ))
-        .await
-    {
-        btn.click().await.map_err(map_wd_err)?;
-        info!("[Instagram] Saved login info.");
-    } else {
-        info!("[Instagram] No save login info button found.");
+        .await;
+
+    if save_info_el.is_ok() {
+        if let Ok(btn) = save_info_el {
+            btn.click().await.map_err(map_wd_err)?;
+            info!("[Instagram] Saved login info.");
+        } else {
+            info!("[Instagram] No 'Save login info' button found.");
+        }
     }
 
     // 로그인 처리 대기 (최대 30초)
@@ -215,23 +341,6 @@ async fn attempt_login(driver: &WebDriver) -> Result<(), OmniNewsError> {
     }
 
     error!("[Service-Instagram] Login failed or timed out.");
-    Err(OmniNewsError::WebDriverNotFound)
-}
-
-async fn wait_until_profile_loaded(driver: &WebDriver) -> Result<(), OmniNewsError> {
-    // username 포함하는 /{username}/ 링크나 post anchor 존재 여부로 판단
-    for _ in 0..10 {
-        if driver
-            .find(By::XPath("//a[contains(@href,'/p/')]"))
-            .await
-            .is_ok()
-        {
-            return Ok(());
-        }
-        // 혹시 로그인 유지 모달 닫기 등
-        dismiss_close_overlay(driver).await.ok();
-        sleep(Duration::from_secs(2)).await;
-    }
     Err(OmniNewsError::WebDriverNotFound)
 }
 
@@ -275,198 +384,6 @@ async fn get_meta_content(driver: &WebDriver, property: &str) -> Result<String, 
         .map_err(map_wd_err)?
         .unwrap_or_default();
     Ok(content)
-}
-
-async fn collect_post_links(
-    driver: &WebDriver,
-    target: usize,
-) -> Result<Vec<String>, OmniNewsError> {
-    let mut links: HashSet<String> = HashSet::new();
-    let mut scroll_attempts = 0;
-    let max_scroll_attempts = 15;
-
-    loop {
-        // 현재 DOM에서 링크 추출 (href 패턴 기반)
-        let anchors = driver
-            .find_all(By::XPath(
-                "//a[contains(@href,'/p/') or contains(@href,'/reel/')]",
-            ))
-            .await
-            .unwrap_or_default();
-
-        for a in anchors {
-            if let Ok(Some(href)) = a.attr("href").await {
-                // 상대경로 -> 절대경로
-                if href.contains("/p/") || href.contains("/reel/") {
-                    let full = if href.starts_with("http") {
-                        info!("href: {href}");
-                        href
-                    } else {
-                        format!("https://www.instagram.com{href}")
-                    };
-                    links.insert(full);
-                }
-            }
-            if links.len() >= target {
-                break;
-            }
-        }
-
-        if links.len() >= target {
-            break;
-        }
-
-        // 스크롤
-        let _ = driver
-            .execute(
-                "window.scrollTo(0, document.body.scrollHeight); return document.body.scrollHeight;",
-                vec![],
-            )
-            .await;
-        sleep(Duration::from_secs(2)).await;
-
-        scroll_attempts += 1;
-        if scroll_attempts >= max_scroll_attempts {
-            info!(
-                "[Instagram] Reached max scroll attempts. Collected {} posts.",
-                links.len()
-            );
-            break;
-        }
-    }
-
-    if links.is_empty() {
-        return Err(OmniNewsError::NotFound(
-            "No post links found on profile.".into(),
-        ));
-    }
-
-    let mut collected: Vec<String> = links.into_iter().collect();
-    collected.sort();
-    Ok(collected.into_iter().take(target).collect())
-}
-
-async fn parse_post_page(
-    driver: &WebDriver,
-    url: &str,
-    username: &str,
-) -> Result<(Item, String), OmniNewsError> {
-    // 새 탭 열기
-    driver
-        .execute(&format!("window.open('{}','_blank');", url), vec![])
-        .await
-        .map_err(map_wd_err)?;
-
-    // 윈도우 전환
-    let handles = driver.windows().await.map_err(map_wd_err)?;
-    let new_handle = handles.last().ok_or_else(|| {
-        OmniNewsError::NotFound("No new window handle after opening post.".into())
-    })?;
-    driver
-        .switch_to_window(new_handle.clone())
-        .await
-        .map_err(map_wd_err)?;
-    sleep(Duration::from_secs(3)).await; // 로딩 대기
-
-    // 메타 정보 수집
-    let og_title = get_meta_content(driver, "og:title")
-        .await
-        .unwrap_or_default();
-    let og_desc = get_meta_content(driver, "og:description")
-        .await
-        .unwrap_or_default();
-    let og_image = get_meta_content(driver, "og:image")
-        .await
-        .unwrap_or_default();
-
-    // time 태그
-    let pub_date_raw = if let Ok(time_el) = driver.find(By::Css("time")).await {
-        time_el
-            .attr("datetime")
-            .await
-            .map_err(map_wd_err)?
-            .unwrap_or_default()
-    } else {
-        "".into()
-    };
-
-    // datetime -> RFC 2822 (rss pubDate) 변환 시도
-    let pub_date_rfc2822 = if !pub_date_raw.is_empty() {
-        // Instagram time: ISO8601 (e.g. 2025-08-12T09:00:00.000Z)
-        match DateTime::parse_from_rfc3339(&pub_date_raw) {
-            Ok(dt) => dt.to_rfc2822(),
-            Err(_) => {
-                // fallback: try Utc parse
-                if let Ok(dt2) = DateTime::parse_from_rfc3339(&(pub_date_raw.clone() + "Z")) {
-                    dt2.to_rfc2822()
-                } else {
-                    // final fallback: now
-                    Utc::now().to_rfc2822()
-                }
-            }
-        }
-    } else {
-        Utc::now().to_rfc2822()
-    };
-
-    // title / description 정리
-    // og:title 종종 "username on Instagram: “본문 일부…”" 형태
-    let (title, description) = refine_text(&og_title, &og_desc);
-
-    let item = ItemBuilder::default()
-        .title(title)
-        .description(description)
-        .link(url.to_string())
-        .author(username.to_string())
-        .pub_date(pub_date_rfc2822)
-        .enclosure({
-            // 이미지가 있다면 enclosure 로 넣을 수도 있음 (선택)
-            // rss::extension::dublincore 나 custom 사용 가능. 여기서는 skip 또는 image URL logging
-            None
-        })
-        .build();
-
-    // 탭 닫고 원래 핸들 복귀
-    driver.close_window().await.map_err(map_wd_err)?;
-    let handles_after = driver.windows().await.map_err(map_wd_err)?;
-    if let Some(original) = handles_after.first() {
-        driver
-            .switch_to_window(original.clone())
-            .await
-            .map_err(map_wd_err)?;
-    }
-
-    Ok((item, og_image))
-}
-
-fn refine_text(og_title: &str, og_desc: &str) -> (String, String) {
-    // 단순 정제 로직 (원하는 형태로 커스터마이징 가능)
-    // TODO: title이랑 desciprion이랑 같은 경우가 있음. 어떻게 정제할지 생각해보기
-    let title_candidate = og_title.trim();
-    // og:description 은 종종 "Instagram: ..." 형태 / 게시물 내용 + " • Instagram" 등
-    let mut desc_candidate = og_desc.trim().to_string();
-    if let Some(pos) = desc_candidate.rfind("Instagram") {
-        // 너무 뒤쪽 마무리 제거 시도
-        if pos > 40 {
-            // 내용이 충분히 긴 경우만 자름
-            desc_candidate = desc_candidate[..pos].trim().to_string();
-        }
-    }
-
-    // 너무 짧으면 타이틀/디스크립션 서로 fallback
-    let title = if title_candidate.is_empty() {
-        desc_candidate.chars().take(60).collect()
-    } else {
-        title_candidate.to_string()
-    };
-
-    let desc = if desc_candidate.is_empty() {
-        title.clone()
-    } else {
-        desc_candidate
-    };
-
-    (title, desc)
 }
 
 fn map_wd_err(e: WebDriverError) -> OmniNewsError {

@@ -19,7 +19,7 @@ use rss::{Channel, Item};
 use scraper::{Html, Selector};
 use sqlx::MySqlPool;
 
-pub async fn crate_rss_items_and_embedding(
+pub async fn create_rss_items_and_embedding(
     pool: &MySqlPool,
     embedding_service: &EmbeddingService,
     mut channel: Channel,
@@ -97,7 +97,6 @@ pub async fn create_rss_item_and_embedding(
     Ok(true)
 }
 
-// TODO: description 수정하기.
 fn extract_html_passage(html: &str) -> (String, Option<String>) {
     let document = Html::parse_document(html);
 

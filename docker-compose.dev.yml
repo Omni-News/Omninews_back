@@ -49,59 +49,62 @@ services:
       timeout: 20s
       retries: 10
 
-#  selenium1:
-#    image: selenium/standalone-chromium:latest
-#    container_name: selenium-chromium-1
-#    shm_size: 2g
-#    restart: unless-stopped
-#    environment:
-#      SE_NODE_SESSION_TIMEOUT: 14400
-#      SE_SCREEN_WIDTH: 1940
-#      SE_SCREEN_HEIGHT: 1120
-#      SE_SCREEN_DEPTH: 24
-#    ports:
-#      - "4444:4444"
-#      - "7901:7900"
-#    volumes:
-#      - selenium-profile-1:/home/seluser/.config/google-chrome
-#    networks:
-#      - omninews-network
-#
-#  selenium2:
-#    image: selenium/standalone-chromium:latest
-#    container_name: selenium-chromium-2
-#    shm_size: 2g
-#    restart: unless-stopped
-#    environment:
-#      SE_NODE_SESSION_TIMEOUT: 14400
-#      SE_SCREEN_WIDTH: 1940
-#      SE_SCREEN_HEIGHT: 1120
-#      SE_SCREEN_DEPTH: 24
-#    ports:
-#      - "4445:4444"
-#      - "7902:7900"
-#    volumes:
-#      - selenium-profile-2:/home/seluser/.config/google-chrome
-#    networks:
-#      - omninews-network
-#
-#  selenium3:
-#    image: selenium/standalone-chromium:latest
-#    container_name: selenium-chromium-3
-#    shm_size: 2g
-#    restart: unless-stopped
-#    environment:
-#      SE_NODE_SESSION_TIMEOUT: 14400
-#      SE_SCREEN_WIDTH: 1940
-#      SE_SCREEN_HEIGHT: 1120
-#      SE_SCREEN_DEPTH: 24
-#    ports:
-#      - "4446:4444"
-#      - "7903:7900"
-#    volumes:
-#      - selenium-profile-3:/home/seluser/.config/google-chrome
-#    networks:
-#      - omninews-network
+  selenium1:
+    image: selenium/standalone-chromium:latest
+    container_name: selenium-chromium-1
+    shm_size: 2g
+    restart: unless-stopped
+    environment:
+      SE_NODE_MAX_SESSIONS: 12
+      SE_NODE_SESSION_TIMEOUT: 14400
+      SE_SCREEN_WIDTH: 1940
+      SE_SCREEN_HEIGHT: 1120
+      SE_SCREEN_DEPTH: 24
+    ports:
+      - "4444:4444"
+      - "7901:7900"
+    volumes:
+      - selenium-profile-1:/home/seluser/.config/google-chrome
+    networks:
+      - omninews-network
+
+  selenium2:
+    image: selenium/standalone-chromium:latest
+    container_name: selenium-chromium-2
+    shm_size: 2g
+    restart: unless-stopped
+    environment:
+      SE_NODE_MAX_SESSIONS: 12
+      SE_NODE_SESSION_TIMEOUT: 14400
+      SE_SCREEN_WIDTH: 1940
+      SE_SCREEN_HEIGHT: 1120
+      SE_SCREEN_DEPTH: 24
+    ports:
+      - "4445:4444"
+      - "7902:7900"
+    volumes:
+      - selenium-profile-2:/home/seluser/.config/google-chrome
+    networks:
+      - omninews-network
+
+  selenium3:
+    image: selenium/standalone-chromium:latest
+    container_name: selenium-chromium-3
+    shm_size: 2g
+    restart: unless-stopped
+    environment:
+      SE_NODE_MAX_SESSIONS: 12
+      SE_NODE_SESSION_TIMEOUT: 14400
+      SE_SCREEN_WIDTH: 1940
+      SE_SCREEN_HEIGHT: 1120
+      SE_SCREEN_DEPTH: 24
+    ports:
+      - "4446:4444"
+      - "7903:7900"
+    volumes:
+      - selenium-profile-3:/home/seluser/.config/google-chrome
+    networks:
+      - omninews-network
 
 networks:
   omninews-network:
@@ -109,8 +112,8 @@ networks:
 
 volumes:
   mysql_dev_data:
-  #  selenium-profile-1:
-  #  selenium-profile-2:
-  #  selenium-profile-3:
+  selenium-profile-1:
+  selenium-profile-2:
+  selenium-profile-3:
   cargo_cache:
   target_cache:

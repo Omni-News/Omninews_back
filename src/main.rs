@@ -32,7 +32,7 @@ async fn rocket() -> _ {
     // setup the webdriver pool
     let dp_cfg = DriverPoolConfig::default();
 
-    //let driver_pool = DriverPool::new(dp_cfg);
+    let driver_pool = DriverPool::new(dp_cfg);
 
     let pool = db_util::create_pool().await;
     let pool_middleware = pool.clone();
@@ -55,7 +55,7 @@ async fn rocket() -> _ {
         .manage(pool)
         .manage(embedding_service)
         .manage(AuthCache::new())
-        //.manage(driver_pool)
+        .manage(driver_pool)
         .attach(CORS)
         .attach(AuthMiddleware::new(exempt_paths, pool_middleware))
         .mount("/rapidoc/", create_rapidoc())
