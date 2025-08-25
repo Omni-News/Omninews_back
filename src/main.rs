@@ -48,7 +48,7 @@ async fn rocket() -> _ {
         // openapi
         "/rapidoc/".to_string(),
         "/swagger-ui/".to_string(),
-        format!("/{}/openapi.json", CURRENT_VERSION).to_owned(),
+        format!("/{CURRENT_VERSION}/openapi.json").to_owned(),
     ];
 
     let mut rocket = rocket::build()
@@ -67,7 +67,7 @@ async fn rocket() -> _ {
     let custom_route_spec = (vec![], custom_openapi_spec());
 
     mount_endpoints_and_merged_docs! {
-        rocket, format!("/{}", CURRENT_VERSION).to_owned(), openapi_settings,
+        rocket, format!("/{CURRENT_VERSION}").to_owned(), openapi_settings,
         "/external" => custom_route_spec,
         "/api" => handler::get_routes_and_docs(&openapi_settings),
     };

@@ -11,7 +11,7 @@ pub fn create_rapidoc() -> impl Into<Vec<Route>> {
         general: GeneralConfig {
             spec_urls: vec![UrlObject::new(
                 "General",
-                &format!("../{}/openapi.json", CURRENT_VERSION),
+                &format!("../{CURRENT_VERSION}/openapi.json"),
             )],
             ..Default::default()
         },

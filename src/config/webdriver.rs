@@ -1,5 +1,6 @@
 use std::{
     collections::VecDeque,
+    env,
     sync::Arc,
     time::{Duration, Instant},
 };
@@ -34,9 +35,9 @@ impl Default for DriverPoolConfig {
         Self {
             max_sessions: 3,
             selenium_endpoints: vec![
-                "http://selenium1:4444".into(),
-                "http://selenium2:4444".into(),
-                "http://selenium3:4444".into(),
+                env::var("SELENIUM_URL_1").expect("SELENIUM_URL_1 not set"),
+                env::var("SELENIUM_URL_2").expect("SELENIUM_URL_2 not set"),
+                env::var("SELENIUM_URL_3").expect("SELENIUM_URL_3 not set"),
             ],
             page_load_strategy: PageLoadStrategy::Eager,
             window_size: (1920, 1080),

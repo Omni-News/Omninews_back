@@ -11,7 +11,7 @@ pub async fn generate_rss(
     link: &str,
 ) -> Result<i32, OmniNewsError> {
     let user = extract_user_by_link(link)?;
-    let medium_rss_link = format!("https://medium.com/{}/feed", user);
+    let medium_rss_link = format!("https://medium.com/{user}/feed");
 
     match channel_service::create_rss_and_embedding(pool, embedding_service, medium_rss_link).await
     {

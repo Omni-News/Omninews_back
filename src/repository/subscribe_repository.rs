@@ -60,10 +60,7 @@ pub async fn select_subscription_items(
         .collect::<Vec<String>>()
         .join(",");
 
-    let query = format!(
-        "SELECT * FROM rss_item WHERE channel_id IN ({})",
-        placeholder
-    );
+    let query = format!("SELECT * FROM rss_item WHERE channel_id IN ({placeholder})");
 
     let mut qurey_builder = query_as::<_, RssItem>(&query);
 

@@ -12,7 +12,7 @@ pub async fn generate_rss(
     link: &str,
 ) -> Result<i32, OmniNewsError> {
     let user = extract_user_by_link(link)?;
-    let tistory_rss_link = format!("https://{}.tistory.com/rss", user);
+    let tistory_rss_link = format!("https://{user}.tistory.com/rss");
 
     match channel_service::create_rss_and_embedding(pool, embedding_service, tistory_rss_link).await
     {

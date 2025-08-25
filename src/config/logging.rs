@@ -39,17 +39,17 @@ pub fn load_logger() {
         .build();
 
     let create_file_appender = |name: &str| -> RollingFileAppender {
-        let log_path = format!("logs/{}.log", name);
+        let log_path = format!("logs/{name}.log");
         let size_trigger = SizeTrigger::new(10 * 1024 * 1024); // 10MB
         let rollder = FixedWindowRoller::builder()
-            .build(&format!("logs/{}.log.{{}}", name), 5)
+            .build(&format!("logs/{name}.log.{{}}"), 5)
             .unwrap();
         let policy = CompoundPolicy::new(Box::new(size_trigger), Box::new(rollder));
 
         RollingFileAppender::builder()
             .encoder(Box::new(PatternEncoder::new("{d} {h({l})} - {m}{n}")))
             .build(log_path, Box::new(policy))
-            .unwrap_or_else(|_| panic!("Failed to create file appender for {}", name))
+            .unwrap_or_else(|_| panic!("Failed to create file appender for {name}"))
     };
 
     let rss_appender = create_file_appender(RSS_SCHEDULER);

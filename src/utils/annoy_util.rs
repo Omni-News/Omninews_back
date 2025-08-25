@@ -17,8 +17,7 @@ pub async fn load_channel_annoy(
     annoy.load(PathBuf::from("../resources/channel_embeddings.ann"));
 
     // 검색어 형식화
-    let search_query = format!("제목: {}. 내용: {}", search_value, search_value);
-    let embedding_search_text = embedding_sentence(service, search_query).await?;
+    let embedding_search_text = embedding_sentence(service, search_value).await?;
 
     // search_k 값 추가 (10000)
     let (result_ids, distances) = annoy.get_nns_by_vector(embedding_search_text, 200, 10000);
@@ -51,9 +50,7 @@ pub async fn load_rss_annoy(
     let annoy = rannoy::Rannoy::new(384);
     annoy.load(PathBuf::from("../resources/rss_embeddings.ann"));
 
-    // 검색어 형식화
-    let search_query = format!("제목: {}. 내용: {}", search_value, search_value);
-    let embedding_search_text = embedding_sentence(service, search_query).await?;
+    let embedding_search_text = embedding_sentence(service, search_value).await?;
 
     // search_k 값 추가
     let (result_ids, distances) = annoy.get_nns_by_vector(embedding_search_text, 200, 10000);
@@ -81,8 +78,7 @@ pub async fn load_news_annoy(
     annoy.load(PathBuf::from("../resources/news_embeddings.ann"));
 
     // 검색어 형식화
-    let search_query = format!("제목: {}. 내용: {}", search_value, search_value);
-    let embedding_search_text = embedding_sentence(service, search_query).await?;
+    let embedding_search_text = embedding_sentence(service, search_value).await?;
 
     // search_k 값 추가
     let (result_ids, distances) = annoy.get_nns_by_vector(embedding_search_text, 10, 10000);

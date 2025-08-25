@@ -220,7 +220,7 @@ impl Fairing for AuthMiddleware {
                     .auth_failures
                     .write()
                     .unwrap()
-                    .insert(request_id, format!("유효하지 않은 토큰입니다: {}", e));
+                    .insert(request_id, format!("유효하지 않은 토큰입니다: {e}"));
             }
         };
     }

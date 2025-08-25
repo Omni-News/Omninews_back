@@ -29,12 +29,12 @@ pub fn custom_openapi_spec() -> OpenApi {
         },
         servers: vec![
             Server {
-                url: format!("http://127.0.0.1:1027/{}", CURRENT_VERSION).to_owned(),
+                url: format!("http://127.0.0.1:1027/{CURRENT_VERSION}").to_owned(),
                 description: Some("Localhost".to_owned()),
                 ..Default::default()
             },
             Server {
-                url: format!("http://61.253.113.42:1027/{}", CURRENT_VERSION).to_owned(),
+                url: format!("http://61.253.113.42:1027/{CURRENT_VERSION}").to_owned(),
                 description: Some("Possible Remote".to_owned()),
                 ..Default::default()
             },

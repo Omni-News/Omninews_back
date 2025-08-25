@@ -129,7 +129,7 @@ async fn fetch_subscription_status(
 
     let client = Client::new();
 
-    let url = format!("{}/v1/subscriptions/{}", base_url, transaction_id);
+    let url = format!("{base_url}/v1/subscriptions/{transaction_id}");
 
     omninews_subscription_info!("App Store 구독 상태 조회 URL: {}", url);
 

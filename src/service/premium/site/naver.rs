@@ -11,7 +11,7 @@ pub async fn generate_rss(
     link: &str,
 ) -> Result<i32, OmniNewsError> {
     let user = extract_user_by_link(link)?;
-    let naver_rss_link = format!("https://blog.rss.naver.com/{}", user);
+    let naver_rss_link = format!("https://blog.rss.naver.com/{user}");
 
     match channel_service::create_rss_and_embedding(pool, embedding_service, naver_rss_link).await {
         Ok(channel_id) => Ok(channel_id),

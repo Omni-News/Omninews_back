@@ -196,7 +196,7 @@ fn build_feed_candidates(input_url: &str) -> Vec<String> {
     let mut prefixes: Vec<String> = vec![];
     if let Some(first) = segments.first() {
         if looks_like_collection(first) {
-            prefixes.push(format!("/{}", first));
+            prefixes.push(format!("/{first}"));
         }
     }
 
@@ -206,10 +206,10 @@ fn build_feed_candidates(input_url: &str) -> Vec<String> {
         let first = &segments[0].to_lowercase();
         let second = &segments[1];
         if (first == "category" || first == "tag") && !second.is_empty() {
-            category_tag_candidates.push(format!("{}/category/{}/feed", origin, second));
-            category_tag_candidates.push(format!("{}/tag/{}/feed", origin, second));
-            category_tag_candidates.push(format!("{}/category/{}/rss", origin, second));
-            category_tag_candidates.push(format!("{}/tag/{}/rss", origin, second));
+            category_tag_candidates.push(format!("{origin}/category/{second}/feed"));
+            category_tag_candidates.push(format!("{origin}/tag/{second}/feed"));
+            category_tag_candidates.push(format!("{origin}/category/{second}/rss"));
+            category_tag_candidates.push(format!("{origin}/tag/{second}/rss"));
         }
     }
 
@@ -218,7 +218,7 @@ fn build_feed_candidates(input_url: &str) -> Vec<String> {
 
     // 루트 레벨
     for suf in root_suffixes {
-        out.push(format!("{}{}", origin, suf));
+        out.push(format!("{origin}{suf}"));
     }
 
     // 섹션 레벨 (예: /blog/feed, /blog/atom.xml)
@@ -235,7 +235,7 @@ fn build_feed_candidates(input_url: &str) -> Vec<String> {
     ];
     for pre in prefixes {
         for suf in &section_suffixes {
-            out.push(format!("{}{}{}", origin, pre, suf));
+            out.push(format!("{origin}{pre}{suf}"));
         }
     }
 
@@ -243,8 +243,8 @@ fn build_feed_candidates(input_url: &str) -> Vec<String> {
     out.extend(category_tag_candidates);
 
     // 5) 워드프레스 쿼리 파라미터 스타일
-    out.push(format!("{}/?feed=rss2", origin));
-    out.push(format!("{}/?feed=atom", origin));
+    out.push(format!("{origin}/?feed=rss2"));
+    out.push(format!("{origin}/?feed=atom"));
 
     dedup(out)
 }
@@ -262,7 +262,7 @@ async fn verify_feed_candidates(
             r#"
             return (async () => {{
                 try {{
-                    const response = await fetch("{}", {{
+                    const response = await fetch("{candidate}", {{
                         method: 'GET',
                         headers: {{
                             'Accept': 'application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.8, application/feed+json;q=0.9, */*;q=0.1'
@@ -292,8 +292,7 @@ async fn verify_feed_candidates(
                     return false;
                 }}
             }})();
-        "#,
-            candidate
+        "#
         );
 
         let result = driver.execute(js, Vec::<Value>::new()).await?;

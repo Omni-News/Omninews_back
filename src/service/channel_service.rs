@@ -378,7 +378,7 @@ fn prepare_embedding_text(title: &str, description: &str) -> String {
     let clean_description = remove_html_tags(description);
 
     // 2. 구조화된 형식으로 정보 표현
-    let mut text = format!("제목: {}. 내용: {}", title, clean_description);
+    let mut text = format!("제목: {title}. 내용: {clean_description}");
 
     // 3. 특수문자 정리 및 중복 공백 제거 - 한글 보존 처리 추가
     text = text
@@ -403,7 +403,7 @@ fn prepare_embedding_text(title: &str, description: &str) -> String {
     }
 
     // 5. 제목 반복으로 중요성 강조 (선택적)
-    text = format!("{}. {}", text, title);
+    text = format!("{text}. {title}");
 
     text
 }
