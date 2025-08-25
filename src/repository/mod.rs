@@ -1,3 +1,4 @@
+pub mod channel_css_repository;
 pub mod embedding_repository;
 pub mod folder_repository;
 pub mod news_repository;

@@ -52,6 +52,17 @@ pub struct RssItem {
     pub rss_image_link: Option<String>,
 }
 
+#[derive(Debug, Clone, FromRow)]
+pub struct ChannelCssElement {
+    pub channel_id: Option<i32>,
+    pub item_title_css: Option<String>,
+    pub item_description_css: Option<String>,
+    pub item_link_css: Option<String>,
+    pub item_author_css: Option<String>,
+    pub item_pub_date_css: Option<String>,
+    pub item_image_css: Option<String>,
+}
+
 #[allow(clippy::too_many_arguments)]
 impl NewRssChannel {
     pub fn new(

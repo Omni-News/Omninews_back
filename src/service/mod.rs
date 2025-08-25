@@ -1,3 +1,4 @@
+pub mod channel_css_service;
 pub mod channel_service;
 pub mod embedding_service;
 pub mod folder_service;

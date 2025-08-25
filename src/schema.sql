@@ -9,6 +9,7 @@ drop table if exists morpheme;
 drop table if exists user_subscription_channel;
 drop table if exists rss_folder;
 drop table if exists channels_in_folder;
+drop table if exists rss_css_channel;
 
 CREATE TABLE `user` (
 	`user_id` INT NOT NULL AUTO_INCREMENT  ,
@@ -119,5 +120,15 @@ CREATE TABLE `channels_in_folder` (
   `folder_id` INT NULL DEFAULT 0,
   `channel_id` INT NULL DEFAULT 0,
   PRIMARY KEY (channels_in_folder_id)
-)
+);
 
+CREATE TABLE `rss_css_channel` (
+	`channel_id`	INT	DEFAULT 0,
+	`item_title_css`	VARCHAR(200)	NULL,
+	`item_description_css`	VARCHAR(200)	NULL,
+	`item_link_css`	VARCHAR(200)	NULL,
+	`item_author_css`	VARCHAR(200)	NULL,
+	`item_pub_date_css`	VARCHAR(200)	NULL,
+	`item_image_css`	VARCHAR(200)	NULL,
+  PRIMARY KEY (channel_id)
+);

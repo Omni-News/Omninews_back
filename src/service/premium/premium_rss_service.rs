@@ -15,8 +15,8 @@ use crate::{
         },
         rss::response::RssChannelResponseDto,
     },
-    model::{error::OmniNewsError, premium::rss_generate::SiteType},
-    service::{channel_service, item_service},
+    model::{error::OmniNewsError, premium::rss_generate::SiteType, rss::ChannelCssElement},
+    service::{channel_css_service, channel_service, item_service},
     utils::embedding_util::EmbeddingService,
 };
 
@@ -58,7 +58,6 @@ pub async fn generate_rss(
     })
 }
 
-// TODO: 사용자가 입력한 CSS 요소를 DB에 저장해서 스케쥴 시켜야 됨.
 pub async fn generate_rss_by_css(
     pool: &MySqlPool,
     embedding_service: &EmbeddingService,
@@ -88,7 +87,7 @@ pub async fn generate_rss_by_css(
         .map_err(OmniNewsError::WebDriverError)?;
 
     let (channel_id, mut rss_channel) = make_channel(pool, embedding_service, &data).await?;
-    let items = make_items(data, driver).await?;
+    let items = make_items(&data, driver).await?;
 
     rss_channel.set_items(items.0);
     let _ = item_service::create_rss_items_and_embedding(
@@ -106,6 +105,20 @@ pub async fn generate_rss_by_css(
         );
         e
     });
+
+    let channel_css_el = ChannelCssElement {
+        channel_id: Some(channel_id),
+        item_title_css: Some(data.item_title_css),
+        item_description_css: Some(data.item_description_css),
+        item_link_css: Some(data.item_link_css),
+        item_author_css: Some(data.item_author_css),
+        item_pub_date_css: Some(data.item_pub_date_css),
+        item_image_css: Some(data.item_image_css),
+    };
+
+    // store item css elements
+    // TODO: 이거 잘 동작하는지 확인.
+    let _ = channel_css_service::store_channel_css_service(pool, channel_css_el).await?;
 
     let channel = channel_service::find_rss_channel_by_id(pool, channel_id).await?;
 
@@ -146,7 +159,7 @@ async fn make_channel(
 }
 
 async fn make_items(
-    data: RssGenerateByCssReqeustDto,
+    data: &RssGenerateByCssReqeustDto,
     driver: &thirtyfour::WebDriver,
 ) -> Result<(Vec<rss::Item>, Vec<String>), OmniNewsError> {
     let mut items = (Vec::new(), Vec::new());
