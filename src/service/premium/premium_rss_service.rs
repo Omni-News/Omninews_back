@@ -144,7 +144,7 @@ async fn make_channel(
         .description(channel_description)
         .language(channel_language.to_string())
         .image(image)
-        .generator("omninews".to_string())
+        .generator("Omninews".to_string())
         .build();
     let channel = channel_service::make_rss_channel(
         &rss_channel,
