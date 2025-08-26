@@ -117,8 +117,6 @@ pub async fn generate_rss_by_css(
     };
 
     // store item css elements
-    // TODO: 이거 잘 동작하는지 확인.
-    info!("channel_css_el: {:?}", channel_css_el);
     let _ = channel_css_service::store_channel_css_service(pool, channel_css_el).await?;
 
     let channel = channel_service::find_rss_channel_by_id(pool, channel_id).await?;
