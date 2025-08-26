@@ -257,7 +257,7 @@ async fn generate_rss_channel(
         .description(channel_description)
         .link(link.to_string())
         .image(image)
-        .generator("instagram".to_string())
+        .generator("Omninews".to_string())
         .build();
     let channel = channel_service::make_rss_channel(
         &rss_channel,
