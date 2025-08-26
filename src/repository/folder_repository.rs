@@ -1,4 +1,3 @@
-use rocket::State;
 use sqlx::MySqlPool;
 
 use crate::{
@@ -7,7 +6,7 @@ use crate::{
 };
 
 pub async fn insert_folder(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_id: i32,
     folder_name: String,
 ) -> Result<i32, sqlx::Error> {
@@ -27,7 +26,7 @@ pub async fn insert_folder(
 }
 
 pub async fn insert_channel_to_folder(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     folder_id: i32,
     channel_id: i32,
 ) -> Result<(), sqlx::Error> {
@@ -46,10 +45,7 @@ pub async fn insert_channel_to_folder(
     }
 }
 
-pub async fn select_folders(
-    pool: &State<MySqlPool>,
-    user_id: i32,
-) -> Result<Vec<RssFolder>, sqlx::Error> {
+pub async fn select_folders(pool: &MySqlPool, user_id: i32) -> Result<Vec<RssFolder>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
     let result = sqlx::query_as!(
         RssFolder,
@@ -66,7 +62,7 @@ pub async fn select_folders(
 }
 
 pub async fn select_channels_in_folder(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     folder_id: i32,
 ) -> Result<Vec<RssChannel>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -87,7 +83,7 @@ pub async fn select_channels_in_folder(
 }
 
 pub async fn update_folder(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     folder_id: i32,
     folder_name: String,
 ) -> Result<i32, sqlx::Error> {
@@ -112,7 +108,7 @@ pub async fn update_folder(
     }
 }
 
-pub async fn delete_folder(pool: &State<MySqlPool>, folder_id: i32) -> Result<(), sqlx::Error> {
+pub async fn delete_folder(pool: &MySqlPool, folder_id: i32) -> Result<(), sqlx::Error> {
     let mut conn = get_db(pool).await?;
     let result = sqlx::query!("DELETE FROM rss_folder WHERE folder_id = ?", folder_id)
         .execute(&mut *conn)
@@ -131,7 +127,7 @@ pub async fn delete_folder(pool: &State<MySqlPool>, folder_id: i32) -> Result<()
 }
 
 pub async fn delete_channel_from_folder(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     folder_id: i32,
     channel_id: i32,
 ) -> Result<(), sqlx::Error> {

@@ -1,30 +1,8 @@
 use chrono::NaiveDateTime;
-use serde::{Deserialize, Serialize};
+use rss::Item;
 use sqlx::prelude::FromRow;
 
 #[derive(Debug, Clone)]
-pub enum NewticleType {
-    Channel,
-    Rss,
-    News,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
-pub struct RssLink {
-    pub link: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RssId {
-    pub rss_id: i32,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ChannelId {
-    pub channel_id: i32,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
 pub struct NewRssChannel {
     pub channel_title: Option<String>,
     pub channel_link: Option<String>,
@@ -36,7 +14,7 @@ pub struct NewRssChannel {
     pub channel_rss_link: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Clone)]
 pub struct RssChannel {
     pub channel_id: Option<i32>,
     pub channel_title: Option<String>,
@@ -49,7 +27,7 @@ pub struct RssChannel {
     pub channel_rss_link: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Clone)]
 pub struct NewRssItem {
     pub channel_id: Option<i32>,
     pub rss_title: Option<String>,
@@ -61,7 +39,7 @@ pub struct NewRssItem {
     pub rss_image_link: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Clone, FromRow)]
 pub struct RssItem {
     pub rss_id: Option<i32>,
     pub channel_id: Option<i32>,
@@ -74,13 +52,79 @@ pub struct RssItem {
     pub rss_image_link: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct UpdateChannelRank {
-    pub channel_id: i32,
-    pub num: i32,
+#[derive(Debug, Clone, FromRow)]
+pub struct ChannelCssElement {
+    pub channel_id: Option<i32>,
+    pub item_title_css: Option<String>,
+    pub item_description_css: Option<String>,
+    pub item_link_css: Option<String>,
+    pub item_author_css: Option<String>,
+    pub item_pub_date_css: Option<String>,
+    pub item_image_css: Option<String>,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct UpdateRssRank {
-    pub rss_id: i32,
-    pub num: i32,
+
+#[allow(clippy::too_many_arguments)]
+impl NewRssChannel {
+    pub fn new(
+        channel_title: String,
+        channel_link: String,
+        channel_description: String,
+        channel_image_url: Option<String>,
+        channel_language: String,
+        rss_generator: String,
+        channel_rank: i32,
+        channel_rss_link: String,
+    ) -> Self {
+        Self {
+            channel_title: Some(channel_title),
+            channel_link: Some(channel_link),
+            channel_description: Some(channel_description),
+            channel_image_url,
+            channel_language: Some(channel_language),
+            rss_generator: Some(rss_generator),
+            channel_rank: Some(channel_rank),
+            channel_rss_link: Some(channel_rss_link),
+        }
+    }
+}
+
+impl RssChannel {
+    pub fn new(new_channel: NewRssChannel) -> Self {
+        Self {
+            channel_id: Some(0),
+            channel_title: new_channel.channel_title,
+            channel_link: new_channel.channel_link,
+            channel_description: new_channel.channel_description,
+            channel_image_url: new_channel.channel_image_url,
+            channel_language: new_channel.channel_language,
+            rss_generator: new_channel.rss_generator,
+            channel_rank: new_channel.channel_rank,
+            channel_rss_link: new_channel.channel_rss_link,
+        }
+    }
+}
+
+impl NewRssItem {
+    pub fn new(
+        channel_id: i32,
+        item: &Item,
+        rss_pub_date: Option<NaiveDateTime>,
+        item_image_link: String,
+    ) -> Self {
+        Self {
+            channel_id: Some(channel_id),
+            rss_title: Some(
+                item.title()
+                    .filter(|title| title.len() <= 200)
+                    .unwrap_or_default()
+                    .to_string(),
+            ),
+            rss_description: Some(item.description().unwrap_or("None").to_string()),
+            rss_link: Some(item.link().unwrap_or("None").to_string()),
+            rss_author: Some(item.author().unwrap_or("None").to_string()),
+            rss_pub_date,
+            rss_rank: Some(0),
+            rss_image_link: Some(item_image_link),
+        }
+    }
 }

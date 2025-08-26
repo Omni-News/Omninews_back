@@ -1,10 +1,11 @@
+pub mod auth;
 pub mod embedding;
 pub mod error;
 pub mod feedback;
 pub mod folder;
 pub mod news;
+pub mod omninews_subscription;
+pub mod premium;
 pub mod rss;
 pub mod search;
-pub mod subscription;
-pub mod token;
 pub mod user;

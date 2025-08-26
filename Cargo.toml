@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 # server
 tokio = { version = "1", features = ["full"] }
-rocket = { version = "0.5.1", features = ["json"] }
+rocket = { version = "0.5.1", features = ["json", "secrets"] }
 
 # static
 lazy_static = "1.5.0"
@@ -22,7 +22,7 @@ mysql = "*"
 sqlx = { version = "0.8", features = ["chrono", "mysql", "runtime-tokio"] }
 
 # crawl
-scraper = "0.22.0"
+scraper = "0.23.0"
 
 # DateTime
 chrono = { version = "0.4", features = ["serde"] }
@@ -38,6 +38,9 @@ serde_json = "1.0"
 reqwest = { version = "*", features = ["json"] }
 rss = "2.0"
 
+# crawl
+thirtyfour = "0.36.1"
+
 # xml 
 quick-xml = { version = "*", features = ["serialize"] }
 
@@ -49,15 +52,31 @@ rust-bert = "0.23.0"
 
 # annoy(Approximate Nearest Neighbors Oh Yeah)
 rannoy = { git = "https://github.com/uzushino/rs-annoy" }
+regex = "1.11.0"
 
 # JWT
 jsonwebtoken = "9"
 
 uuid = "1.16.0"
 
+# Swagger
+rocket_okapi = { version = "0.9.0", features = [
+  "swagger",
+  "rapidoc",
+  "secrets",
+] }
 
+base64 = "0.22.0"
+
+## compatibility issues
+console = "0.15"
+indicatif = "0.15"
+
+schemars = { version = "0.8.0", features = ["chrono"] }
+okapi = { version = "0.7.0-rc.1" }
+openssl-sys = "0.9.109"
 [build-dependencies]
-bindgen = "0.71.1"
+bindgen = "0.72.0"
 
 
 [features]

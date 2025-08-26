@@ -9,6 +9,7 @@ drop table if exists morpheme;
 drop table if exists user_subscription_channel;
 drop table if exists rss_folder;
 drop table if exists channels_in_folder;
+drop table if exists rss_css_channel;
 
 CREATE TABLE `user` (
 	`user_id` INT NOT NULL AUTO_INCREMENT  ,
@@ -16,21 +17,25 @@ CREATE TABLE `user` (
 	`user_display_name`	VARCHAR(100),
 	`user_photo_url`	TEXT,
 	`user_social_login_provider`	ENUM('google', 'kakao', 'apple') NOT NULL,
-	`user_social_provider_id`	VARCHAR(255) NOT NULL,
+	`user_social_provider_id`	VARCHAR(255) NOT NULL, -- Apple은 로그인 시 이 속성으로 비교해야 함.
 	`user_access_token`	TEXT,
 	`user_refresh_token`	TEXT,
 	`user_access_token_expires_at`	DATETIME,
   `user_refresh_token_expires_at`	DATETIME,
 	`user_status`	ENUM('active', 'inactive', 'suspended, deleted')	DEFAULT 'active',
 	`user_role`	ENUM('user', 'admin', 'editor')	DEFAULT 'user',
-	`user_theme`	ENUM('white', 'black', 'blue', 'paper')	DEFAULT 'paper',
+	`user_theme`	ENUM('light', 'dark', 'blue', 'paper')	DEFAULT 'paper',
 	`user_notification_push`	BOOLEAN NOT NULL	DEFAULT FALSE,
+  `user_fcm_token` VARCHAR(255) NULL,
 	`user_articles_read`	INT	DEFAULT 0,
 	`user_last_active_at`	DATETIME    ,
+  `user_subscription_product_id`  VARCHAR(100) NULL,
+  `user_subscription_receipt_data`  VARCHAR(3000) NULL,
+  `user_subscription_platform`  ENUM('ios', 'android') NULL,
+  `user_subscription_is_test` BOOLEAN NULL,
 	`user_subscription_plan`    BOOLEAN	DEFAULT FALSE,
 	`user_subscription_start_date`	DATETIME	NULL,
 	`user_subscription_end_date`	DATETIME	NULL,
-	`user_subscription_last_date`	DATETIME	NULL,
 	`user_subscription_auto_renew`	BOOLEAN	DEFAULT FALSE,
 	`user_created_at`	DATETIME	,
 	`user_updated_at`	DATETIME,
@@ -73,7 +78,7 @@ CREATE TABLE `rss_channel` (
 	`channel_language`	VARCHAR(10)	NULL,
 	`rss_generator`	VARCHAR(300)	NULL,
 	`channel_rank`	INT	NULL,
-    `channel_rss_link` VARCHAR(500) UNIQUE ,
+  `channel_rss_link` VARCHAR(500) UNIQUE ,
 	PRIMARY KEY (`channel_id`)
 );
 
@@ -115,5 +120,15 @@ CREATE TABLE `channels_in_folder` (
   `folder_id` INT NULL DEFAULT 0,
   `channel_id` INT NULL DEFAULT 0,
   PRIMARY KEY (channels_in_folder_id)
-)
+);
 
+CREATE TABLE `rss_css_channel` (
+	`channel_id`	INT	DEFAULT 0,
+	`item_title_css`	VARCHAR(200)	NULL,
+	`item_description_css`	VARCHAR(200)	NULL,
+	`item_link_css`	VARCHAR(200)	NULL,
+	`item_author_css`	VARCHAR(200)	NULL,
+	`item_pub_date_css`	VARCHAR(200)	NULL,
+	`item_image_css`	VARCHAR(200)	NULL,
+  PRIMARY KEY (channel_id)
+);

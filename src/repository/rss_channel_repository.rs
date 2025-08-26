@@ -1,11 +1,10 @@
-use rocket::State;
 use sqlx::{query, query_as, MySqlPool};
 
 use crate::db_util::get_db;
 use crate::model::rss::{NewRssChannel, RssChannel};
 
 pub async fn select_rss_channel_by_id(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     channel_id: i32,
 ) -> Result<RssChannel, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -24,7 +23,7 @@ pub async fn select_rss_channel_by_id(
     }
 }
 pub async fn select_rss_channel_by_rss_link(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     rss_channel_link: String,
 ) -> Result<RssChannel, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -43,16 +42,16 @@ pub async fn select_rss_channel_by_rss_link(
     }
 }
 
-pub async fn select_rss_channel_by_channel_rss_link(
-    pool: &State<MySqlPool>,
-    rss_link: String,
+pub async fn select_rss_channel_by_channel_link(
+    pool: &MySqlPool,
+    channel_link: &str,
 ) -> Result<RssChannel, sqlx::Error> {
     let mut conn = get_db(pool).await?;
     let result = query_as!(
         RssChannel,
         "SELECT * FROM rss_channel
-                WHERE channel_rss_link = ?",
-        rss_link,
+                WHERE channel_link LIKE ?",
+        channel_link,
     )
     .fetch_one(&mut *conn)
     .await;
@@ -64,7 +63,7 @@ pub async fn select_rss_channel_by_channel_rss_link(
 }
 
 pub async fn select_rss_channel_by_embedding_id(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     embedding_id: i32,
 ) -> Result<RssChannel, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -86,7 +85,7 @@ pub async fn select_rss_channel_by_embedding_id(
     }
 }
 pub async fn select_rss_channels_order_by_channel_rank(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
 ) -> Result<Vec<RssChannel>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
     let result = query_as!(
@@ -104,7 +103,7 @@ pub async fn select_rss_channels_order_by_channel_rank(
 }
 
 pub async fn insert_rss_channel(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     rss_channel: NewRssChannel,
 ) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -131,7 +130,7 @@ pub async fn insert_rss_channel(
 }
 
 pub async fn update_rss_channel_rank_by_id(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     channel_id: i32,
     num: i32,
 ) -> Result<bool, sqlx::Error> {

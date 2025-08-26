@@ -1,4 +1,3 @@
-use rocket::State;
 use sqlx::{query, query_as, MySqlPool};
 
 use crate::{
@@ -7,7 +6,7 @@ use crate::{
 };
 
 pub async fn insert_user_subscribe_channel(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_id: i32,
     channel_id: i32,
 ) -> Result<i32, sqlx::Error> {
@@ -28,7 +27,7 @@ pub async fn insert_user_subscribe_channel(
 }
 
 pub async fn select_subscription_channels(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_id: i32,
 ) -> Result<Vec<RssChannel>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -51,7 +50,7 @@ pub async fn select_subscription_channels(
 }
 
 pub async fn select_subscription_items(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     channels: Vec<i32>,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -61,10 +60,7 @@ pub async fn select_subscription_items(
         .collect::<Vec<String>>()
         .join(",");
 
-    let query = format!(
-        "SELECT * FROM rss_item WHERE channel_id IN ({})",
-        placeholder
-    );
+    let query = format!("SELECT * FROM rss_item WHERE channel_id IN ({placeholder})");
 
     let mut qurey_builder = query_as::<_, RssItem>(&query);
 
@@ -81,7 +77,7 @@ pub async fn select_subscription_items(
 }
 
 pub async fn is_already_subscribe_channel(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_id: i32,
     channel_id: i32,
 ) -> Result<bool, sqlx::Error> {
@@ -105,7 +101,7 @@ pub async fn is_already_subscribe_channel(
 }
 
 pub async fn delete_subscribe_channel(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_id: i32,
     channel_id: i32,
 ) -> Result<i32, sqlx::Error> {

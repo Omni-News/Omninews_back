@@ -2,42 +2,47 @@ use std::env;
 
 use chrono::{DateTime, FixedOffset, NaiveDateTime, Utc};
 use jsonwebtoken::{encode, EncodingKey, Header};
-use rocket::State;
 use sqlx::MySqlPool;
 
 use crate::{
     auth_middleware::Claims,
+    dto::{
+        auth::{
+            request::VerifyRefreshTokenRequestDto,
+            response::{AccessTokenResponseDto, JwtTokenResponseDto},
+        },
+        user::{
+            request::{
+                AppleLoginRequestDto, LoginUserRequestDto, UserNotificationRequestDto,
+                UserThemeRequestDto,
+            },
+            response::UserThemeResponseDto,
+        },
+    },
     model::{
+        auth::{AccessToken, JwtToken, TokenType},
         error::OmniNewsError,
-        token::{AccessToken, JwtToken, RefreshTokenAndUserEmail, TokenType},
-        user::{NewUser, ParamUser},
+        user::NewUser,
     },
     repository::user_repository,
+    user_error, user_info, user_warn,
 };
 
 /// 1. access token O refresh token O -> processed in auto login.
 /// 2. access token X refresh token O -> processed in auto login.
-/// 3. access token X refresh token X -> Reissue refresh token and access token or Create user
-///
-/// ```
-/// return Some(JwtToken {
-///     access_token: Some(access_token),
-///     access_token_expires_at: Some(access_token_expires_at),
-///     refresh_token: Some(refresh_token),
-///     refresh_token_expires_at: Some(refresh_token_expires_at),
-/// })
-/// ```
+/// 3. access token X refresh token X -> Reissue refresh token and access token or Create user +
+///    Update User Info
 pub async fn login_or_create_user(
-    pool: &State<MySqlPool>,
-    user: ParamUser,
-) -> Result<JwtToken, OmniNewsError> {
+    pool: &MySqlPool,
+    user: LoginUserRequestDto,
+) -> Result<JwtTokenResponseDto, OmniNewsError> {
     let (is_access_available, is_refresh_available) = user_repository::validate_users_all_tokens(
         pool,
         user.user_email.clone().unwrap_or_default(),
     )
     .await
     .map_err(|e| {
-        error!(
+        user_error!(
             "[Service] Failed to validate access and refresh token: {}",
             e
         );
@@ -46,7 +51,7 @@ pub async fn login_or_create_user(
 
     // 1 or 2 -> new login
     if is_access_available || is_refresh_available {
-        warn!("[Service] Access or refresh token is already alived ailed to login");
+        user_warn!("[Service] Access or refresh token is already alived ailed to login");
     }
 
     // 3. access token X refresh token X -> reissue both token or create user
@@ -54,26 +59,54 @@ pub async fn login_or_create_user(
         .is_ok()
     {
         // 3-1. reissue both
-        info!(
+        user_info!(
             "[Service] 3-1. Success login: {}",
             user.user_email.clone().unwrap()
         );
-        let tokens = issue_tokens(pool, user.user_email.clone().unwrap()).await?;
+        let jwt_token = issue_tokens(pool, user.user_email.clone().unwrap()).await?;
+        // update user info
+        match user_repository::update_user_info(
+            pool,
+            user.user_email.clone(),
+            user.user_display_name,
+            user.user_photo_url,
+            user.user_social_login_provider,
+            user.user_social_provider_id,
+        )
+        .await
+        {
+            Ok(_) => {
+                user_info!(
+                    "[Service] User info updated for email: {}",
+                    user.user_email.clone().unwrap()
+                );
+            }
+            Err(e) => {
+                user_error!("[Service] Failed to update user info: {}", e);
+                return Err(OmniNewsError::Database(e));
+            }
+        }
+        user_info!(
+            "[Service] User info updated for email: {}",
+            user.user_email.clone().unwrap()
+        );
 
-        info!("{:?}", tokens);
-
-        return Ok(tokens);
+        return Ok(JwtTokenResponseDto::from_model(jwt_token));
     }
-
     // 3-2.create user
-    info!(
+    user_info!(
         "[Service] 3-2. Success login: {}",
         user.user_email.clone().unwrap()
     );
-    create_user(pool, user).await
+
+    let jwt_token = create_user(pool, user).await?;
+    Ok(JwtTokenResponseDto::from_model(jwt_token))
 }
 
-async fn create_user(pool: &State<MySqlPool>, user: ParamUser) -> Result<JwtToken, OmniNewsError> {
+async fn create_user(
+    pool: &MySqlPool,
+    user: LoginUserRequestDto,
+) -> Result<JwtToken, OmniNewsError> {
     let (access_token, access_token_expires_at) = make_token(
         TokenType::Access,
         user.user_email.clone().unwrap_or_default(),
@@ -88,31 +121,26 @@ async fn create_user(pool: &State<MySqlPool>, user: ParamUser) -> Result<JwtToke
         .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
         .naive_utc();
 
-    let new_user = NewUser {
-        user_email: user.user_email,
-        user_display_name: user.user_display_name,
-        user_photo_url: user.user_photo_url,
-        user_social_login_provider: user.user_social_login_provider,
-        user_social_provider_id: user.user_social_provider_id,
-        user_access_token: Some(access_token.clone()),
-        user_refresh_token: Some(refresh_token.clone()),
-        user_access_token_expires_at: Some(access_token_expires_at),
-        user_refresh_token_expires_at: Some(refresh_token_expires_at),
-        user_notification_push: user.user_notification_push,
-        user_last_active_at: Some(ktc_now),
-        user_created_at: Some(ktc_now),
-        user_updated_at: Some(ktc_now),
-    };
+    let new_user = NewUser::new(
+        user,
+        JwtToken::new(
+            access_token.clone(),
+            refresh_token.clone(),
+            access_token_expires_at,
+            refresh_token_expires_at,
+        ),
+        ktc_now,
+    );
     match user_repository::insert_user(pool, new_user).await {
-        Ok(_) => Ok(JwtToken {
-            access_token: Some(access_token),
-            refresh_token: Some(refresh_token),
-            access_token_expires_at: Some(access_token_expires_at),
-            refresh_token_expires_at: Some(refresh_token_expires_at),
-        }),
+        Ok(_) => Ok(JwtToken::new(
+            access_token,
+            refresh_token,
+            access_token_expires_at,
+            refresh_token_expires_at,
+        )),
 
         Err(e) => {
-            error!("[Service] Failed to create user: {}", e);
+            user_error!("[Service] Failed to create user: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -126,16 +154,16 @@ pub async fn vliadate_access_token(
     match user_repository::validate_access_token_by_user_email(pool, token, email).await {
         Ok(_) => Ok(true),
         Err(_) => {
-            error!("[Service] Token validation failed");
+            user_error!("[Service] Token validation failed");
             Err(OmniNewsError::TokenValidationError)
         }
     }
 }
 
 pub async fn validate_refresh_token(
-    pool: &State<MySqlPool>,
-    refresh_token: RefreshTokenAndUserEmail,
-) -> Result<AccessToken, OmniNewsError> {
+    pool: &MySqlPool,
+    refresh_token: VerifyRefreshTokenRequestDto,
+) -> Result<AccessTokenResponseDto, OmniNewsError> {
     let user_email = refresh_token.email.clone().unwrap_or_default();
     let refresh_token = refresh_token.token.unwrap_or_default();
 
@@ -147,19 +175,20 @@ pub async fn validate_refresh_token(
     .await
     {
         Ok(_) => {
-            // TODO access token 재발급.
-            info!("[Service] Reissue access token.");
-            reissue_access_token(pool, user_email).await
+            user_info!("[Service] Reissue access token.");
+            let acces_token = reissue_access_token(pool, user_email).await?;
+
+            Ok(AccessTokenResponseDto::from_model(acces_token))
         }
         Err(_) => {
-            error!("[Service] Refresh token validation failed");
+            user_error!("[Service] Refresh token validation failed");
             Err(OmniNewsError::TokenValidationError)
         }
     }
 }
 
 async fn reissue_access_token(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
 ) -> Result<AccessToken, OmniNewsError> {
     let (access_token, access_token_expires_at) =
@@ -173,33 +202,26 @@ async fn reissue_access_token(
     )
     .await?;
 
-    Ok(AccessToken {
-        access_token: Some(access_token),
-        access_token_expires_at: Some(access_token_expires_at),
-    })
+    Ok(AccessToken::new(access_token, access_token_expires_at))
 }
 
-async fn issue_tokens(
-    pool: &State<MySqlPool>,
-    user_email: String,
-) -> Result<JwtToken, OmniNewsError> {
+async fn issue_tokens(pool: &MySqlPool, user_email: String) -> Result<JwtToken, OmniNewsError> {
     let (access_token, access_token_expires_at) =
         make_token(TokenType::Access, user_email.clone())?;
 
     let (refresh_token, refresh_token_expires_at) =
         make_token(TokenType::Refresh, user_email.clone())?;
 
-    let tokens = JwtToken {
-        access_token: Some(access_token),
-        access_token_expires_at: Some(access_token_expires_at),
-        refresh_token: Some(refresh_token),
-        refresh_token_expires_at: Some(refresh_token_expires_at),
-    };
-
+    let tokens = JwtToken::new(
+        access_token,
+        refresh_token,
+        access_token_expires_at,
+        refresh_token_expires_at,
+    );
     match user_repository::update_uesr_tokens(pool, user_email, tokens.clone()).await {
         Ok(_) => Ok(tokens),
         Err(e) => {
-            error!("[Service] Failed to update user tokens: {}", e);
+            user_error!("[Service] Failed to update user tokens: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }
@@ -214,7 +236,7 @@ fn make_token(
 
     match token_type {
         TokenType::Access => {
-            let access_token_exp = Utc::now().timestamp() as u64 + (30 * 60) + (9 * 3600); // 30 min and kst
+            let access_token_exp = Utc::now().timestamp() as u64 + (60 * 60 * 24) + (9 * 3600); // 1 day and kst
             let access_token_claim = Claims {
                 aud: "omninews".to_owned(),
                 sub: sub.clone(),
@@ -229,7 +251,7 @@ fn make_token(
             ) {
                 Ok(token) => Some(token),
                 Err(e) => {
-                    error!("[Service] Failed to create JWT access token: {}", e);
+                    user_error!("[Service] Failed to create JWT access token: {}", e);
                     return Err(OmniNewsError::TokenCreateError);
                 }
             };
@@ -243,7 +265,7 @@ fn make_token(
         }
         TokenType::Refresh => {
             let refresh_token_exp =
-                Utc::now().timestamp() as u64 + (60 * 60 * 24 * 14) + (9 * 3600); // 14 days and
+                Utc::now().timestamp() as u64 + (60 * 60 * 24 * 31) + (9 * 3600); // 1 month and
                                                                                   // kst
 
             let refresh_token_claim = Claims {
@@ -260,7 +282,7 @@ fn make_token(
             ) {
                 Ok(token) => Some(token),
                 Err(e) => {
-                    error!("[Service] Failed to create JWT refresh token: {}", e);
+                    user_error!("[Service] Failed to create JWT refresh token: {}", e);
                     return Err(OmniNewsError::TokenCreateError);
                 }
             };
@@ -275,27 +297,103 @@ fn make_token(
     }
 }
 
+pub async fn apple_login(
+    pool: &MySqlPool,
+    apple_login: AppleLoginRequestDto,
+) -> Result<JwtTokenResponseDto, OmniNewsError> {
+    let user_email = user_repository::select_user_email_by_social_provider_id(
+        pool,
+        apple_login
+            .user_social_provider_id
+            .clone()
+            .unwrap_or_default(),
+    )
+    .await?;
+
+    // Apple login is not a new user, so we can issue tokens directly
+    login_or_create_user(
+        pool,
+        LoginUserRequestDto {
+            user_email: Some(user_email),
+            user_display_name: None,
+            user_photo_url: None,
+            user_social_login_provider: Some("apple".to_string()),
+            user_social_provider_id: apple_login.user_social_provider_id,
+        },
+    )
+    .await
+}
+
 pub async fn find_user_id_by_email(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     user_email: String,
 ) -> Result<i32, OmniNewsError> {
     match user_repository::select_user_id_by_email(pool, user_email).await {
         Ok(user_id) => Ok(user_id),
         Err(e) => {
-            error!("[Service] Failed to find user id by email: {}", e);
+            user_error!("[Service] Failed to find user id by email: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }
 }
 
-pub async fn delete_user_token(
-    pool: &State<MySqlPool>,
-    user_email: String,
-) -> Result<(), OmniNewsError> {
+pub async fn delete_user_token(pool: &MySqlPool, user_email: String) -> Result<(), OmniNewsError> {
     match user_repository::delete_user_token_by_email(pool, user_email).await {
         Ok(_) => Ok(()),
         Err(e) => {
-            error!("[Service] Failed to remove user token: {}", e);
+            user_error!("[Service] Failed to remove user token: {}", e);
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
+pub async fn update_user_notification_setting(
+    pool: &MySqlPool,
+    user_email: String,
+    notification_data: UserNotificationRequestDto,
+) -> Result<(), OmniNewsError> {
+    match user_repository::update_user_notification_setting(
+        pool,
+        user_email,
+        notification_data.user_notification_push.unwrap_or_default(),
+        notification_data.user_fcm_token.unwrap_or_default(),
+    )
+    .await
+    {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            user_error!(
+                "[Service] Failed to update user notification setting: {}",
+                e
+            );
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
+
+pub async fn get_user_theme(
+    pool: &MySqlPool,
+    user_email: String,
+) -> Result<UserThemeResponseDto, OmniNewsError> {
+    match user_repository::get_user_theme(pool, user_email).await {
+        Ok(theme) => Ok(UserThemeResponseDto::new(theme)),
+        Err(e) => {
+            user_error!("[Service] Failed to get user theme: {}", e);
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
+
+pub async fn update_user_theme(
+    pool: &MySqlPool,
+    user_email: String,
+    theme: UserThemeRequestDto,
+) -> Result<(), OmniNewsError> {
+    match user_repository::update_user_theme(pool, user_email, theme.theme.unwrap_or_default())
+        .await
+    {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            user_error!("[Service] Failed to update user theme: {}", e);
             Err(OmniNewsError::Database(e))
         }
     }

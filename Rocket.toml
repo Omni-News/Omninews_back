@@ -1,13 +1,14 @@
 [default]
 address = "0.0.0.0"
-port = 8080
-log_lovel = "normal"
+port = 1027
+log_level = "normal"
 
 [debug]
+address = "0.0.0.0"
 port = 1027
 log_level = "debug"
 
 [release]
 address = "0.0.0.0"
-port = 80
+port = 1027
 log_level = "critical"

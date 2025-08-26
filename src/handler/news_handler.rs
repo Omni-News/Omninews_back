@@ -1,41 +1,31 @@
+use okapi::openapi3::OpenApi;
 use rocket::{http::Status, serde::json::Json, State};
+use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use sqlx::MySqlPool;
 
 use crate::{
-    global::FETCH_FLAG,
-    model::news::{News, NewsItem, NewsParams},
-    service::news_service,
+    auth_middleware::AuthenticatedUser, dto::news::response::NewsResponseDto, service::news_service,
 };
 
+pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
+    openapi_get_routes_spec![settings: get_news]
+}
+
+/// # 뉴스 카테고리별 조회 API
+///
+/// 제공된 카테고리에 해당하는 뉴스 목록을 반환합니다.
+///
+/// ### `category` : 뉴스 카테고리 (예: "정치", "경제", "사회", "생활/문화", "세계", "IT/과학")
+///
+#[openapi(tag = "뉴스 API")]
 #[get("/news?<category>")]
 pub async fn get_news(
     pool: &State<MySqlPool>,
     category: String,
-) -> Result<Json<Vec<News>>, Status> {
+    _auth: AuthenticatedUser,
+) -> Result<Json<Vec<NewsResponseDto>>, Status> {
     match news_service::get_news(pool, category).await {
         Ok(res) => Ok(Json(res)),
         Err(_) => Err(Status::InternalServerError),
     }
-}
-
-#[get("/news/api?<params..>")]
-pub async fn get_news_by_api(params: NewsParams) -> Result<Json<Vec<NewsItem>>, Status> {
-    match news_service::get_news_by_api(params).await {
-        Ok(res) => Ok(Json(res)),
-        Err(_) => Err(Status::InternalServerError),
-    }
-}
-
-#[get("/fetch_start")]
-pub async fn fetch_start() -> &'static str {
-    let mut fetch_flag = FETCH_FLAG.lock().unwrap();
-    *fetch_flag = true;
-    "Fetching started!"
-}
-
-#[get("/fetch_stop")]
-pub async fn fetch_stop() -> &'static str {
-    let mut fetch_flag = FETCH_FLAG.lock().unwrap();
-    *fetch_flag = false;
-    "Fetching stopped!"
 }

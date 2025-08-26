@@ -1,13 +1,9 @@
-use rocket::State;
-use sqlx::{query, query_as, MySqlPool};
+use sqlx::{query, MySqlPool};
 
-use crate::{
-    db_util::{get_db, get_db_without_state},
-    model::embedding::{Embedding, NewEmbedding},
-};
+use crate::{db_util::get_db, model::embedding::NewEmbedding};
 
 pub async fn insert_embedding(
-    pool: &State<MySqlPool>,
+    pool: &MySqlPool,
     embedding: NewEmbedding,
 ) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await?;
@@ -25,48 +21,6 @@ pub async fn insert_embedding(
 
     match result {
         Ok(res) => Ok(res.last_insert_id() as i32),
-        Err(e) => Err(e),
-    }
-}
-
-pub async fn select_all_channel_embeddings(
-    pool: &MySqlPool,
-) -> Result<Vec<Embedding>, sqlx::Error> {
-    let mut conn = get_db_without_state(pool).await?;
-    let result = query_as!(
-    Embedding,
-        "SELECT * from embedding WHERE channel_id IS NOT NULL AND rss_id IS NULL AND news_id IS NULL",
-
-).fetch_all(&mut *conn).await;
-
-    match result {
-        Ok(res) => Ok(res),
-        Err(e) => Err(e),
-    }
-}
-
-pub async fn select_all_rss_embeddings(pool: &MySqlPool) -> Result<Vec<Embedding>, sqlx::Error> {
-    let mut conn = get_db_without_state(pool).await?;
-    let result = query_as!(
-    Embedding,
-        "SELECT * from embedding WHERE channel_id IS NULL AND rss_id IS NOT NULL AND news_id IS NULL",
-).fetch_all(&mut *conn).await;
-
-    match result {
-        Ok(res) => Ok(res),
-        Err(e) => Err(e),
-    }
-}
-
-pub async fn select_all_news_embeddings(pool: &MySqlPool) -> Result<Vec<Embedding>, sqlx::Error> {
-    let mut conn = get_db_without_state(pool).await?;
-    let result = query_as!(
-    Embedding,
-        "SELECT * from embedding WHERE channel_id IS NULL AND rss_id IS NULL AND news_id IS NOT NULL",
-).fetch_all(&mut *conn).await;
-
-    match result {
-        Ok(res) => Ok(res),
         Err(e) => Err(e),
     }
 }
