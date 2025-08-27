@@ -199,7 +199,7 @@ pub fn make_rss_channel(
         channel
             .generator()
             .unwrap_or(if is_generated_channel {
-                "Omninews"
+                "Omninews_default"
             } else {
                 "None"
             })

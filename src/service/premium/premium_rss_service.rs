@@ -144,7 +144,8 @@ async fn make_channel(
         .description(channel_description)
         .language(channel_language.to_string())
         .image(image)
-        .generator("Omninews".to_string())
+        // Css요소는 스케쥴 시 추가 관리 필요함
+        .generator("Omninews_css".to_string())
         .build();
     let channel = channel_service::make_rss_channel(
         &rss_channel,
