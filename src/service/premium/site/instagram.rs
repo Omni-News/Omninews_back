@@ -33,6 +33,7 @@ pub async fn generate_rss(
     let driver = driver_handle.driver();
 
     let username = extract_username(link).ok_or_else(|| OmniNewsError::ExtractLinkError)?;
+    let link = &format!("http://instagram.com/{username}");
     let feeds_graphql_url = format!(
         r#"
             http://www.instagram.com/graphql/query?variables={{"data":{{"count":12,"include_relationship_info":false,"latest_besties_reel_media":false,"latest_reel_media":true}},"username":"{username}","__relay_internal__pv__PolarisFeedShareMenurelayprovider":false}}&doc_id=7898261790222653&server_timestamps=true
