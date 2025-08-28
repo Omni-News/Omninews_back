@@ -13,6 +13,7 @@ services:
       - RUST_LOG=debug
     env_file:
       - .env
+      - .development.env
     volumes:
       - ./src:/app/src:ro # 소스코드 hot-reload
       - ./Cargo.toml:/app/Cargo.toml:ro
