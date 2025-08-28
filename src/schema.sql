@@ -43,7 +43,7 @@ CREATE TABLE `user` (
 );
 
 
-CREATE TABLE `News` (
+CREATE TABLE `news` (
 	`news_id`	INT	NOT NULL AUTO_INCREMENT,
 	`news_title`	VARCHAR(200)	NULL,
 	`news_description`	VARCHAR(1000)	NULL,
