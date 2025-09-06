@@ -1,7 +1,7 @@
 use serde_json::Value;
 use std::{env, time::Duration};
 
-use chrono::{DateTime, TimeZone, Utc};
+use chrono::{DateTime, FixedOffset, TimeZone, Utc};
 use rss::{Channel, ChannelBuilder, Image, Item, ItemBuilder};
 use sqlx::MySqlPool;
 use thirtyfour::{error::WebDriverError, By, WebDriver};
@@ -185,7 +185,9 @@ async fn generate_rss_items(
                 .unwrap()
                 .unwrap();
 
-                let pub_date_rfc2822 = DateTime::to_rfc2822(&pub_date_timestamp);
+                let kst = FixedOffset::east_opt(9 * 3600).unwrap();
+                let pub_date_kst: DateTime<FixedOffset> = pub_date_timestamp.with_timezone(&kst);
+                let pub_date_rfc2822 = pub_date_kst.to_rfc2822();
 
                 let image_link = v
                     .get("node")
