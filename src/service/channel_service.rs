@@ -180,7 +180,10 @@ pub async fn parse_rss_link_to_channel_with_web_driver(
         return Err(OmniNewsError::WebDriverNotFound);
     }
     Channel::read_from(body.as_bytes()).map_err(|e| {
-        rss_error!("[Service] Failed to read from rss body: {:?}", e);
+        rss_error!(
+            "[Service] Failed to read from rss body: {:?}, link: {link}",
+            e
+        );
         OmniNewsError::ParseRssChannel
     })
 }
