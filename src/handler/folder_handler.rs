@@ -32,6 +32,8 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 ///
 /// ### `folder_name`: 폴더 이름 (예: "Development")
 ///
+//TODO: 이거 expected Expr뜨는거, okapi 문제니까 0.9.1 업데이트 후 해결되는지 확인하기
+//https://github.com/GREsau/okapi/issues/166
 #[openapi(tag = "Folder")]
 #[post("/folder", data = "<folder>")]
 pub async fn create_folder(

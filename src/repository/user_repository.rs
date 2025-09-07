@@ -53,6 +53,26 @@ pub async fn select_user_id_by_email(
     }
 }
 
+pub async fn validate_premium_user(
+    pool: &MySqlPool,
+    user_email: &str,
+) -> Result<bool, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!(
+        "SELECT user_email FROM user WHERE user_email = ? AND user_subscription_plan <> 0 ",
+        user_email
+    )
+    .fetch_one(&mut *conn)
+    .await;
+
+    match result {
+        Ok(_) => Ok(true),
+        Err(sqlx::Error::RowNotFound) => Ok(false),
+        Err(e) => Err(e),
+    }
+}
+
 pub async fn select_user_email_by_social_provider_id(
     pool: &MySqlPool,
     user_social_provider_id: String,
