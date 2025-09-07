@@ -4,12 +4,13 @@ use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use sqlx::MySqlPool;
 
 use crate::{
+    auth_middleware::AuthenticatedUser,
     config::webdriver::DriverPool,
     dto::premium::rss::{
         request::{RssGenerateByCssReqeustDto, RssGenerateRequestDto},
         response::RssGenerateResponseDto,
     },
-    service::premium::premium_rss_service,
+    service::{premium::rss::generate_rss, user_service},
     utils::embedding_util::EmbeddingService,
 };
 
@@ -30,10 +31,16 @@ pub async fn rss_generate(
     embedding_service: &State<EmbeddingService>,
     driver_pool: &State<DriverPool>,
     data: Json<RssGenerateRequestDto>,
+    user: AuthenticatedUser,
 ) -> Result<Json<RssGenerateResponseDto>, Status> {
-    match premium_rss_service::generate_rss(pool, embedding_service, driver_pool, data.into_inner())
-        .await
-    {
+    // premium 유저 검증
+    if let Ok(res) = user_service::validate_premium_user(pool, &user.user_email).await {
+        if !res {
+            return Err(Status::InternalServerError);
+        }
+    }
+
+    match generate_rss::generate(pool, embedding_service, driver_pool, data.into_inner()).await {
         Ok(res) => Ok(Json(res)),
         Err(_) => Err(Status::InternalServerError),
     }
@@ -63,15 +70,16 @@ pub async fn rss_generate_by_css(
     embedding_service: &State<EmbeddingService>,
     driver_pool: &State<DriverPool>,
     data: Json<RssGenerateByCssReqeustDto>,
+    user: AuthenticatedUser,
 ) -> Result<Json<RssGenerateResponseDto>, Status> {
-    match premium_rss_service::generate_rss_by_css(
-        pool,
-        embedding_service,
-        driver_pool,
-        data.into_inner(),
-    )
-    .await
-    {
+    // premium 유저 검증
+    if let Ok(res) = user_service::validate_premium_user(pool, &user.user_email).await {
+        if !res {
+            return Err(Status::InternalServerError);
+        }
+    }
+
+    match generate_rss::rss_by_css(pool, embedding_service, driver_pool, data.into_inner()).await {
         Ok(res) => Ok(Json(res)),
         Err(_) => Err(Status::InternalServerError),
     }

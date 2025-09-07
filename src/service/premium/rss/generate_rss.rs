@@ -22,7 +22,7 @@ use crate::{
 
 use super::site::{default, instagram, medium, naver, tistory};
 
-pub async fn generate_rss(
+pub async fn generate(
     pool: &MySqlPool,
     embedding_service: &EmbeddingService,
     driver_pool: &DriverPool,
@@ -58,7 +58,7 @@ pub async fn generate_rss(
     })
 }
 
-pub async fn generate_rss_by_css(
+pub async fn rss_by_css(
     pool: &MySqlPool,
     embedding_service: &EmbeddingService,
     driver_pool: &DriverPool,

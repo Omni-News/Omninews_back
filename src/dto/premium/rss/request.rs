@@ -69,3 +69,8 @@ fn item_pub_date_css_example() -> &'static str {
 fn item_image_css_example() -> &'static str {
     ".item-image"
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct RssSummaryRequestDto {
+    pub rss_link: String,
+}
