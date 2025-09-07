@@ -197,7 +197,12 @@ async fn store_rss_item(pool: &MySqlPool, mut rss_item: NewRssItem) -> Result<i3
                 "[Service] Item already exists with link: {}",
                 item.rss_link.clone().unwrap_or_default()
             );
-            Err(OmniNewsError::AlreadyExists)
+            rss_item_repository::insert_rss_item(pool, rss_item)
+                .await
+                .map_err(|e| {
+                    rss_error!("[Service] Failed to select item by link : {}", e);
+                    OmniNewsError::Database(e)
+                })
         }
 
         Err(_) => rss_item_repository::insert_rss_item(pool, rss_item)
