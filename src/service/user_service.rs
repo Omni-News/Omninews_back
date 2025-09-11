@@ -411,3 +411,17 @@ pub async fn update_user_theme(
         }
     }
 }
+
+pub async fn remove_user(
+    pool: &MySqlPool,
+    user_email: String,
+) -> Result<bool, OmniNewsError> {
+    match user_repository::delete_user_by_email(pool, user_email).await {
+        Ok(_) => Ok(true),
+        Err(e) => {
+            user_error!("[Service] Failed to delete user: {}", e);
+            Err(OmniNewsError::Database(e))
+        }
+    }
+
+}
