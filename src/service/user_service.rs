@@ -341,7 +341,7 @@ pub async fn validate_premium_user(
     pool: &MySqlPool,
     user_email: &str,
 ) -> Result<bool, OmniNewsError> {
-    match user_repository::validate_premium_user(pool, &user_email).await {
+    match user_repository::validate_premium_user(pool, user_email).await {
         Ok(res) => Ok(res),
         Err(e) => {
             user_error!("[Service] Failed to find user id by email: {}", e);
@@ -412,10 +412,7 @@ pub async fn update_user_theme(
     }
 }
 
-pub async fn remove_user(
-    pool: &MySqlPool,
-    user_email: String,
-) -> Result<bool, OmniNewsError> {
+pub async fn remove_user(pool: &MySqlPool, user_email: String) -> Result<bool, OmniNewsError> {
     match user_repository::delete_user_by_email(pool, user_email).await {
         Ok(_) => Ok(true),
         Err(e) => {
@@ -423,5 +420,4 @@ pub async fn remove_user(
             Err(OmniNewsError::Database(e))
         }
     }
-
 }
