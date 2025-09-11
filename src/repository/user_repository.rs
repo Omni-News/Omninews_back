@@ -340,3 +340,19 @@ pub async fn update_user_info(
         Err(e) => Err(e),
     }
 }
+
+pub async fn delete_user_by_email(
+    pool: &MySqlPool,
+    user_email: String,
+) -> Result<i32, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!("DELETE FROM user WHERE user_email = ?", user_email)
+        .execute(&mut *conn)
+        .await;
+
+    match result {
+        Ok(res) => Ok(res.rows_affected() as i32),
+        Err(e) => Err(e),
+    }
+}

@@ -22,7 +22,7 @@ use crate::{
 };
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: verify_refresh_token, verify_access_token, login, apple_login, logout, notification_setting, get_user_theme, user_theme_setting]
+    openapi_get_routes_spec![settings: verify_refresh_token, verify_access_token, login, apple_login, logout, notification_setting, get_user_theme, user_theme_setting, remove_user]
 }
 
 /// # 리프레시 토큰 검증 API
@@ -97,11 +97,7 @@ pub async fn apple_login(
 ///
 #[openapi(tag = "인증 API")]
 #[post("/user/logout")]
-pub async fn logout(
-    pool: &State<MySqlPool>,
-    user: AuthenticatedUser,
-    _auth: AuthenticatedUser,
-) -> Result<Status, Status> {
+pub async fn logout(pool: &State<MySqlPool>, user: AuthenticatedUser) -> Result<Status, Status> {
     match user_service::delete_user_token(pool, user.user_email).await {
         Ok(_) => Ok(Status::Ok),
         Err(_) => Err(Status::InternalServerError),
@@ -118,6 +114,21 @@ pub async fn verify_access_token(_auth: AuthenticatedUser) -> Result<Status, Sta
     Ok(Status::Ok)
 }
 
+/// # 사용자 회원 탈퇴 API
+///
+/// 회원 탈퇴 API입니다.
+///
+#[openapi(tag = "인증 API")]
+#[delete("/user/delete")]
+pub async fn remove_user(
+    pool: &State<MySqlPool>,
+    user: AuthenticatedUser,
+) -> Result<Status, Status> {
+    match user_service::remove_user(pool, user.user_email).await {
+        Ok(_) => Ok(Status::Ok),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
 /// # 사용자 알림 설정 API
 ///
 /// 사용자가 알림을 설정했을 때 사용되는 API입니다.
