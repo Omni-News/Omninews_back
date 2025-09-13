@@ -1,6 +1,7 @@
 use okapi::openapi3::OpenApi;
 use rocket_okapi::{get_nested_endpoints_and_docs, settings::OpenApiSettings};
 
+pub mod apple_server_notification;
 pub mod config_handler;
 pub mod error_handler;
 pub mod folder_handler;
@@ -26,6 +27,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 
         // premium
         "/" => premium::rss_generate::get_routes_and_docs(settings),
-        "/" => premium::rss_summary::get_routes_and_docs(settings)
+        "/" => premium::rss_summary::get_routes_and_docs(settings),
+        "/" => apple_server_notification::notification::get_routes_and_docs(settings)
     }
 }
