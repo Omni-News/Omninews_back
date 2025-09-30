@@ -50,6 +50,9 @@ pub enum OmniNewsError {
 
     #[error("WebDriverPool error: {0}")]
     WebDriverPool(#[from] PoolError),
+
+    #[error("Decode error")]
+    DecodeError,
 }
 
 #[derive(Debug, Error)]

@@ -9,7 +9,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 }
 
 #[openapi(tag = "Apple")]
-#[post("/apple/notification", data = "<data>")]
+#[post("/apple/notification/v2", data = "<data>")]
 /// # Apple Server Notification API
 /// 구독 등 변경사항 있을 시, Apple Server에서 관련 내용을 보내주는 API입니다.
 ///
