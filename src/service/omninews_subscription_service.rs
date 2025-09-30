@@ -220,6 +220,7 @@ async fn validate_transaction_id(auth_token: &str, transaction_id: &str, is_sand
             })
             .unwrap()
     } else {
+        omninews_subscription_info!("[Service] Test environment");
         client
             .get(sandbox_url)
             .bearer_auth(auth_token)
