@@ -80,43 +80,36 @@ pub fn load_logger() {
         .logger(
             Logger::builder()
                 .appender("rss_file")
-                .appender("stdout")
                 .build(RSS_SCHEDULER, LevelFilter::Info),
         )
         .logger(
             Logger::builder()
                 .appender("embedding_file")
-                .appender("stdout")
                 .build(EMBEDDING_SCHEDULER, LevelFilter::Info),
         )
         .logger(
             Logger::builder()
                 .appender("folder_file")
-                .appender("stdout")
                 .build(FOLDER_SCHEDULER, LevelFilter::Info),
         )
         .logger(
             Logger::builder()
                 .appender("news_file")
-                .appender("stdout")
                 .build(NEWS_SCHEDULER, LevelFilter::Info),
         )
         .logger(
             Logger::builder()
                 .appender("omninews_subscription_file")
-                .appender("stdout")
                 .build(OMNINEWS_SUBSCRIPTION_SCHEDULER, LevelFilter::Info),
         )
         .logger(
             Logger::builder()
                 .appender("subscription_file")
-                .appender("stdout")
                 .build(SUBSCRIPTION_SCHEDULER, LevelFilter::Info),
         )
         .logger(
             Logger::builder()
                 .appender("user_file")
-                .appender("stdout")
                 .build(USER_SCHEDULER, LevelFilter::Info),
         );
 
