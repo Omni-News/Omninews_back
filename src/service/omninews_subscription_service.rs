@@ -197,15 +197,20 @@ pub async fn register_subscription(
 
 async fn validate_transaction_id(auth_token: &str, transaction_id: &str, is_sandbox: bool) -> bool {
     // 0 -> product, 1 -> sandbox
-    let get_transaction_info_url = [
-        "https://api.storekit.itunes.apple.com/inApps/v1/transactions",
-        "https://api.storekit-sandbox.itunes.apple.com/inApps/v1/transactions",
-    ];
+    let product_url = format!(
+        "https://api.storekit.itunes.apple.com/inApps/v1/transactions/{}",
+        transaction_id
+    );
+
+    let sandbox_url = format!(
+        "https://api.storekit-sandbox.itunes.apple.com/inApps/v1/transactions/{}",
+        transaction_id
+    );
     let client = Client::new();
 
     let data = if !is_sandbox {
         client
-            .get(get_transaction_info_url[0])
+            .get(product_url)
             .bearer_auth(auth_token)
             .send()
             .await
@@ -216,7 +221,7 @@ async fn validate_transaction_id(auth_token: &str, transaction_id: &str, is_sand
             .unwrap()
     } else {
         client
-            .get(get_transaction_info_url[1])
+            .get(sandbox_url)
             .bearer_auth(auth_token)
             .send()
             .await

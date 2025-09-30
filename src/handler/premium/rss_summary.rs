@@ -33,7 +33,7 @@ pub async fn rss_summary(
         }
     }
 
-    match summary_rss::summary(pool, data.into_inner()).await {
+    match summary_rss::summary(data.into_inner()).await {
         Ok(res) => Ok(Json(res)),
         Err(_) => Err(Status::InternalServerError),
     }
