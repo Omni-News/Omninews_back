@@ -1,5 +1,4 @@
 use scraper::{Html, Selector};
-use sqlx::MySqlPool;
 
 use crate::{
     dto::premium::rss::{request::RssSummaryRequestDto, response::RssSummaryResponseDto},
@@ -8,7 +7,6 @@ use crate::{
 };
 
 pub async fn summary(
-    pool: &MySqlPool,
     item_link_data: RssSummaryRequestDto,
 ) -> Result<RssSummaryResponseDto, OmniNewsError> {
     let item_link = item_link_data.rss_link;
