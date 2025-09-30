@@ -25,5 +25,3 @@ src/bindings.rs
 # firebase sdk
 *.json
 
-# firebase
-omninews_firebase_sdk.json
