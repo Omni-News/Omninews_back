@@ -14,8 +14,7 @@ pub struct OmninewsSubscriptionResponseDto {
 impl OmninewsSubscriptionResponseDto {
     pub fn from_model(user: User) -> Self {
         Self {
-            is_active: user.user_subscription_plan.is_some()
-                && user.user_subscription_plan.unwrap() > 0,
+            is_active: true,
             product_id: user.user_subscription_product_id.unwrap_or_default(),
             expires_date: user.user_subscription_end_date.unwrap_or_default(),
         }

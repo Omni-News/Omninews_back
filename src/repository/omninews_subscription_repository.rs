@@ -11,7 +11,7 @@ pub async fn verify_subscription(
 ) -> Result<User, sqlx::Error> {
     let result = query_as!(
         User,
-        "SELECT * FROM user WHERE user_email = ? AND user_subscription_plan = 1",
+        "SELECT * FROM user WHERE user_email = ? AND user_subscription_end_date > NOW()",
         user_email
     )
     .fetch_one(pool)
@@ -34,8 +34,8 @@ pub async fn register_subscription(
         "UPDATE user 
             SET user_subscription_receipt_data = ?, 
                 user_subscription_product_id = ?, 
+                user_subscription_transaction_id = ?,
                 user_subscription_platform = ?, 
-                user_subscription_plan = ?, 
                 user_subscription_auto_renew = ?, 
                 user_subscription_is_test = ?,
                 user_subscription_start_date = ?, 
@@ -43,8 +43,8 @@ pub async fn register_subscription(
             WHERE user_email = ?",
         subscription.user_subscription_receipt_data,
         subscription.user_subscription_product_id,
+        subscription.user_subscription_transaction_id,
         subscription.user_subscription_platform,
-        subscription.user_subscription_plan,
         subscription.user_subscription_auto_renew,
         subscription.user_subscription_is_test,
         subscription.user_subscription_start_date,

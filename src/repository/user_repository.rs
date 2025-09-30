@@ -60,7 +60,7 @@ pub async fn validate_premium_user(
     let mut conn = get_db(pool).await?;
 
     let result = query!(
-        "SELECT user_email FROM user WHERE user_email = ? AND user_subscription_plan <> 0 ",
+        "SELECT user_email FROM user WHERE user_email = ? AND user_subscription_end_date > NOW()",
         user_email
     )
     .fetch_one(&mut *conn)

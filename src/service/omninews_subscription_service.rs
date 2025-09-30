@@ -105,18 +105,6 @@ fn generate_app_store_server_jwt(config: &AppStoreConfig) -> Result<String, Omni
     Ok(token)
 }
 
-fn extract_transaction_id(
-    provided_transaction_id: Option<String>,
-) -> Result<String, OmniNewsError> {
-    if let Some(transaction_id) = provided_transaction_id {
-        if !transaction_id.is_empty() {
-            return Ok(transaction_id);
-        }
-    }
-    omninews_subscription_error!("트랜잭션 ID가 제공되지 않았습니다.");
-    Err(OmniNewsError::NotFound("Not FOund Transaction ID".into()))
-}
-
 fn decode_recipt_data(receipt_data: &str) -> Result<DecodedReceipt, OmniNewsError> {
     let payload = decode_only(receipt_data)
         .map_err(|e| {
@@ -134,8 +122,13 @@ pub async fn verify_subscription(
     match omninews_subscription_repository::verify_subscription(pool, user_email).await {
         Ok(res) => Ok(OmninewsSubscriptionResponseDto::from_model(res)),
         Err(_) => {
-            omninews_subscription_warn!("사용자 {}는 구독 중이지 않습니다.", user_email);
-            Err(OmniNewsError::NotFound("User not found".into()))
+            omninews_subscription_warn!(
+                "사용자 {}는 구독 중이지 않거나 기간이 만료됐습니다.",
+                user_email
+            );
+            Err(OmniNewsError::NotFound(
+                "Subscription info not found".into(),
+            ))
         }
     }
 }
@@ -159,7 +152,7 @@ pub async fn register_subscription(
     )
     .await;
 
-    if validate_recipt == false {
+    if !validate_recipt {
         omninews_subscription_error!("[Service] Invalid transaction ID");
         return Err(OmniNewsError::NotFound("Invalid transaction ID".into()));
     }
@@ -204,7 +197,7 @@ pub async fn register_subscription(
 
 async fn validate_transaction_id(auth_token: &str, transaction_id: &str, is_sandbox: bool) -> bool {
     // 0 -> product, 1 -> sandbox
-    let get_transaction_info_url = vec![
+    let get_transaction_info_url = [
         "https://api.storekit.itunes.apple.com/inApps/v1/transactions",
         "https://api.storekit-sandbox.itunes.apple.com/inApps/v1/transactions",
     ];
