@@ -164,12 +164,12 @@ pub async fn register_subscription(
         receipt.platform,
         receipt.is_test,
         Some(
-            DateTime::from_timestamp(payload.signed_date.unwrap_or_default(), 0)
+            DateTime::from_timestamp_millis(payload.signed_date.unwrap_or_default())
                 .unwrap()
                 .naive_utc(),
         ),
         Some(
-            DateTime::from_timestamp(payload.expires_date.unwrap_or_default(), 0)
+            DateTime::from_timestamp_millis(payload.expires_date.unwrap_or_default())
                 .unwrap()
                 .naive_utc(),
         ),
