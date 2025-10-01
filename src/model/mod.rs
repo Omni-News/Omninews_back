@@ -1,3 +1,4 @@
+pub mod appstore_api;
 pub mod auth;
 pub mod embedding;
 pub mod error;

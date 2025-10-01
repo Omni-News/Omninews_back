@@ -1,24 +1,20 @@
-use sqlx::{query, query_as, MySqlPool};
+use sqlx::{query, MySqlPool};
 
-use crate::{
-    db_util::get_db,
-    model::{omninews_subscription::NewOmniNewsSubscription, user::User},
-};
+use crate::{db_util::get_db, model::omninews_subscription::NewOmniNewsSubscription};
 
-pub async fn verify_subscription(
+pub async fn validate_subscription_and_select_transaction_id(
     pool: &sqlx::MySqlPool,
     user_email: &str,
-) -> Result<User, sqlx::Error> {
-    let result = query_as!(
-        User,
-        "SELECT * FROM user WHERE user_email = ? AND user_subscription_end_date > NOW()",
+) -> Result<String, sqlx::Error> {
+    let result = query!(
+        "SELECT user_subscription_transaction_id FROM user WHERE user_email = ? AND user_subscription_end_date > NOW()",
         user_email
     )
     .fetch_one(pool)
     .await;
 
     match result {
-        Ok(res) => Ok(res),
+        Ok(res) => Ok(res.user_subscription_transaction_id.unwrap_or_default()),
         Err(e) => Err(e),
     }
 }

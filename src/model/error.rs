@@ -36,9 +36,6 @@ pub enum OmniNewsError {
     #[error("Configuration error: {0}")]
     Config(String),
 
-    #[error("Failed to parse JSON: {0}")]
-    JsonParseError(String),
-
     #[error("Failed extract link")]
     ExtractLinkError,
 

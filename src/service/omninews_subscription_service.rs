@@ -8,7 +8,8 @@ use chrono::{DateTime, NaiveDateTime, Utc};
 use jsonwebtoken::{decode, decode_header, encode, Algorithm, EncodingKey, Header};
 use jwt_rustcrypto::decode_only;
 use reqwest::{Client, StatusCode};
-use serde::{Deserialize, Serialize};
+use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde_json::Value;
 use sqlx::MySqlPool;
 
 use crate::{
@@ -16,8 +17,9 @@ use crate::{
         request::OmninewsReceiptRequestDto, response::OmninewsSubscriptionResponseDto,
     },
     model::{
+        appstore_api::{ProductionApi, SandboxApi},
         error::OmniNewsError,
-        omninews_subscription::{DecodedReceipt, NewOmniNewsSubscription},
+        omninews_subscription::{DecodeLastTransaction, DecodedReceipt, NewOmniNewsSubscription},
     },
     omninews_subscription_error, omninews_subscription_info, omninews_subscription_warn,
     repository::omninews_subscription_repository,
@@ -31,27 +33,6 @@ struct AppStoreConfig {
     bundle_id: String,
 }
 
-fn load_app_store_config() -> Result<AppStoreConfig, OmniNewsError> {
-    omninews_subscription_info!("App Store Server API 설정 로드 중...");
-    // Load the App Store configuration from environment variables or a config file
-    let private_key = env::var("APPLE_PRIVATE_KEY")
-        .map_err(|_| OmniNewsError::Config("APP_STORE_PRIVATE_KEY not set".into()))?;
-    let key_id = env::var("APPLE_KEY_ID")
-        .map_err(|_| OmniNewsError::Config("APP_STORE_KEY_ID not set".into()))?;
-    let issuer_id = env::var("APPLE_ISSUER_ID")
-        .map_err(|_| OmniNewsError::Config("APP_STORE_ISSUER_ID not set".into()))?;
-    let bundle_id = env::var("APPLE_BUNDLE_ID")
-        .map_err(|_| OmniNewsError::Config("APP_STORE_BUNDLE_ID not set".into()))?;
-
-    omninews_subscription_info!("App Store Server API 설정 로드 완료");
-    Ok(AppStoreConfig {
-        private_key,
-        key_id,
-        issuer_id,
-        bundle_id,
-    })
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 struct AppStoreServerApiClaims {
     iss: String, // Issuer
@@ -61,76 +42,81 @@ struct AppStoreServerApiClaims {
     bid: String, // Bundle ID
 }
 
-#[derive(Debug)]
-pub struct SubscriptionData {
-    pub product_id: String,
-    pub original_transaction_id: String,
-    pub transaction_id: String,
-    pub expires_date: i64,
-    pub is_active: bool,
-}
-
-fn generate_app_store_server_jwt(config: &AppStoreConfig) -> Result<String, OmniNewsError> {
-    // set jwt header
-    let mut header = Header::new(Algorithm::ES256);
-    header.kid = Some(config.key_id.clone());
-
-    let now = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_secs();
-
-    // set payload
-    let claims = AppStoreServerApiClaims {
-        iss: config.issuer_id.clone(),
-        iat: now,
-        exp: now + 20 * 60, // 20 minutes expiration
-        aud: "appstoreconnect-v1".to_string(),
-        bid: config.bundle_id.clone(),
-    };
-    omninews_subscription_info!("Claims 생성: {:?}", claims);
-
-    let encoding_key = EncodingKey::from_ec_pem(config.private_key.as_bytes()).map_err(|e| {
-        omninews_subscription_error!("Private key 인코딩 오류: {}", e);
-        OmniNewsError::Config("Invalid private key".into())
-    })?;
-
-    let token = encode(&header, &claims, &encoding_key).map_err(|e| {
-        omninews_subscription_error!("JWT 생성 오류: {}", e);
-        OmniNewsError::TokenCreateError
-    })?;
-
-    omninews_subscription_info!("App Store Server JWT 생성 성공: {}", token);
-
-    Ok(token)
-}
-
-fn decode_recipt_data(receipt_data: &str) -> Result<DecodedReceipt, OmniNewsError> {
-    let payload = decode_only(receipt_data)
-        .map_err(|e| {
-            omninews_subscription_error!("[Service] Failed to decode receipt data: {}", e);
-            OmniNewsError::DecodeError
-        })?
-        .payload;
-    Ok(DecodedReceipt::new(&payload))
-}
-
+/// 1. find user info(user_subscription_info, transaction_id) from db
+/// 2. validate transaction id with App Store Server API
 pub async fn verify_subscription(
     pool: &MySqlPool,
     user_email: &str,
+    is_sandbox: bool,
 ) -> Result<OmninewsSubscriptionResponseDto, OmniNewsError> {
-    match omninews_subscription_repository::verify_subscription(pool, user_email).await {
-        Ok(res) => Ok(OmninewsSubscriptionResponseDto::from_model(res)),
-        Err(_) => {
-            omninews_subscription_warn!(
-                "사용자 {}는 구독 중이지 않거나 기간이 만료됐습니다.",
-                user_email
-            );
-            Err(OmniNewsError::NotFound(
-                "Subscription info not found".into(),
-            ))
+    let transaction_id =
+        match omninews_subscription_repository::validate_subscription_and_select_transaction_id(
+            pool, user_email,
+        )
+        .await
+        {
+            Ok(res) => res,
+            Err(_) => {
+                omninews_subscription_warn!(
+                    "[Service] user {} has not subscription or expired.",
+                    user_email
+                );
+                return Err(OmniNewsError::NotFound(
+                    "Subscription info not found".into(),
+                ));
+            }
+        };
+
+    let url = if !is_sandbox {
+        ProductionApi::VerifySubscription.url(&transaction_id)
+    } else {
+        SandboxApi::VerifySubscription.url(&transaction_id)
+    };
+
+    /*
+        {
+            "environment": "Sandbox",
+            "bundleId": "com.kdh.omninews",
+            "data": [
+                {
+                "subscriptionGroupIdentifier": "21745813",
+                "lastTransactions": [
+                    {
+                    "originalTransactionId": "2000001024227281",
+                    "status": 1,
+                    "signedTransactionInfo": "eyJhbGciOi...생략...",
+                    "signedRenewalInfo": "eyJhbGciOi...생략..."
+                    }
+                ]
+                }
+            ]
         }
+    */
+    let res = call_app_store_api(&url).await?;
+    let jwt_token = res
+        .get("data")
+        .and_then(|v| {
+            v.get("lastTransactions")
+                .and_then(|v| v.get("signedTransactionInfo").and_then(|v| v.as_str()))
+        })
+        .unwrap_or_default();
+
+    let res = decode_jwt_data::<DecodeLastTransaction>(jwt_token)?;
+
+    let expires_date_utc =
+        DateTime::from_timestamp_millis(res.expires_date.unwrap_or_default()).unwrap();
+    if expires_date_utc < Utc::now() {
+        omninews_subscription_error!(
+            "[Service] User {} subscription expired. subscription expired at {}.",
+            user_email,
+            expires_date_utc
+        );
+        return Err(OmniNewsError::NotFound("Subscription expired".into()));
     }
+    Ok(OmninewsSubscriptionResponseDto {
+        is_active: true,
+        expires_date: expires_date_utc.naive_utc(),
+    })
 }
 
 pub async fn register_subscription(
@@ -141,18 +127,21 @@ pub async fn register_subscription(
     let app_store_config = load_app_store_config()?;
     let auth_token = generate_app_store_server_jwt(&app_store_config)?;
 
-    let payload = decode_recipt_data(&receipt.receipt_data.clone().unwrap_or_default())?;
+    let payload =
+        decode_jwt_data::<DecodedReceipt>(&receipt.receipt_data.clone().unwrap_or_default())?;
 
     // App Store Server API에서 original_transaction_id도 된다 함.
     // The identifier of a transaction that belongs to the customer, and which may be an original transaction identifier (originalTransactionId).
-    let validate_recipt = validate_transaction_id(
-        &auth_token,
-        &payload.original_transaction_id.clone().unwrap_or_default(),
-        receipt.is_test.unwrap_or_default(),
-    )
-    .await;
+    let transaction_id = payload.original_transaction_id.clone().unwrap_or_default();
+    let url = if !receipt.is_test.unwrap_or_default() {
+        ProductionApi::VerifyTransaction.url(transaction_id.as_str())
+    } else {
+        SandboxApi::VerifyTransaction.url(transaction_id.as_str())
+    };
 
-    if !validate_recipt {
+    let res = call_app_store_api(&url).await.is_ok();
+
+    if !res {
         omninews_subscription_error!("[Service] Invalid transaction ID");
         return Err(OmniNewsError::NotFound("Invalid transaction ID".into()));
     }
@@ -195,80 +184,105 @@ pub async fn register_subscription(
     }
 }
 
-async fn validate_transaction_id(auth_token: &str, transaction_id: &str, is_sandbox: bool) -> bool {
-    // 0 -> product, 1 -> sandbox
-    let product_url = format!(
-        "https://api.storekit.itunes.apple.com/inApps/v1/transactions/{}",
-        transaction_id
-    );
-
-    let sandbox_url = format!(
-        "https://api.storekit-sandbox.itunes.apple.com/inApps/v1/transactions/{}",
-        transaction_id
-    );
+// ---------------------- Helpers ----------------------
+async fn call_app_store_api(url: &str) -> Result<Value, OmniNewsError> {
+    let config = load_app_store_config()?;
+    let token = generate_app_store_server_jwt(&config)?;
     let client = Client::new();
+    client
+        .get(url)
+        .bearer_auth(token)
+        .send()
+        .await
+        .map_err(|e| {
+            omninews_subscription_error!(
+                "[Service] Failed to call App Store API. url: {}: error: {}",
+                url,
+                e
+            );
+            OmniNewsError::Request(e)
+        })?
+        .json::<Value>()
+        .await
+        .map_err(|e| {
+            omninews_subscription_error!(
+                "[Service] Failed to parse App Store API. url: {} response: {}",
+                url,
+                e
+            );
+            OmniNewsError::FetchUrl
+        })
+}
 
-    let data = if !is_sandbox {
-        client
-            .get(product_url)
-            .bearer_auth(auth_token)
-            .send()
-            .await
-            .map_err(|e| {
-                omninews_subscription_error!("[Service] Failed to fetch transaction info: {}", e);
-                OmniNewsError::Request(e)
-            })
-            .unwrap()
-    } else {
-        omninews_subscription_info!("[Service] Test environment");
-        client
-            .get(sandbox_url)
-            .bearer_auth(auth_token)
-            .send()
-            .await
-            .map_err(|e| {
-                omninews_subscription_error!("[Service] Failed to fetch transaction info: {}", e);
-                OmniNewsError::Request(e)
-            })
-            .unwrap()
+fn load_app_store_config() -> Result<AppStoreConfig, OmniNewsError> {
+    omninews_subscription_info!("App Store Server API 설정 로드 중...");
+    // Load the App Store configuration from environment variables or a config file
+    let private_key = env::var("APPLE_PRIVATE_KEY")
+        .map_err(|_| OmniNewsError::Config("APP_STORE_PRIVATE_KEY not set".into()))?;
+    let key_id = env::var("APPLE_KEY_ID")
+        .map_err(|_| OmniNewsError::Config("APP_STORE_KEY_ID not set".into()))?;
+    let issuer_id = env::var("APPLE_ISSUER_ID")
+        .map_err(|_| OmniNewsError::Config("APP_STORE_ISSUER_ID not set".into()))?;
+    let bundle_id = env::var("APPLE_BUNDLE_ID")
+        .map_err(|_| OmniNewsError::Config("APP_STORE_BUNDLE_ID not set".into()))?;
+
+    omninews_subscription_info!("App Store Server API 설정 로드 완료");
+    Ok(AppStoreConfig {
+        private_key,
+        key_id,
+        issuer_id,
+        bundle_id,
+    })
+}
+
+fn generate_app_store_server_jwt(config: &AppStoreConfig) -> Result<String, OmniNewsError> {
+    // set jwt header
+    let mut header = Header::new(Algorithm::ES256);
+    header.kid = Some(config.key_id.clone());
+
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs();
+
+    // set payload
+    let claims = AppStoreServerApiClaims {
+        iss: config.issuer_id.clone(),
+        iat: now,
+        exp: now + 20 * 60, // 20 minutes expiration
+        aud: "appstoreconnect-v1".to_string(),
+        bid: config.bundle_id.clone(),
     };
+    omninews_subscription_info!("Claims 생성: {:?}", claims);
 
-    if data.status() != StatusCode::OK {
-        omninews_subscription_error!(
-            "[Service] Failed to fetch transaction info: HTTP {}",
-            data.status()
-        );
-        return false;
-    }
+    let encoding_key = EncodingKey::from_ec_pem(config.private_key.as_bytes()).map_err(|e| {
+        omninews_subscription_error!("Private key 인코딩 오류: {}", e);
+        OmniNewsError::Config("Invalid private key".into())
+    })?;
 
-    true
+    let token = encode(&header, &claims, &encoding_key).map_err(|e| {
+        omninews_subscription_error!("JWT 생성 오류: {}", e);
+        OmniNewsError::TokenCreateError
+    })?;
+
+    omninews_subscription_info!("App Store Server JWT 생성 성공: {}", token);
+
+    Ok(token)
 }
 
-// TODO:  receipt갖고 애플, 구글에 정상 영수증인지 검증
-pub async fn validate_receipt(
-    user_email: &str,
-    receipt: OmninewsReceiptRequestDto,
-) -> Result<bool, OmniNewsError> {
-    let platform = &receipt.clone().platform.unwrap_or_default();
-    if platform == "ios" {
-        return validate_apple_receipt(user_email, &receipt).await;
-    } else if platform == "android" {
-        return validate_google_receipt(user_email, &receipt).await;
-    }
-    omninews_subscription_error!("Unsupported platform: {}", &platform);
-    Err(OmniNewsError::NotFound("Unsupported platform".into()))
-}
+fn decode_jwt_data<T>(jwt_token: &str) -> Result<T, OmniNewsError>
+where
+    T: DeserializeOwned,
+{
+    let payload = decode_only(jwt_token)
+        .map_err(|e| {
+            omninews_subscription_error!("[Service] Failed to decode jwt data: {}", e);
+            OmniNewsError::DecodeError
+        })?
+        .payload;
 
-async fn validate_apple_receipt(
-    user_email: &str,
-    receipt: &OmninewsReceiptRequestDto,
-) -> Result<bool, OmniNewsError> {
-    Ok(true)
-}
-
-async fn validate_google_receipt(
-    user_email: &str,
-    receipt: &OmninewsReceiptRequestDto,
-) -> Result<bool, OmniNewsError> {
-    Ok(true)
+    serde_json::from_value::<T>(payload).map_err(|e| {
+        omninews_subscription_error!("[Service] Failed to parse jwt payload: {}", e);
+        OmniNewsError::DecodeError
+    })
 }
