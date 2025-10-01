@@ -79,4 +79,5 @@ pub struct DecodedReceipt {
 #[serde(rename_all = "camelCase")]
 pub struct DecodeLastTransaction {
     pub expires_date: Option<i64>,
+    pub product_id: Option<String>,
 }
