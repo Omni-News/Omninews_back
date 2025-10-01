@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use serde_json::Value;
+use serde::Deserialize;
 
 #[derive(Debug, Clone)]
 pub struct NewOmniNewsSubscription {
@@ -13,6 +13,7 @@ pub struct NewOmniNewsSubscription {
     pub user_subscription_auto_renew: Option<bool>,
 }
 
+#[allow(clippy::too_many_arguments)]
 impl NewOmniNewsSubscription {
     pub fn new(
         receipt_data: Option<String>,
@@ -35,12 +36,6 @@ impl NewOmniNewsSubscription {
             user_subscription_auto_renew: auto_renew,
         }
     }
-}
-
-#[derive(Debug, Clone)]
-pub struct Receipt {
-    pub receipt_data: Option<String>,
-    pub platform: Option<String>,
 }
 
 /*
@@ -69,93 +64,19 @@ pub struct Receipt {
   "appTransactionId": "704895469463456075"
 }
 */
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct DecodedReceipt {
-    pub transaction_id: Option<String>,
     pub original_transaction_id: Option<String>,
-    pub web_order_line_item_id: Option<String>,
-    pub bundle_id: Option<String>,
     pub product_id: Option<String>,
-    pub subscription_group_identifier: Option<String>,
-    pub purchase_date: Option<i64>,
-    pub original_purchase_date: Option<i64>,
     pub expires_date: Option<i64>,
-    pub quantity: Option<i32>,
+    #[serde(rename = "type")]
     pub type_: Option<String>,
-    pub device_verification: Option<String>,
-    pub device_verification_nonce: Option<String>,
-    pub in_app_ownership_type: Option<String>,
     pub signed_date: Option<i64>,
-    pub environment: Option<String>,
-    pub transaction_reason: Option<String>,
-    pub storefront: Option<String>,
-    pub storefront_id: Option<String>,
-    pub price: Option<i32>,
-    pub currency: Option<String>,
-    pub app_transaction_id: Option<String>,
 }
 
-impl DecodedReceipt {
-    pub fn new(payload: &Value) -> Self {
-        DecodedReceipt {
-            transaction_id: payload
-                .get("transactionId")
-                .and_then(|v| v.as_str().map(String::from)),
-            original_transaction_id: payload
-                .get("originalTransactionId")
-                .and_then(|v| v.as_str().map(String::from)),
-            web_order_line_item_id: payload
-                .get("webOrderLineItemId")
-                .and_then(|v| v.as_str().map(String::from)),
-            bundle_id: payload
-                .get("bundleId")
-                .and_then(|v| v.as_str().map(String::from)),
-            product_id: payload
-                .get("productId")
-                .and_then(|v| v.as_str().map(String::from)),
-            subscription_group_identifier: payload
-                .get("subscriptionGroupIdentifier")
-                .and_then(|v| v.as_str().map(String::from)),
-            purchase_date: payload.get("purchaseDate").and_then(|v| v.as_i64()),
-            original_purchase_date: payload.get("originalPurchaseDate").and_then(|v| v.as_i64()),
-            expires_date: payload.get("expiresDate").and_then(|v| v.as_i64()),
-            quantity: payload
-                .get("quantity")
-                .and_then(|v| v.as_i64().map(|n| n as i32)),
-            type_: payload
-                .get("type")
-                .and_then(|v| v.as_str().map(String::from)),
-            device_verification: payload
-                .get("deviceVerification")
-                .and_then(|v| v.as_str().map(String::from)),
-            device_verification_nonce: payload
-                .get("deviceVerificationNonce")
-                .and_then(|v| v.as_str().map(String::from)),
-            in_app_ownership_type: payload
-                .get("inAppOwnershipType")
-                .and_then(|v| v.as_str().map(String::from)),
-            signed_date: payload.get("signedDate").and_then(|v| v.as_i64()),
-            environment: payload
-                .get("environment")
-                .and_then(|v| v.as_str().map(String::from)),
-            transaction_reason: payload
-                .get("transactionReason")
-                .and_then(|v| v.as_str().map(String::from)),
-            storefront: payload
-                .get("storefront")
-                .and_then(|v| v.as_str().map(String::from)),
-            storefront_id: payload
-                .get("storefrontId")
-                .and_then(|v| v.as_str().map(String::from)),
-            price: payload
-                .get("price")
-                .and_then(|v| v.as_i64().map(|n| n as i32)),
-            currency: payload
-                .get("currency")
-                .and_then(|v| v.as_str().map(String::from)),
-            app_transaction_id: payload
-                .get("appTransactionId")
-                .and_then(|v| v.as_str().map(String::from)),
-        }
-    }
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DecodeLastTransaction {
+    pub expires_date: Option<i64>,
 }
