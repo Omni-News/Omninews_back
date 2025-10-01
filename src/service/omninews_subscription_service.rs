@@ -115,6 +115,7 @@ pub async fn verify_subscription(
     }
     Ok(OmninewsSubscriptionResponseDto {
         is_active: true,
+        product_id: res.product_id.unwrap_or_default(),
         expires_date: expires_date_utc.naive_utc(),
     })
 }
