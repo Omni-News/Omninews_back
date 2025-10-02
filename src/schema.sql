@@ -24,6 +24,7 @@ DROP TABLE IF EXISTS rss_item;
 DROP TABLE IF EXISTS rss_channel;
 DROP TABLE IF EXISTS news;
 DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS user_omninews_subscription;
 
 CREATE TABLE `user` (
 	`user_id` INT NOT NULL AUTO_INCREMENT,
@@ -43,17 +44,53 @@ CREATE TABLE `user` (
     `user_fcm_token` VARCHAR(255) NULL,
 	`user_articles_read` INT DEFAULT 0,
 	`user_last_active_at` DATETIME,
-  `user_subscription_receipt_data` VARCHAR(10000) NULL,
-    `user_subscription_product_id` VARCHAR(100) NULL,
-  `user_subscription_transaction_id` VARCHAR(1000) NULL,
-    `user_subscription_platform` ENUM('ios', 'android') NULL,
-    `user_subscription_is_test` BOOLEAN NULL,
-	`user_subscription_start_date` DATETIME NULL,
-	`user_subscription_end_date` DATETIME NULL,
-	`user_subscription_auto_renew` BOOLEAN DEFAULT FALSE,
 	`user_created_at` DATETIME,
 	`user_updated_at` DATETIME,
     PRIMARY KEY (user_id)
+);
+
+
+CREATE TABLE `omninews_subscription` (
+    `omninews_subscription_id`	INT	NOT NULL AUTO_INCREMENT,
+	`user_id`	INT	NULL	DEFAULT 0,
+    `omninews_subscription_transaction_id`	VARCHAR(255)	NULL,
+	`omninews_subscription_status`	BOOLEAN	NULL,
+    `omninews_subscription_product_id`	VARCHAR(255)	NULL,
+	`omninews_subscription_auto_renew`	BOOLEAN	NULL,
+	`omninews_subscription_platform`	VARCHAR(255)	NULL,
+    `omninews_subscription_start_date`	DATETIME	NULL,
+    `omninews_subscription_renew_date`	DATETIME	NULL,
+    `omninews_subscription_end_date`	DATETIME	NULL,
+	`omninews_subscription_is_sandbox`	BOOLEAN	NULL,
+	PRIMARY KEY (omninews_subscription_id),
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE
+);
+
+CREATE TABLE `user_subscription_channel` (
+	`user_sub_channel_id` INT NOT NULL AUTO_INCREMENT,
+	`user_id` INT NULL,
+	`channel_id` INT NULL,
+    UNIQUE (user_id, channel_id),
+    PRIMARY KEY (user_sub_channel_id),
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`channel_id`) REFERENCES `rss_channel`(`channel_id`) ON DELETE CASCADE
+);
+
+CREATE TABLE `rss_folder` (
+	`folder_id` INT NOT NULL AUTO_INCREMENT,
+	`folder_name` VARCHAR(50) NULL,
+    `user_id` INT NULL,
+    PRIMARY KEY (folder_id),
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE
+);
+
+CREATE TABLE `channels_in_folder` (
+    `channels_in_folder_id` INT NOT NULL AUTO_INCREMENT,
+    `folder_id` INT NULL,
+    `channel_id` INT NULL,
+    PRIMARY KEY (channels_in_folder_id),
+    FOREIGN KEY (`folder_id`) REFERENCES `rss_folder`(`folder_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`channel_id`) REFERENCES `rss_channel`(`channel_id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `news` (
@@ -116,32 +153,6 @@ CREATE TABLE `feedback` (
     PRIMARY KEY (`feedback_id`)
 );
 
-CREATE TABLE `user_subscription_channel` (
-	`user_sub_channel_id` INT NOT NULL AUTO_INCREMENT,
-	`user_id` INT NULL,
-	`channel_id` INT NULL,
-    UNIQUE (user_id, channel_id),
-    PRIMARY KEY (user_sub_channel_id),
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE,
-    FOREIGN KEY (`channel_id`) REFERENCES `rss_channel`(`channel_id`) ON DELETE CASCADE
-);
-
-CREATE TABLE `rss_folder` (
-	`folder_id` INT NOT NULL AUTO_INCREMENT,
-	`folder_name` VARCHAR(50) NULL,
-    `user_id` INT NULL,
-    PRIMARY KEY (folder_id),
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`user_id`) ON DELETE CASCADE
-);
-
-CREATE TABLE `channels_in_folder` (
-    `channels_in_folder_id` INT NOT NULL AUTO_INCREMENT,
-    `folder_id` INT NULL,
-    `channel_id` INT NULL,
-    PRIMARY KEY (channels_in_folder_id),
-    FOREIGN KEY (`folder_id`) REFERENCES `rss_folder`(`folder_id`) ON DELETE CASCADE,
-    FOREIGN KEY (`channel_id`) REFERENCES `rss_channel`(`channel_id`) ON DELETE CASCADE
-);
 
 CREATE TABLE `rss_css_channel` (
 	`channel_id` INT NOT NULL,

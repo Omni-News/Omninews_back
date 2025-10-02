@@ -46,7 +46,7 @@ async fn verify_subscription(
 ///
 /// 사용자의 구독 정보를 등록합니다.
 ///
-/// ### `receipt_data` : Base64로 인코딩된 영수증 데이터 (ex. "base64_encoded_receipt_data")
+/// ### `transaction_id` : Apple 영수증에 있는 original transaction_id (ex. "2000001024227281")
 /// ### `platform` : 구독 플랫폼 (ex. "ios", "android")
 /// ### `is_test` : 테스트 환경 여부 (ex. true, false)
 ///
