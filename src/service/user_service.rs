@@ -25,6 +25,7 @@ use crate::{
         user::NewUser,
     },
     repository::user_repository,
+    service::omninews_subscription_service,
     user_error, user_info, user_warn,
 };
 
@@ -341,13 +342,7 @@ pub async fn validate_premium_user(
     pool: &MySqlPool,
     user_email: &str,
 ) -> Result<bool, OmniNewsError> {
-    match user_repository::validate_premium_user(pool, user_email).await {
-        Ok(res) => Ok(res),
-        Err(e) => {
-            user_error!("[Service] Failed to find user id by email: {}", e);
-            Err(OmniNewsError::Database(e))
-        }
-    }
+    omninews_subscription_service::verify_is_subscribed_user(pool, user_email).await
 }
 
 pub async fn delete_user_token(pool: &MySqlPool, user_email: String) -> Result<(), OmniNewsError> {
