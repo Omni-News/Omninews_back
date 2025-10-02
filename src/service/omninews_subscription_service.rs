@@ -4,7 +4,7 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
-use chrono::{DateTime, NaiveDateTime, Utc};
+use chrono::{DateTime, FixedOffset, NaiveDateTime, Utc};
 use jsonwebtoken::{decode, decode_header, encode, Algorithm, EncodingKey, Header};
 use jwt_rustcrypto::decode_only;
 use reqwest::{Client, StatusCode};
@@ -22,7 +22,8 @@ use crate::{
         omninews_subscription::{DecodeLastTransaction, DecodedReceipt, NewOmniNewsSubscription},
     },
     omninews_subscription_error, omninews_subscription_info, omninews_subscription_warn,
-    repository::omninews_subscription_repository,
+    repository::{omninews_subscription_repository, user_repository},
+    service::user_service,
 };
 
 #[derive(Debug, Clone)]
@@ -49,23 +50,20 @@ pub async fn verify_subscription(
     user_email: &str,
     is_sandbox: bool,
 ) -> Result<OmninewsSubscriptionResponseDto, OmniNewsError> {
-    let transaction_id =
-        match omninews_subscription_repository::validate_subscription_and_select_transaction_id(
-            pool, user_email,
-        )
-        .await
-        {
-            Ok(res) => res,
-            Err(_) => {
-                omninews_subscription_warn!(
-                    "[Service] user {} has not subscription or expired.",
-                    user_email
-                );
-                return Err(OmniNewsError::NotFound(
-                    "Subscription info not found".into(),
-                ));
-            }
-        };
+    // get transation_id from db
+    let transaction_id = match omninews_subscription_repository::select_subscription_transaction_id(
+        pool, user_email,
+    )
+    .await
+    {
+        Ok(res) => res,
+        Err(_) => {
+            omninews_subscription_error!(
+                "[Service] Not found subscription transation_id user : {user_email}."
+            );
+            return Err(OmniNewsError::NotFound("not found transaction_id".into()));
+        }
+    };
 
     let url = if !is_sandbox {
         ProductionApi::VerifySubscription.url(&transaction_id)
@@ -96,8 +94,11 @@ pub async fn verify_subscription(
     let jwt_token = res
         .get("data")
         .and_then(|v| {
-            v.get("lastTransactions")
-                .and_then(|v| v.get("signedTransactionInfo").and_then(|v| v.as_str()))
+            omninews_subscription_info!("1. {:?}", v.as_str());
+            v.get("lastTransactions").and_then(|v| {
+                omninews_subscription_info!("2. {:?}", v.as_str());
+                v.get("signedTransactionInfo").and_then(|v| v.as_str())
+            })
         })
         .unwrap_or_default();
 
@@ -111,8 +112,9 @@ pub async fn verify_subscription(
             user_email,
             expires_date_utc
         );
-        return Err(OmniNewsError::NotFound("Subscription expired".into()));
+        return Err(OmniNewsError::Expired("Subscription expired".into()));
     }
+
     Ok(OmninewsSubscriptionResponseDto {
         is_active: true,
         product_id: res.product_id.unwrap_or_default(),
@@ -120,6 +122,10 @@ pub async fn verify_subscription(
     })
 }
 
+//TODO:
+//
+//
+//
 pub async fn register_subscription(
     pool: &MySqlPool,
     user_email: &str,
@@ -142,13 +148,14 @@ pub async fn register_subscription(
 
     let res = call_app_store_api(&url).await.is_ok();
 
+    omninews_subscription_info!("new_subscription payload: {payload:?}");
     if !res {
         omninews_subscription_error!("[Service] Invalid transaction ID");
         return Err(OmniNewsError::NotFound("Invalid transaction ID".into()));
     }
 
     let new_subscription = NewOmniNewsSubscription::new(
-        receipt.platform.clone(),
+        receipt.receipt_data,
         payload.product_id.clone(),
         payload.original_transaction_id.clone(),
         receipt.platform,
@@ -156,11 +163,13 @@ pub async fn register_subscription(
         Some(
             DateTime::from_timestamp_millis(payload.signed_date.unwrap_or_default())
                 .unwrap()
+                .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
                 .naive_utc(),
         ),
         Some(
             DateTime::from_timestamp_millis(payload.expires_date.unwrap_or_default())
                 .unwrap()
+                .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
                 .naive_utc(),
         ),
         Some(payload.type_.unwrap_or_default() == "Auto-Renewable Subscription"),

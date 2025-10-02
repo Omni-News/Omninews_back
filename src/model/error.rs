@@ -50,6 +50,9 @@ pub enum OmniNewsError {
 
     #[error("Decode error")]
     DecodeError,
+
+    #[error("Expired: {0)")]
+    Expired(String),
 }
 
 #[derive(Debug, Error)]
