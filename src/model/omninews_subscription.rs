@@ -27,5 +27,5 @@ pub struct DecodeSignedTransactionInfo {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DecodeSignedRenewalInfo {
-    pub auto_renew_status: Option<bool>,
+    pub auto_renew_status: Option<i8>,
 }

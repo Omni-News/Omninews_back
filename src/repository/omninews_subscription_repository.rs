@@ -30,8 +30,7 @@ pub async fn register_subscription(
         "INSERT INTO 
             omninews_subscription (user_id, omninews_subscription_transaction_id, omninews_subscription_status, omninews_subscription_product_id, omninews_subscription_auto_renew, omninews_subscription_platform, omninews_subscription_start_date, omninews_subscription_renew_date, omninews_subscription_end_date, omninews_subscription_is_sandbox)
         VALUES (
-            (SELECT user_id FROM user WHERE user_email = ?),
-            ?, ?, ?, ?, ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
         )",
         subscription.user_id,
         subscription.omninews_subscription_transaction_id,
