@@ -19,7 +19,10 @@ use crate::{
     model::{
         appstore_api::{ProductionApi, SandboxApi},
         error::OmniNewsError,
-        omninews_subscription::{DecodeLastTransaction, DecodedReceipt, NewOmniNewsSubscription},
+        omninews_subscription::{
+            DecodeSignedRenewalInfo, DecodeSignedTransactionInfo, DecodedReceipt,
+            NewOmniNewsSubscription,
+        },
     },
     omninews_subscription_error, omninews_subscription_info, omninews_subscription_warn,
     repository::{omninews_subscription_repository, user_repository},
@@ -50,82 +53,72 @@ pub async fn verify_subscription(
     user_email: &str,
     is_sandbox: bool,
 ) -> Result<OmninewsSubscriptionResponseDto, OmniNewsError> {
-    // get transation_id from db
-    let transaction_id = match omninews_subscription_repository::select_subscription_transaction_id(
-        pool, user_email,
+    let user_id = user_service::find_user_id_by_email(pool, user_email.into()).await?;
+    let transaction_id = get_transaction_id_from_db(pool, user_id).await?;
+
+    let (signed_transaction_info, signed_renewal_info) =
+        get_subscription_transaction_info(user_email, is_sandbox, &transaction_id).await?;
+
+    let expires_date_utc = match validate_expires_date(
+        user_email,
+        signed_transaction_info.expires_date.unwrap_or_default(),
     )
     .await
     {
-        Ok(res) => res,
-        Err(_) => {
-            omninews_subscription_error!(
-                "[Service] Not found subscription transation_id user : {user_email}."
-            );
-            return Err(OmniNewsError::NotFound("not found transaction_id".into()));
+        Ok(date) => date,
+        Err(e) => {
+            // update status, auto_renew as 0 to db
+            match omninews_subscription_repository::expired_subscription(pool, user_id).await {
+                Ok(_) => omninews_subscription_info!(
+                    "[Service] Expired subscription status updated for user {}",
+                    user_email
+                ),
+                Err(e) => omninews_subscription_error!(
+                    "[Service] Failed to update expired subscription status for user {}: {}",
+                    user_email,
+                    e
+                ),
+            }
+            return Err(e);
         }
     };
+    // signed_transaction_info의 purchase_date는 최신 구독(갱신 포함)일임.,
+    let renew_date =
+        DateTime::from_timestamp_millis(signed_transaction_info.purchase_date.unwrap_or_default())
+            .unwrap_or_default()
+            .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
+            .naive_utc();
+    let expires_date = expires_date_utc.naive_utc();
+    let auto_renew = signed_renewal_info.auto_renew_status.unwrap_or_default();
 
-    let url = if !is_sandbox {
-        ProductionApi::VerifySubscription.url(&transaction_id)
-    } else {
-        SandboxApi::VerifySubscription.url(&transaction_id)
-    };
-
-    /*
-        {
-            "environment": "Sandbox",
-            "bundleId": "com.kdh.omninews",
-            "data": [
-                {
-                "subscriptionGroupIdentifier": "21745813",
-                "lastTransactions": [
-                    {
-                    "originalTransactionId": "2000001024227281",
-                    "status": 1,
-                    "signedTransactionInfo": "eyJhbGciOi...생략...",
-                    "signedRenewalInfo": "eyJhbGciOi...생략..."
-                    }
-                ]
-                }
-            ]
-        }
-    */
-    let res = call_app_store_api(&url).await?;
-    let jwt_token = res
-        .get("data")
-        .and_then(|v| {
-            omninews_subscription_info!("1. {:?}", v.as_str());
-            v.get("lastTransactions").and_then(|v| {
-                omninews_subscription_info!("2. {:?}", v.as_str());
-                v.get("signedTransactionInfo").and_then(|v| v.as_str())
-            })
-        })
-        .unwrap_or_default();
-
-    let res = decode_jwt_data::<DecodeLastTransaction>(jwt_token)?;
-
-    let expires_date_utc =
-        DateTime::from_timestamp_millis(res.expires_date.unwrap_or_default()).unwrap();
-    if expires_date_utc < Utc::now() {
-        omninews_subscription_error!(
-            "[Service] User {} subscription expired. subscription expired at {}.",
+    // update auto_renew, renew_date, expires_date to db
+    match omninews_subscription_repository::update_verify_subscription_info(
+        pool,
+        user_id,
+        auto_renew,
+        renew_date,
+        expires_date,
+    )
+    .await
+    {
+        Ok(_) => omninews_subscription_info!(
+            "[Service] Subscription info updated for user {}",
+            user_email
+        ),
+        Err(e) => omninews_subscription_error!(
+            "[Service] Failed to update subscription info for user {}: {}",
             user_email,
-            expires_date_utc
-        );
-        return Err(OmniNewsError::Expired("Subscription expired".into()));
+            e
+        ),
     }
 
     Ok(OmninewsSubscriptionResponseDto {
         is_active: true,
-        product_id: res.product_id.unwrap_or_default(),
-        expires_date: expires_date_utc.naive_utc(),
+        product_id: signed_transaction_info.product_id.unwrap_or_default(),
+        expires_date,
     })
 }
 
-//TODO:
-//
-//
-//
 pub async fn register_subscription(
     pool: &MySqlPool,
     user_email: &str,
@@ -134,53 +127,61 @@ pub async fn register_subscription(
     let app_store_config = load_app_store_config()?;
     let auth_token = generate_app_store_server_jwt(&app_store_config)?;
 
-    let payload =
-        decode_jwt_data::<DecodedReceipt>(&receipt.receipt_data.clone().unwrap_or_default())?;
-
     // App Store Server API에서 original_transaction_id도 된다 함.
     // The identifier of a transaction that belongs to the customer, and which may be an original transaction identifier (originalTransactionId).
-    let transaction_id = payload.original_transaction_id.clone().unwrap_or_default();
-    let url = if !receipt.is_test.unwrap_or_default() {
-        ProductionApi::VerifyTransaction.url(transaction_id.as_str())
-    } else {
-        SandboxApi::VerifyTransaction.url(transaction_id.as_str())
-    };
+    // VerifyTransaction의 경우 최초 구독 시의 정보만 반영됨으로, 중단했다 다시 갱신할 때는 기간이
+    // 다름. 이에 VerifySubscription을 통해서 정보를 가져와야 함.
 
-    let res = call_app_store_api(&url).await.is_ok();
+    let transaction_id = receipt.transaction_id.unwrap_or_default();
 
-    omninews_subscription_info!("new_subscription payload: {payload:?}");
-    if !res {
-        omninews_subscription_error!("[Service] Invalid transaction ID");
-        return Err(OmniNewsError::NotFound("Invalid transaction ID".into()));
-    }
-
-    let new_subscription = NewOmniNewsSubscription::new(
-        receipt.receipt_data,
-        payload.product_id.clone(),
-        payload.original_transaction_id.clone(),
-        receipt.platform,
-        receipt.is_test,
-        Some(
-            DateTime::from_timestamp_millis(payload.signed_date.unwrap_or_default())
-                .unwrap()
-                .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
-                .naive_utc(),
-        ),
-        Some(
-            DateTime::from_timestamp_millis(payload.expires_date.unwrap_or_default())
-                .unwrap()
-                .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
-                .naive_utc(),
-        ),
-        Some(payload.type_.unwrap_or_default() == "Auto-Renewable Subscription"),
-    );
-
-    match omninews_subscription_repository::register_subscription(
-        pool,
+    let (signed_transaction_info, signed_renewal_info) = match get_subscription_transaction_info(
         user_email,
-        new_subscription,
+        receipt.is_test.unwrap_or_default(),
+        &transaction_id,
     )
     .await
+    {
+        Ok(res) => res,
+        Err(e) => {
+            omninews_subscription_error!(
+                "[Service] Invalid transaction_id for user : {user_email}"
+            );
+            return Err(OmniNewsError::InvalidValue("Invalid transaction id".into()));
+        }
+    };
+
+    let expires_date_utc = validate_expires_date(
+        user_email,
+        signed_transaction_info.expires_date.unwrap_or_default(),
+    )
+    .await?;
+
+    // register subscription info to db
+    let user_id = user_service::find_user_id_by_email(pool, user_email.into()).await?;
+    let new_omninews_subscription = NewOmniNewsSubscription {
+        user_id: Some(user_id),
+        omninews_subscription_transaction_id: Some(transaction_id),
+        omninews_subscription_status: Some(true),
+        omninews_subscription_product_id: signed_transaction_info.product_id,
+        omninews_subscription_auto_renew: signed_renewal_info.auto_renew_status,
+        omninews_subscription_platform: receipt.platform.clone(),
+        omninews_subscription_start_date: Some(
+            DateTime::from_timestamp_millis(
+                signed_transaction_info
+                    .original_purchase_date
+                    .unwrap_or_default(),
+            )
+            .unwrap_or_default()
+            .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
+            .naive_utc(),
+        ),
+        omninews_subscription_renew_date: None,
+        omninews_subscription_end_date: Some(expires_date_utc.naive_utc()),
+        omninews_subscription_is_sandbox: Some(receipt.is_test.unwrap_or_default()),
+    };
+
+    match omninews_subscription_repository::register_subscription(pool, new_omninews_subscription)
+        .await
     {
         Ok(response) => Ok(response),
         Err(e) => {
@@ -195,34 +196,6 @@ pub async fn register_subscription(
 }
 
 // ---------------------- Helpers ----------------------
-async fn call_app_store_api(url: &str) -> Result<Value, OmniNewsError> {
-    let config = load_app_store_config()?;
-    let token = generate_app_store_server_jwt(&config)?;
-    let client = Client::new();
-    client
-        .get(url)
-        .bearer_auth(token)
-        .send()
-        .await
-        .map_err(|e| {
-            omninews_subscription_error!(
-                "[Service] Failed to call App Store API. url: {}: error: {}",
-                url,
-                e
-            );
-            OmniNewsError::Request(e)
-        })?
-        .json::<Value>()
-        .await
-        .map_err(|e| {
-            omninews_subscription_error!(
-                "[Service] Failed to parse App Store API. url: {} response: {}",
-                url,
-                e
-            );
-            OmniNewsError::FetchUrl
-        })
-}
 
 fn load_app_store_config() -> Result<AppStoreConfig, OmniNewsError> {
     omninews_subscription_info!("App Store Server API 설정 로드 중...");
@@ -295,4 +268,110 @@ where
         omninews_subscription_error!("[Service] Failed to parse jwt payload: {}", e);
         OmniNewsError::DecodeError
     })
+}
+
+async fn get_subscription_transaction_info(
+    user_email: &str,
+    is_sandbox: bool,
+    transaction_id: &str,
+) -> Result<(DecodeSignedTransactionInfo, DecodeSignedRenewalInfo), OmniNewsError> {
+    let url = if !is_sandbox {
+        ProductionApi::VerifySubscription.url(&transaction_id)
+    } else {
+        SandboxApi::VerifySubscription.url(&transaction_id)
+    };
+    let res = call_app_store_api(&url).await?;
+
+    let last_transaction = res
+        .get("data")
+        .and_then(|v| {
+            omninews_subscription_info!("1. {:?}", v.as_str());
+            v.get("lastTransactions")
+        })
+        .unwrap_or_default();
+
+    let signed_transaction_info_jwt = last_transaction
+        .get("signedTransactionInfo")
+        .and_then(|v| v.as_str())
+        .unwrap_or_default();
+    let signed_renewal_info_jwt = last_transaction
+        .get("signedRenewalInfo")
+        .and_then(|v| v.as_str())
+        .unwrap_or_default();
+
+    let signed_transaction_info =
+        decode_jwt_data::<DecodeSignedTransactionInfo>(signed_transaction_info_jwt)?;
+    let signed_renewal_info = decode_jwt_data::<DecodeSignedRenewalInfo>(signed_renewal_info_jwt)?;
+
+    Ok((signed_transaction_info, signed_renewal_info))
+}
+
+async fn call_app_store_api(url: &str) -> Result<Value, OmniNewsError> {
+    let config = load_app_store_config()?;
+    let token = generate_app_store_server_jwt(&config)?;
+    let client = Client::new();
+    client
+        .get(url)
+        .bearer_auth(token)
+        .send()
+        .await
+        .map_err(|e| {
+            omninews_subscription_error!(
+                "[Service] Failed to call App Store API. url: {}: error: {}",
+                url,
+                e
+            );
+            OmniNewsError::Request(e)
+        })?
+        .json::<Value>()
+        .await
+        .map_err(|e| {
+            omninews_subscription_error!(
+                "[Service] Failed to parse App Store API. url: {} response: {}",
+                url,
+                e
+            );
+            OmniNewsError::FetchUrl
+        })
+}
+async fn validate_expires_date(
+    user_email: &str,
+    expires_date: i64,
+) -> Result<DateTime<Utc>, OmniNewsError> {
+    let expires_date_utc = DateTime::from_timestamp_millis(expires_date)
+        .unwrap_or_default()
+        .with_timezone(&FixedOffset::east_opt(9 * 60 * 60).unwrap())
+        .to_utc();
+
+    let now_utc = Utc::now().with_timezone(&FixedOffset::east_opt(9 * 60 * 60).unwrap());
+    if expires_date_utc < now_utc {
+        omninews_subscription_error!(
+            "[Service] Subscription expired for user {}: expires_date: {}, now: {}",
+            user_email,
+            expires_date_utc,
+            now_utc
+        );
+        return Err(OmniNewsError::Expired("Subscription expired".into()));
+    }
+
+    Ok(expires_date_utc)
+}
+
+async fn get_transaction_id_from_db(
+    pool: &sqlx::Pool<sqlx::MySql>,
+    user_id: i32,
+) -> Result<String, OmniNewsError> {
+    let transaction_id =
+        match omninews_subscription_repository::select_subscription_transaction_id(pool, user_id)
+            .await
+        {
+            Ok(res) => res,
+            Err(_) => {
+                omninews_subscription_warn!(
+                    "[Service] Not found subscription transation_id user : {user_id}."
+                );
+                return Err(OmniNewsError::NotFound("not found transaction_id".into()));
+            }
+        };
+    Ok(transaction_id)
 }

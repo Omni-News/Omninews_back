@@ -3,39 +3,16 @@ use serde::Deserialize;
 
 #[derive(Debug, Clone)]
 pub struct NewOmniNewsSubscription {
-    pub user_subscription_receipt_data: Option<String>,
-    pub user_subscription_product_id: Option<String>,
-    pub user_subscription_transaction_id: Option<String>,
-    pub user_subscription_platform: Option<String>,
-    pub user_subscription_is_test: Option<bool>,
-    pub user_subscription_start_date: Option<NaiveDateTime>,
-    pub user_subscription_end_date: Option<NaiveDateTime>,
-    pub user_subscription_auto_renew: Option<bool>,
-}
-
-#[allow(clippy::too_many_arguments)]
-impl NewOmniNewsSubscription {
-    pub fn new(
-        receipt_data: Option<String>,
-        product_id: Option<String>,
-        transaction_id: Option<String>,
-        platform: Option<String>,
-        is_test: Option<bool>,
-        start_date: Option<NaiveDateTime>,
-        end_date: Option<NaiveDateTime>,
-        auto_renew: Option<bool>,
-    ) -> Self {
-        NewOmniNewsSubscription {
-            user_subscription_receipt_data: receipt_data,
-            user_subscription_product_id: product_id,
-            user_subscription_transaction_id: transaction_id,
-            user_subscription_platform: platform,
-            user_subscription_is_test: is_test,
-            user_subscription_start_date: start_date,
-            user_subscription_end_date: end_date,
-            user_subscription_auto_renew: auto_renew,
-        }
-    }
+    pub user_id: Option<i32>,
+    pub omninews_subscription_transaction_id: Option<String>,
+    pub omninews_subscription_status: Option<bool>,
+    pub omninews_subscription_product_id: Option<String>,
+    pub omninews_subscription_auto_renew: Option<bool>,
+    pub omninews_subscription_platform: Option<String>,
+    pub omninews_subscription_start_date: Option<NaiveDateTime>,
+    pub omninews_subscription_renew_date: Option<NaiveDateTime>,
+    pub omninews_subscription_end_date: Option<NaiveDateTime>,
+    pub omninews_subscription_is_sandbox: Option<bool>,
 }
 
 /*
@@ -77,7 +54,15 @@ pub struct DecodedReceipt {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct DecodeLastTransaction {
+pub struct DecodeSignedTransactionInfo {
+    pub purchase_date: Option<i64>,
+    pub original_purchase_date: Option<i64>,
     pub expires_date: Option<i64>,
     pub product_id: Option<String>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DecodeSignedRenewalInfo {
+    pub auto_renew_status: Option<bool>,
 }
