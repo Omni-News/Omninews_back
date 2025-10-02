@@ -59,23 +59,6 @@ pub async fn register_subscription(
     }
 }
 
-pub async fn delete_subscription_info(pool: &MySqlPool, user_id: i32) -> Result<bool, sqlx::Error> {
-    let mut conn = get_db(pool).await?;
-
-    let result = query!(
-        "DELETE FROM omninews_subscription
-     WHERE user_id = ?",
-        user_id
-    )
-    .execute(&mut *conn)
-    .await;
-
-    match result {
-        Ok(_) => Ok(true),
-        Err(e) => Err(e),
-    }
-}
-
 pub async fn expired_subscription(pool: &MySqlPool, user_id: i32) -> Result<bool, sqlx::Error> {
     let mut conn = get_db(pool).await?;
 
@@ -117,6 +100,23 @@ pub async fn update_verify_subscription_info(
 
     match result {
         Ok(_) => Ok(true),
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn select_subscription_status_by_user_email(
+    pool: &MySqlPool,
+    user_id: i32,
+) -> Result<bool, sqlx::Error> {
+    let result = query!(
+        "SELECT omninews_subscription_status FROM omninews_subscription WHERE user_id = ?",
+        user_id
+    )
+    .fetch_one(pool)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res.omninews_subscription_status.unwrap_or_default() == 1),
         Err(e) => Err(e),
     }
 }

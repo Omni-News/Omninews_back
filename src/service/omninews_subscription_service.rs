@@ -20,8 +20,7 @@ use crate::{
         appstore_api::{ProductionApi, SandboxApi},
         error::OmniNewsError,
         omninews_subscription::{
-            DecodeSignedRenewalInfo, DecodeSignedTransactionInfo, DecodedReceipt,
-            NewOmniNewsSubscription,
+            DecodeSignedRenewalInfo, DecodeSignedTransactionInfo, NewOmniNewsSubscription,
         },
     },
     omninews_subscription_error, omninews_subscription_info, omninews_subscription_warn,
@@ -195,6 +194,38 @@ pub async fn register_subscription(
     }
 }
 
+pub async fn verify_is_subscribed_user(
+    pool: &MySqlPool,
+    user_email: &str,
+) -> Result<bool, OmniNewsError> {
+    let user_id = user_service::find_user_id_by_email(pool, user_email.into()).await?;
+
+    match omninews_subscription_repository::select_subscription_status_by_user_email(pool, user_id)
+        .await
+    {
+        Ok(is_subscribed) => {
+            if is_subscribed {
+                Ok(true)
+            } else {
+                omninews_subscription_warn!(
+                    "[Service] User {} is not an active subscriber.",
+                    user_email
+                );
+                Err(OmniNewsError::NotFound("No active subscription".into()))
+            }
+        }
+
+        Err(e) => {
+            omninews_subscription_error!(
+                "[Service] Failed to validate subscription for user {}: {}",
+                user_email,
+                e
+            );
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
+
 // ---------------------- Helpers ----------------------
 
 fn load_app_store_config() -> Result<AppStoreConfig, OmniNewsError> {
@@ -276,9 +307,9 @@ async fn get_subscription_transaction_info(
     transaction_id: &str,
 ) -> Result<(DecodeSignedTransactionInfo, DecodeSignedRenewalInfo), OmniNewsError> {
     let url = if !is_sandbox {
-        ProductionApi::VerifySubscription.url(&transaction_id)
+        ProductionApi::VerifySubscription.url(transaction_id)
     } else {
-        SandboxApi::VerifySubscription.url(&transaction_id)
+        SandboxApi::VerifySubscription.url(transaction_id)
     };
     let res = call_app_store_api(&url).await?;
 
