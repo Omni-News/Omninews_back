@@ -82,19 +82,36 @@ pub async fn verify_subscription(
         }
     };
     // signed_transaction_info의 purchase_date는 최신 구독(갱신 포함)일임.,
+    omninews_subscription_info!(
+        "renew_date: {:?}",
+        signed_transaction_info.purchase_date.unwrap_or_default()
+    );
+    omninews_subscription_info!(
+        "aaaa : {:?}",
+        DateTime::from_timestamp_millis(signed_transaction_info.purchase_date.unwrap_or_default())
+    );
+
+    omninews_subscription_info!(
+        "vvvv : {:?}",
+        DateTime::from_timestamp_millis(signed_transaction_info.purchase_date.unwrap_or_default())
+            .unwrap()
+            .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
+            .naive_local()
+    );
     let renew_date =
         DateTime::from_timestamp_millis(signed_transaction_info.purchase_date.unwrap_or_default())
             .unwrap_or_default()
             .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
-            .naive_utc();
-    let expires_date = expires_date_utc.naive_utc();
+            .naive_local();
+    omninews_subscription_info!("bb : {:?}", renew_date);
+    let expires_date = expires_date_utc.naive_local();
     let auto_renew = signed_renewal_info.auto_renew_status.unwrap_or_default();
 
     // update auto_renew, renew_date, expires_date to db
     match omninews_subscription_repository::update_verify_subscription_info(
         pool,
         user_id,
-        auto_renew,
+        auto_renew != 0,
         renew_date,
         expires_date,
     )
@@ -132,6 +149,7 @@ pub async fn register_subscription(
     // 다름. 이에 VerifySubscription을 통해서 정보를 가져와야 함.
 
     let transaction_id = receipt.transaction_id.unwrap_or_default();
+    omninews_subscription_info!("transaction_id: {transaction_id}");
 
     let (signed_transaction_info, signed_renewal_info) = match get_subscription_transaction_info(
         user_email,
@@ -162,7 +180,9 @@ pub async fn register_subscription(
         omninews_subscription_transaction_id: Some(transaction_id),
         omninews_subscription_status: Some(true),
         omninews_subscription_product_id: signed_transaction_info.product_id,
-        omninews_subscription_auto_renew: signed_renewal_info.auto_renew_status,
+        omninews_subscription_auto_renew: Some(
+            signed_renewal_info.auto_renew_status.unwrap_or_default() != 0,
+        ),
         omninews_subscription_platform: receipt.platform.clone(),
         omninews_subscription_start_date: Some(
             DateTime::from_timestamp_millis(
@@ -172,10 +192,10 @@ pub async fn register_subscription(
             )
             .unwrap_or_default()
             .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
-            .naive_utc(),
+            .naive_local(),
         ),
         omninews_subscription_renew_date: None,
-        omninews_subscription_end_date: Some(expires_date_utc.naive_utc()),
+        omninews_subscription_end_date: Some(expires_date_utc.naive_local()),
         omninews_subscription_is_sandbox: Some(receipt.is_test.unwrap_or_default()),
     };
 
@@ -267,7 +287,6 @@ fn generate_app_store_server_jwt(config: &AppStoreConfig) -> Result<String, Omni
         aud: "appstoreconnect-v1".to_string(),
         bid: config.bundle_id.clone(),
     };
-    omninews_subscription_info!("Claims 생성: {:?}", claims);
 
     let encoding_key = EncodingKey::from_ec_pem(config.private_key.as_bytes()).map_err(|e| {
         omninews_subscription_error!("Private key 인코딩 오류: {}", e);
@@ -278,8 +297,6 @@ fn generate_app_store_server_jwt(config: &AppStoreConfig) -> Result<String, Omni
         omninews_subscription_error!("JWT 생성 오류: {}", e);
         OmniNewsError::TokenCreateError
     })?;
-
-    omninews_subscription_info!("App Store Server JWT 생성 성공: {}", token);
 
     Ok(token)
 }
@@ -315,10 +332,9 @@ async fn get_subscription_transaction_info(
 
     let last_transaction = res
         .get("data")
-        .and_then(|v| {
-            omninews_subscription_info!("1. {:?}", v.as_str());
-            v.get("lastTransactions")
-        })
+        .and_then(|v| v.get(0))
+        .and_then(|v| v.get("lastTransactions"))
+        .and_then(|v| v.get(0))
         .unwrap_or_default();
 
     let signed_transaction_info_jwt = last_transaction
@@ -332,6 +348,7 @@ async fn get_subscription_transaction_info(
 
     let signed_transaction_info =
         decode_jwt_data::<DecodeSignedTransactionInfo>(signed_transaction_info_jwt)?;
+
     let signed_renewal_info = decode_jwt_data::<DecodeSignedRenewalInfo>(signed_renewal_info_jwt)?;
 
     Ok((signed_transaction_info, signed_renewal_info))
@@ -368,11 +385,10 @@ async fn call_app_store_api(url: &str) -> Result<Value, OmniNewsError> {
 async fn validate_expires_date(
     user_email: &str,
     expires_date: i64,
-) -> Result<DateTime<Utc>, OmniNewsError> {
+) -> Result<DateTime<FixedOffset>, OmniNewsError> {
     let expires_date_utc = DateTime::from_timestamp_millis(expires_date)
         .unwrap_or_default()
-        .with_timezone(&FixedOffset::east_opt(9 * 60 * 60).unwrap())
-        .to_utc();
+        .with_timezone(&FixedOffset::east_opt(9 * 60 * 60).unwrap());
 
     let now_utc = Utc::now().with_timezone(&FixedOffset::east_opt(9 * 60 * 60).unwrap());
     if expires_date_utc < now_utc {
