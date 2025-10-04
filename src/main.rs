@@ -52,7 +52,6 @@ async fn rocket() -> _ {
         "/rapidoc/".to_string(),
         "/swagger-ui/".to_string(),
         // marketing
-        "/".to_string(),
         "/app-ads.txt".to_string(),
         format!("/{CURRENT_VERSION}/openapi.json").to_owned(),
     ];

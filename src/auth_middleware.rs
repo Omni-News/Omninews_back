@@ -136,6 +136,11 @@ impl Fairing for AuthMiddleware {
             return;
         }
 
+        // path가 home일 경우 검사 스킵
+        if path == "/" {
+            return;
+        }
+
         let auth_cache = match req.rocket().state::<AuthCache>() {
             Some(cache) => cache,
             None => {
