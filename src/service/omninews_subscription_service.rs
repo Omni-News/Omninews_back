@@ -153,7 +153,7 @@ pub async fn register_subscription(
     let user_id = user_service::find_user_id_by_email(pool, user_email.into()).await?;
     let new_omninews_subscription = NewOmniNewsSubscription {
         user_id: Some(user_id),
-        omninews_subscription_transaction_id: Some(transaction_id),
+        omninews_subscription_transaction_id: receipt.original_transaction_id,
         omninews_subscription_status: Some(true),
         omninews_subscription_product_id: signed_transaction_info.product_id,
         omninews_subscription_auto_renew: Some(
