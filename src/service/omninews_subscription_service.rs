@@ -1,11 +1,10 @@
-#![allow(unused)]
 use std::{
     env,
     time::{SystemTime, UNIX_EPOCH},
 };
 
-use chrono::{DateTime, FixedOffset, NaiveDateTime, Utc};
-use jsonwebtoken::{decode, decode_header, encode, Algorithm, EncodingKey, Header};
+use chrono::{DateTime, FixedOffset, Utc};
+use jsonwebtoken::{encode, Algorithm, EncodingKey, Header};
 use jwt_rustcrypto::decode_only;
 use reqwest::{Client, StatusCode};
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -24,7 +23,7 @@ use crate::{
         },
     },
     omninews_subscription_error, omninews_subscription_info, omninews_subscription_warn,
-    repository::{omninews_subscription_repository, user_repository},
+    repository::omninews_subscription_repository,
     service::user_service,
 };
 
@@ -50,13 +49,14 @@ struct AppStoreServerApiClaims {
 pub async fn verify_subscription(
     pool: &MySqlPool,
     user_email: &str,
-    is_sandbox: bool,
 ) -> Result<OmninewsSubscriptionResponseDto, OmniNewsError> {
     let user_id = user_service::find_user_id_by_email(pool, user_email.into()).await?;
     let transaction_id = get_transaction_id_from_db(pool, user_id).await?;
 
+    let is_sandbox = is_sandbox(&transaction_id).await?;
+
     let (signed_transaction_info, signed_renewal_info) =
-        get_subscription_transaction_info(user_email, is_sandbox, &transaction_id).await?;
+        get_subscription_transaction_info(is_sandbox, &transaction_id).await?;
 
     let expires_date_utc = match validate_expires_date(
         user_email,
@@ -81,29 +81,12 @@ pub async fn verify_subscription(
             return Err(e);
         }
     };
-    // signed_transaction_info의 purchase_date는 최신 구독(갱신 포함)일임.,
-    omninews_subscription_info!(
-        "renew_date: {:?}",
-        signed_transaction_info.purchase_date.unwrap_or_default()
-    );
-    omninews_subscription_info!(
-        "aaaa : {:?}",
-        DateTime::from_timestamp_millis(signed_transaction_info.purchase_date.unwrap_or_default())
-    );
-
-    omninews_subscription_info!(
-        "vvvv : {:?}",
-        DateTime::from_timestamp_millis(signed_transaction_info.purchase_date.unwrap_or_default())
-            .unwrap()
-            .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
-            .naive_local()
-    );
+    // signed_transaction_info의 purchase_date는 최신 구독(갱신 포함)일임.
     let renew_date =
         DateTime::from_timestamp_millis(signed_transaction_info.purchase_date.unwrap_or_default())
             .unwrap_or_default()
             .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
             .naive_local();
-    omninews_subscription_info!("bb : {:?}", renew_date);
     let expires_date = expires_date_utc.naive_local();
     let auto_renew = signed_renewal_info.auto_renew_status.unwrap_or_default();
 
@@ -140,9 +123,6 @@ pub async fn register_subscription(
     user_email: &str,
     receipt: OmninewsReceiptRequestDto,
 ) -> Result<bool, OmniNewsError> {
-    let app_store_config = load_app_store_config()?;
-    let auth_token = generate_app_store_server_jwt(&app_store_config)?;
-
     // App Store Server API에서 original_transaction_id도 된다 함.
     // The identifier of a transaction that belongs to the customer, and which may be an original transaction identifier (originalTransactionId).
     // VerifyTransaction의 경우 최초 구독 시의 정보만 반영됨으로, 중단했다 다시 갱신할 때는 기간이
@@ -150,22 +130,18 @@ pub async fn register_subscription(
 
     let transaction_id = receipt.transaction_id.unwrap_or_default();
     omninews_subscription_info!("transaction_id: {transaction_id}");
+    let is_sandbox = is_sandbox(&transaction_id).await?;
 
-    let (signed_transaction_info, signed_renewal_info) = match get_subscription_transaction_info(
-        user_email,
-        receipt.is_test.unwrap_or_default(),
-        &transaction_id,
-    )
-    .await
-    {
-        Ok(res) => res,
-        Err(e) => {
-            omninews_subscription_error!(
-                "[Service] Invalid transaction_id for user : {user_email}"
-            );
-            return Err(OmniNewsError::InvalidValue("Invalid transaction id".into()));
-        }
-    };
+    let (signed_transaction_info, signed_renewal_info) =
+        match get_subscription_transaction_info(is_sandbox, &transaction_id).await {
+            Ok(res) => res,
+            Err(_) => {
+                omninews_subscription_error!(
+                    "[Service] Invalid transaction_id for user : {user_email}"
+                );
+                return Err(OmniNewsError::InvalidValue("Invalid transaction id".into()));
+            }
+        };
 
     let expires_date_utc = validate_expires_date(
         user_email,
@@ -196,7 +172,7 @@ pub async fn register_subscription(
         ),
         omninews_subscription_renew_date: None,
         omninews_subscription_end_date: Some(expires_date_utc.naive_local()),
-        omninews_subscription_is_sandbox: Some(receipt.is_test.unwrap_or_default()),
+        omninews_subscription_is_sandbox: Some(is_sandbox),
     };
 
     match omninews_subscription_repository::register_subscription(pool, new_omninews_subscription)
@@ -249,7 +225,6 @@ pub async fn verify_is_subscribed_user(
 // ---------------------- Helpers ----------------------
 
 fn load_app_store_config() -> Result<AppStoreConfig, OmniNewsError> {
-    omninews_subscription_info!("App Store Server API 설정 로드 중...");
     // Load the App Store configuration from environment variables or a config file
     let private_key = env::var("APPLE_PRIVATE_KEY")
         .map_err(|_| OmniNewsError::Config("APP_STORE_PRIVATE_KEY not set".into()))?;
@@ -260,7 +235,6 @@ fn load_app_store_config() -> Result<AppStoreConfig, OmniNewsError> {
     let bundle_id = env::var("APPLE_BUNDLE_ID")
         .map_err(|_| OmniNewsError::Config("APP_STORE_BUNDLE_ID not set".into()))?;
 
-    omninews_subscription_info!("App Store Server API 설정 로드 완료");
     Ok(AppStoreConfig {
         private_key,
         key_id,
@@ -319,7 +293,6 @@ where
 }
 
 async fn get_subscription_transaction_info(
-    user_email: &str,
     is_sandbox: bool,
     transaction_id: &str,
 ) -> Result<(DecodeSignedTransactionInfo, DecodeSignedRenewalInfo), OmniNewsError> {
@@ -421,4 +394,27 @@ async fn get_transaction_id_from_db(
             }
         };
     Ok(transaction_id)
+}
+
+/// transaction_id가 production에 있는지 확인
+/// 있으면 production, 없으면 sandbox
+async fn is_sandbox(transaction_id: &str) -> Result<bool, OmniNewsError> {
+    let config = load_app_store_config()?;
+    let auth_token = generate_app_store_server_jwt(&config)?;
+
+    let product_url = ProductionApi::VerifyTransaction.url(transaction_id);
+
+    let client = Client::new();
+    let is_product = {
+        let res = client
+            .get(product_url)
+            .bearer_auth(auth_token)
+            .send()
+            .await
+            .unwrap();
+
+        res.status() != StatusCode::NOT_FOUND
+    };
+
+    Ok(!is_product)
 }
