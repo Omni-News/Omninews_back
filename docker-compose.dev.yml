@@ -19,6 +19,8 @@ services:
       - ./Cargo.toml:/app/Cargo.toml:ro
       - ./Rocket.toml:/app/Rocket.toml:ro
       - ./logs:/app/logs
+      - ./static:/app/static
+      - ./templates:/app/templates
       - ./omninews_firebase_sdk.json:/app/omninews_firebase_sdk.json:ro
       - cargo_cache:/usr/local/cargo/registry
     networks:
