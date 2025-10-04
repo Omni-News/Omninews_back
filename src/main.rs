@@ -15,11 +15,14 @@ use config::{
     env, logging, openapi::custom_openapi_spec, rapidoc::create_rapidoc, swagger::create_swagger_ui,
 };
 use handler::{config_handler::options_handler, error_handler::error_catchers};
+use rocket::fs::FileServer;
+use rocket_dyn_templates::Template;
 use rocket_okapi::mount_endpoints_and_merged_docs;
 use utils::embedding_util::EmbeddingService;
 
 use crate::{
     config::webdriver::{DriverPool, DriverPoolConfig},
+    handler::index::{app_ads, index},
     utils::db_util,
 };
 
@@ -48,6 +51,9 @@ async fn rocket() -> _ {
         // openapi
         "/rapidoc/".to_string(),
         "/swagger-ui/".to_string(),
+        // marketing
+        "/".to_string(),
+        "/app-ads.txt".to_string(),
         format!("/{CURRENT_VERSION}/openapi.json").to_owned(),
     ];
 
@@ -60,7 +66,12 @@ async fn rocket() -> _ {
         .attach(AuthMiddleware::new(exempt_paths, pool_middleware))
         .mount("/rapidoc/", create_rapidoc())
         .mount("/swagger-ui/", create_swagger_ui())
+        //config
         .mount("/", routes![options_handler])
+        //marketing
+        .mount("/", routes![index, app_ads])
+        .mount("/static", FileServer::from("static"))
+        .attach(Template::fairing())
         .register("/", error_catchers());
 
     let openapi_settings = rocket_okapi::settings::OpenApiSettings::default();

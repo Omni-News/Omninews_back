@@ -7,6 +7,7 @@ edition = "2021"
 # server
 tokio = { version = "1", features = ["full"] }
 rocket = { version = "0.5.1", features = ["json", "secrets"] }
+rocket_dyn_templates = { version = "0.1.0", features = ["handlebars"] }
 
 # static
 lazy_static = "1.5.0"

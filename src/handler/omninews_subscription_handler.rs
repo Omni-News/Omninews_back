@@ -16,7 +16,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 }
 
 #[openapi(tag = "OmniNews Subscription API")]
-#[get("/subscription/verify?<is_sandbox>")]
+#[get("/subscription/verify")]
 ///
 /// # 사용자 구독 검증 API
 ///
@@ -25,15 +25,8 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 async fn verify_subscription(
     pool: &State<MySqlPool>,
     auth: AuthenticatedUser,
-    is_sandbox: Option<bool>,
 ) -> Result<Json<OmninewsSubscriptionResponseDto>, Status> {
-    match omninews_subscription_service::verify_subscription(
-        pool,
-        &auth.user_email,
-        is_sandbox.unwrap_or_default(),
-    )
-    .await
-    {
+    match omninews_subscription_service::verify_subscription(pool, &auth.user_email).await {
         Ok(res) => Ok(Json(res)),
         Err(_) => Err(Status::InternalServerError),
     }

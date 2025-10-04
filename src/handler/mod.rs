@@ -6,6 +6,7 @@ pub mod config_handler;
 pub mod error_handler;
 pub mod folder_handler;
 pub mod health_handler;
+pub mod index;
 pub mod news_handler;
 pub mod omninews_subscription_handler;
 pub mod premium;
@@ -28,6 +29,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
         // premium
         "/" => premium::rss_generate::get_routes_and_docs(settings),
         "/" => premium::rss_summary::get_routes_and_docs(settings),
-        "/" => apple_server_notification::notification::get_routes_and_docs(settings)
+        "/" => apple_server_notification::notification::get_routes_and_docs(settings),
+
     }
 }

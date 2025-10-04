@@ -5,5 +5,4 @@ use serde::{Deserialize, Serialize};
 pub struct OmninewsReceiptRequestDto {
     pub transaction_id: Option<String>,
     pub platform: Option<String>,
-    pub is_test: Option<bool>,
 }
