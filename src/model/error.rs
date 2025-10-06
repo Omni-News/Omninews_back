@@ -56,6 +56,9 @@ pub enum OmniNewsError {
 
     #[error("Invalid Value: {0}")]
     InvalidValue(String),
+
+    #[error("Subscription error: {0}")]
+    SubscriptionError(String),
 }
 
 #[derive(Debug, Error)]

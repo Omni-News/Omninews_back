@@ -18,6 +18,7 @@ pub struct NewOmniNewsSubscription {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DecodeSignedTransactionInfo {
+    pub original_transaction_id: Option<String>,
     pub purchase_date: Option<i64>,
     pub original_purchase_date: Option<i64>,
     pub expires_date: Option<i64>,
