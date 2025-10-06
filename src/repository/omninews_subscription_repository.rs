@@ -8,7 +8,7 @@ pub async fn select_subscription_transaction_id(
     user_id: i32,
 ) -> Result<String, sqlx::Error> {
     let result = query!(
-        "SELECT omninews_subscription_transaction_id FROM omninews_subscription WHERE user_id = ?",
+        "SELECT omninews_subscription_transaction_id FROM omninews_subscription WHERE user_id = ? order by omninews_subscription_id desc",
         user_id,
     )
     .fetch_one(pool)
@@ -116,6 +116,25 @@ pub async fn select_subscription_status_by_user_email(
 
     match result {
         Ok(res) => Ok(res.omninews_subscription_status.unwrap_or_default() == 1),
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn is_exist_transaction_id(
+    pool: &MySqlPool,
+    transaction_id: &str,
+) -> Result<bool, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!(
+        "SELECT * FROM omninews_subscription WHERE omninews_subscription_transaction_id = ? AND omninews_subscription_status",
+        transaction_id
+    )
+    .fetch_one(&mut *conn)
+    .await;
+
+    match result {
+        Ok(_) => Ok(true),
         Err(e) => Err(e),
     }
 }

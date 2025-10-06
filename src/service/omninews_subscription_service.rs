@@ -44,8 +44,11 @@ struct AppStoreServerApiClaims {
     bid: String, // Bundle ID
 }
 
-/// 1. find user info(user_subscription_info, transaction_id) from db
-/// 2. validate transaction id with App Store Server API
+// 1. 구독은 사용자 기준으로 흘러가야 함.
+// 1-1. 즉, 기기에서 구독이 되었어도, 로그인한 사용자의 구독정보가 db에 없다면, 구독 기능을 이용할
+// 수 없음.
+// 1-2. 기기에서 구독이력이 없어도, 로그인한 사용자의 구독정보가 db에 있다면, 구독 기능을 이용할
+// 수 있음.
 pub async fn verify_subscription(
     pool: &MySqlPool,
     user_email: &str,
@@ -118,6 +121,11 @@ pub async fn verify_subscription(
     })
 }
 
+// 1. 구독은 사용자 기준으로 흘러가야 함.
+// 1-1. 즉, 기기에서 구독이 되었어도, 로그인한 사용자의 구독정보가 db에 없다면, 구독 기능을 이용할
+// 수 없음.
+// 1-2. 기기에서 구독이력이 없어도, 로그인한 사용자의 구독정보가 db에 있다면, 구독 기능을 이용할
+// 수 있음.
 pub async fn register_subscription(
     pool: &MySqlPool,
     user_email: &str,
@@ -129,7 +137,6 @@ pub async fn register_subscription(
     // 다름. 이에 VerifySubscription을 통해서 정보를 가져와야 함.
 
     let transaction_id = receipt.transaction_id.unwrap_or_default();
-    omninews_subscription_info!("transaction_id: {transaction_id}");
     let is_sandbox = is_sandbox(&transaction_id).await?;
 
     let (signed_transaction_info, signed_renewal_info) =
@@ -142,7 +149,24 @@ pub async fn register_subscription(
                 return Err(OmniNewsError::InvalidValue("Invalid transaction id".into()));
             }
         };
+    let transaction_id = signed_transaction_info
+        .original_transaction_id
+        .unwrap_or_default();
+    omninews_subscription_info!("[Service] transaction_id: {transaction_id}");
 
+    // 사용자 구독여부 검증
+    // original_transaction_id가 다른 계정에 이미 있는지 검증.
+    if omninews_subscription_repository::is_exist_transaction_id(pool, &transaction_id)
+        .await
+        .is_ok()
+    {
+        omninews_subscription_error!("[Service] Transaction id {transaction_id} is already exist.");
+        return Err(OmniNewsError::SubscriptionError(
+            "transaction already exist.".into(),
+        ));
+    }
+
+    // 영수증 만료일 검증
     let expires_date_utc = validate_expires_date(
         user_email,
         signed_transaction_info.expires_date.unwrap_or_default(),
@@ -153,7 +177,7 @@ pub async fn register_subscription(
     let user_id = user_service::find_user_id_by_email(pool, user_email.into()).await?;
     let new_omninews_subscription = NewOmniNewsSubscription {
         user_id: Some(user_id),
-        omninews_subscription_transaction_id: receipt.original_transaction_id,
+        omninews_subscription_transaction_id: Some(transaction_id),
         omninews_subscription_status: Some(true),
         omninews_subscription_product_id: signed_transaction_info.product_id,
         omninews_subscription_auto_renew: Some(
