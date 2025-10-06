@@ -7,8 +7,6 @@ pub struct DemoLoginRequestDto {
     pub user_email: Option<String>,
     #[schemars(example = "example_user_display_name")]
     pub user_password: Option<String>,
-    #[schemars(example = "example_expired")]
-    pub expired: Option<bool>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
