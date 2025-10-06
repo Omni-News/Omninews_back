@@ -13,8 +13,8 @@ use crate::{
         },
         user::{
             request::{
-                AppleLoginRequestDto, LoginUserRequestDto, UserNotificationRequestDto,
-                UserThemeRequestDto,
+                AppleLoginRequestDto, DemoLoginRequestDto, LoginUserRequestDto,
+                UserNotificationRequestDto, UserThemeRequestDto,
             },
             response::UserThemeResponseDto,
         },
@@ -28,6 +28,41 @@ use crate::{
     service::omninews_subscription_service,
     user_error, user_info, user_warn,
 };
+
+pub async fn demo_login(
+    pool: &MySqlPool,
+    user: DemoLoginRequestDto,
+) -> Result<JwtTokenResponseDto, OmniNewsError> {
+    user_info!("[Service] Demo login attempt: {:?}", user);
+    let whitelist_email = ["omninews_demo@test.com"];
+    let whitelist_password = ["omninews2025"];
+    let user_email = user.user_email.clone().unwrap_or_default();
+    let user_password = user.user_password.clone().unwrap_or_default();
+    let expired = user.expired.unwrap_or(false);
+
+    if user_email.is_empty()
+        || !whitelist_email.contains(&user_email.as_str())
+        || !whitelist_password.contains(&user_password.as_str())
+    {
+        user_error!("[Service] Unauthorized demo login attempt: {}", user_email);
+        return Err(OmniNewsError::NotFound("not found user".into()));
+    }
+    user_info!(
+        "[Service] Authorized demo login attempt: {}, expired: {}",
+        user_email,
+        expired
+    );
+
+    let login_dto = LoginUserRequestDto {
+        user_email: Some(user_email.clone()),
+        user_display_name: Some("Demo User".to_string()),
+        user_photo_url: Some("https://example.com/photo.jpg".to_string()),
+        user_social_login_provider: Some("apple".to_string()),
+        user_social_provider_id: Some("demo_provider_id".to_string()),
+    };
+
+    login_or_create_user(pool, login_dto).await
+}
 
 /// 1. access token O refresh token O -> processed in auto login.
 /// 2. access token X refresh token O -> processed in auto login.
