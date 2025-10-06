@@ -12,8 +12,8 @@ use crate::{
         },
         user::{
             request::{
-                AppleLoginRequestDto, LoginUserRequestDto, UserNotificationRequestDto,
-                UserThemeRequestDto,
+                AppleLoginRequestDto, DemoLoginRequestDto, LoginUserRequestDto,
+                UserNotificationRequestDto, UserThemeRequestDto,
             },
             response::UserThemeResponseDto,
         },
@@ -22,7 +22,7 @@ use crate::{
 };
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: verify_refresh_token, verify_access_token, login, apple_login, logout, notification_setting, get_user_theme, user_theme_setting, remove_user]
+    openapi_get_routes_spec![settings: demo_login, verify_refresh_token, verify_access_token, login, apple_login, logout, notification_setting, get_user_theme, user_theme_setting, remove_user]
 }
 
 /// # 리프레시 토큰 검증 API
@@ -42,6 +42,24 @@ pub async fn verify_refresh_token(
     refresh_token: Json<VerifyRefreshTokenRequestDto>,
 ) -> Result<Json<AccessTokenResponseDto>, Status> {
     match user_service::validate_refresh_token(pool, refresh_token.into_inner()).await {
+        Ok(token) => Ok(Json(token)),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
+
+/// # 데모 로그인 API
+/// 리뷰어어를 위한 데모 로그인 API입니다.
+///
+/// ### `user_email` : 사용자의 이메일 주소
+/// ### `user_password`: 사용자의 비밀번호
+/// ### `expired`: 구독 만료 여부
+#[openapi(tag = "인증 API")]
+#[post("/user/demo_login", data = "<data>")]
+pub async fn demo_login(
+    pool: &State<MySqlPool>,
+    data: Json<DemoLoginRequestDto>,
+) -> Result<Json<JwtTokenResponseDto>, Status> {
+    match user_service::demo_login(pool, data.into_inner()).await {
         Ok(token) => Ok(Json(token)),
         Err(_) => Err(Status::InternalServerError),
     }

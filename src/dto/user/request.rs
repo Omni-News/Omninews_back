@@ -2,6 +2,16 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct DemoLoginRequestDto {
+    #[schemars(example = "example_user_email")]
+    pub user_email: Option<String>,
+    #[schemars(example = "example_user_display_name")]
+    pub user_password: Option<String>,
+    #[schemars(example = "example_expired")]
+    pub expired: Option<bool>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct LoginUserRequestDto {
     #[schemars(example = "example_user_email")]
     pub user_email: Option<String>,
@@ -65,4 +75,8 @@ fn example_user_fcm_token() -> &'static str {
 
 fn example_theme() -> &'static str {
     "paper"
+}
+
+fn example_expired() -> bool {
+    false
 }
