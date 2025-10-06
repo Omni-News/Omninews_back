@@ -25,7 +25,7 @@ use crate::{
         user::NewUser,
     },
     repository::user_repository,
-    service::omninews_subscription_service,
+    service::omninews_subscription_service::{self},
     user_error, user_info, user_warn,
 };
 
@@ -38,7 +38,6 @@ pub async fn demo_login(
     let whitelist_password = ["omninews2025"];
     let user_email = user.user_email.clone().unwrap_or_default();
     let user_password = user.user_password.clone().unwrap_or_default();
-    let expired = user.expired.unwrap_or(false);
 
     if user_email.is_empty()
         || !whitelist_email.contains(&user_email.as_str())
@@ -47,11 +46,7 @@ pub async fn demo_login(
         user_error!("[Service] Unauthorized demo login attempt: {}", user_email);
         return Err(OmniNewsError::NotFound("not found user".into()));
     }
-    user_info!(
-        "[Service] Authorized demo login attempt: {}, expired: {}",
-        user_email,
-        expired
-    );
+    user_info!("[Service] Authorized demo login attempt: {}", user_email,);
 
     let login_dto = LoginUserRequestDto {
         user_email: Some(user_email.clone()),
