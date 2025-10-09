@@ -184,6 +184,8 @@ pub async fn register_subscription(
             signed_renewal_info.auto_renew_status.unwrap_or_default() != 0,
         ),
         omninews_subscription_platform: receipt.platform.clone(),
+        omninews_subscription_device_id: receipt.device_id.clone(),
+        omninews_subscription_device_model: receipt.device_model.clone(),
         omninews_subscription_start_date: Some(
             DateTime::from_timestamp_millis(
                 signed_transaction_info
