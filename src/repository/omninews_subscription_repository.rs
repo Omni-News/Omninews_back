@@ -8,7 +8,7 @@ pub async fn select_subscription_transaction_id(
     user_id: i32,
 ) -> Result<String, sqlx::Error> {
     let result = query!(
-        "SELECT omninews_subscription_transaction_id FROM omninews_subscription WHERE user_id = ? order by omninews_subscription_id desc",
+        "SELECT omninews_subscription_transaction_id FROM omninews_subscription WHERE user_id = ? AND omninews_subscription_status = true",
         user_id,
     )
     .fetch_one(pool)
@@ -28,9 +28,9 @@ pub async fn register_subscription(
 
     let result = query!(
         "INSERT INTO 
-            omninews_subscription (user_id, omninews_subscription_transaction_id, omninews_subscription_status, omninews_subscription_product_id, omninews_subscription_auto_renew, omninews_subscription_platform, omninews_subscription_start_date, omninews_subscription_renew_date, omninews_subscription_end_date, omninews_subscription_is_sandbox)
+            omninews_subscription (user_id, omninews_subscription_transaction_id, omninews_subscription_status, omninews_subscription_product_id, omninews_subscription_auto_renew, omninews_subscription_platform, omninews_subscription_device_id, omninews_subscription_device_model, omninews_subscription_start_date, omninews_subscription_renew_date, omninews_subscription_end_date, omninews_subscription_is_sandbox)
         VALUES (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
         )",
         subscription.user_id,
         subscription.omninews_subscription_transaction_id,
@@ -38,6 +38,8 @@ pub async fn register_subscription(
         subscription.omninews_subscription_product_id,
         subscription.omninews_subscription_auto_renew,
         subscription.omninews_subscription_platform,
+        subscription.omninews_subscription_device_id,
+        subscription.omninews_subscription_device_model,
         subscription.omninews_subscription_start_date,
         subscription.omninews_subscription_renew_date,
         subscription.omninews_subscription_end_date,
@@ -64,7 +66,7 @@ pub async fn expired_subscription(pool: &MySqlPool, user_id: i32) -> Result<bool
     let result = query!(
         "UPDATE omninews_subscription
      SET omninews_subscription_status = false, omninews_subscription_auto_renew = false
-     WHERE user_id = ?",
+     WHERE user_id = ? AND omninews_subscription_status = true",
         user_id
     )
     .execute(&mut *conn)
@@ -88,7 +90,7 @@ pub async fn update_verify_subscription_info(
     let result = query!(
         "UPDATE omninews_subscription
      SET omninews_subscription_auto_renew = ?, omninews_subscription_renew_date = ?, omninews_subscription_end_date = ?
-     WHERE user_id = ?",
+     WHERE user_id = ? AND omninews_subscription_status = true",
         auto_renew,
         renew_date,
         expire_date,
@@ -108,7 +110,7 @@ pub async fn select_subscription_status_by_user_email(
     user_id: i32,
 ) -> Result<bool, sqlx::Error> {
     let result = query!(
-        "SELECT omninews_subscription_status FROM omninews_subscription WHERE user_id = ?",
+        "SELECT omninews_subscription_status FROM omninews_subscription WHERE user_id = ? AND omninews_subscription_status = true",
         user_id
     )
     .fetch_one(pool)

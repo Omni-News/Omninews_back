@@ -9,6 +9,8 @@ pub struct NewOmniNewsSubscription {
     pub omninews_subscription_product_id: Option<String>,
     pub omninews_subscription_auto_renew: Option<bool>,
     pub omninews_subscription_platform: Option<String>,
+    pub omninews_subscription_device_id: Option<String>,
+    pub omninews_subscription_device_model: Option<String>,
     pub omninews_subscription_start_date: Option<NaiveDateTime>,
     pub omninews_subscription_renew_date: Option<NaiveDateTime>,
     pub omninews_subscription_end_date: Option<NaiveDateTime>,
