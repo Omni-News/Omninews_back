@@ -74,7 +74,3 @@ fn example_user_fcm_token() -> &'static str {
 fn example_theme() -> &'static str {
     "paper"
 }
-
-fn example_expired() -> bool {
-    false
-}
