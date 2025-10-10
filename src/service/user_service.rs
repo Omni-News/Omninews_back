@@ -34,7 +34,7 @@ pub async fn demo_login(
     user: DemoLoginRequestDto,
 ) -> Result<JwtTokenResponseDto, OmniNewsError> {
     user_info!("[Service] Demo login attempt: {:?}", user);
-    let whitelist_email = ["omninews_demo@test.com"];
+    let whitelist_email = ["omninews_demo@test.com", "omninews@test.com"];
     let whitelist_password = ["omninews2025"];
     let user_email = user.user_email.clone().unwrap_or_default();
     let user_password = user.user_password.clone().unwrap_or_default();
