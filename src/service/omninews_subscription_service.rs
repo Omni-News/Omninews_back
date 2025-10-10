@@ -100,7 +100,6 @@ pub async fn verify_subscription(
     })
 }
 
-
 // 1. 구독은 사용자 기준으로 흘러가야 함.
 // 1-1. 즉, 기기에서 구독이 되었어도, 로그인한 사용자의 구독정보가 db에 없다면, 구독 기능을 이용할
 // 수 없음.
@@ -131,9 +130,11 @@ pub async fn register_subscription(
         };
     let transaction_id = signed_transaction_info
         .original_transaction_id
+        .clone()
         .unwrap_or_default();
     omninews_subscription_info!("[Service] transaction_id: {transaction_id}");
 
+    let user_id = user_service::find_user_id_by_email(pool, user_email.into()).await?;
     // 사용자 구독여부 검증
     // original_transaction_id가 다른 계정에 이미 있는지 검증.
     if omninews_subscription_repository::is_exist_transaction_id(pool, &transaction_id)
@@ -143,11 +144,19 @@ pub async fn register_subscription(
         // 이미 있을 시 유효한 transaction id인지 검증
         omninews_subscription_warn!("[Service] Transaction id {transaction_id} is already exist.");
         omninews_subscription_info!("[Service] Validating exist transaction id is available..");
-        update_expires_date()
-
-        return Err(OmniNewsError::SubscriptionError(
-            "transaction already exist.".into(),
-        ));
+        // expires date가 남았을 시, 다른 사용자가 사용중인 구독이므로 오류임.
+        if update_expires_date(pool, user_email, user_id, &signed_transaction_info)
+            .await
+            .is_ok()
+        {
+            omninews_subscription_error!(
+                "[Service] Transaction id {transaction_id} is already used other user."
+            );
+            return Err(OmniNewsError::SubscriptionError(
+                "transaction already exist.".into(),
+            ));
+        };
+        omninews_subscription_info!("[Service] Transaction id {transaction_id} is expired. new subscription will be registered.");
     }
 
     // 영수증 만료일 검증
@@ -158,7 +167,6 @@ pub async fn register_subscription(
     .await?;
 
     // register subscription info to db
-    let user_id = user_service::find_user_id_by_email(pool, user_email.into()).await?;
     let new_omninews_subscription = NewOmniNewsSubscription {
         user_id: Some(user_id),
         omninews_subscription_transaction_id: Some(transaction_id),
@@ -430,18 +438,18 @@ async fn is_sandbox(transaction_id: &str) -> Result<bool, OmniNewsError> {
 }
 
 async fn update_expires_date(
-    pool: &sqlx::Pool<sqlx::MySql>,
+    pool: &MySqlPool,
     user_email: &str,
     user_id: i32,
     signed_transaction_info: &DecodeSignedTransactionInfo,
 ) -> Result<DateTime<FixedOffset>, OmniNewsError> {
-    let expires_date_utc = match validate_expires_date(
+    match validate_expires_date(
         user_email,
         signed_transaction_info.expires_date.unwrap_or_default(),
     )
     .await
     {
-        Ok(date) => date,
+        Ok(date) => Ok(date),
         Err(e) => {
             // update status, auto_renew as 0 to db
             match omninews_subscription_repository::expired_subscription(pool, user_id).await {
@@ -455,8 +463,7 @@ async fn update_expires_date(
                     e
                 ),
             }
-            return Err(e);
+            Err(e)
         }
-    };
-    Ok(expires_date_utc)
+    }
 }
