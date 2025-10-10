@@ -43,7 +43,6 @@ CREATE TABLE `user` (
 	`user_notification_push` BOOLEAN NOT NULL DEFAULT FALSE,
     `user_fcm_token` VARCHAR(255) NULL,
 	`user_articles_read` INT DEFAULT 0,
-  `user_omninews_subscription` BOOLEAN DEFAULT FALSE,
 	`user_last_active_at` DATETIME,
 	`user_created_at` DATETIME,
 	`user_updated_at` DATETIME,
