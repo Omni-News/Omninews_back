@@ -293,7 +293,7 @@ fn generate_app_store_server_jwt(config: &AppStoreConfig) -> Result<String, Omni
     Ok(token)
 }
 
-fn decode_jwt_data<T>(jwt_token: &str) -> Result<T, OmniNewsError>
+pub fn decode_jwt_data<T>(jwt_token: &str) -> Result<T, OmniNewsError>
 where
     T: DeserializeOwned,
 {
