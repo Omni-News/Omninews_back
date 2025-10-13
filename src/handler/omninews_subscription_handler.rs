@@ -8,6 +8,7 @@ use crate::{
     dto::omninews_subscription::{
         request::OmninewsReceiptRequestDto, response::OmninewsSubscriptionResponseDto,
     },
+    handler::error_handler::MyError,
     service::omninews_subscription_service,
 };
 
@@ -25,10 +26,14 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 async fn verify_subscription(
     pool: &State<MySqlPool>,
     auth: AuthenticatedUser,
-) -> Result<Json<OmninewsSubscriptionResponseDto>, Status> {
+) -> Result<Json<OmninewsSubscriptionResponseDto>, MyError> {
     match omninews_subscription_service::verify_subscription(pool, &auth.user_email).await {
         Ok(res) => Ok(Json(res)),
-        Err(_) => Err(Status::InternalServerError),
+        Err(e) => Err(MyError {
+            err: "internal server error".to_string(),
+            msg: Some(e.to_string()),
+            http_status_code: 500,
+        }),
     }
 }
 
@@ -47,7 +52,7 @@ async fn register_subscription(
     pool: &State<MySqlPool>,
     subscription: Json<OmninewsReceiptRequestDto>,
     auth: AuthenticatedUser,
-) -> Result<Json<bool>, Status> {
+) -> Result<Json<bool>, MyError> {
     match omninews_subscription_service::register_subscription(
         pool,
         &auth.user_email,
@@ -56,6 +61,10 @@ async fn register_subscription(
     .await
     {
         Ok(response) => Ok(Json(response)),
-        Err(_) => Err(Status::InternalServerError),
+        Err(e) => Err(MyError {
+            err: "internal server error".to_string(),
+            msg: Some(e.to_string()),
+            http_status_code: 500,
+        }),
     }
 }

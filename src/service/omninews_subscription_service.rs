@@ -1,3 +1,11 @@
+/*
+*
+* # 구독 프로세스 정의
+*   1. 구독 기능은 사용자 계정에 종속됨. (구독한 애플 계정이 아님.)
+*   2. 한 애플 계정에서 중복 구독할 시 기존 구독한 계정으로의 전환 안내.
+*     2-1. 백에서는 Error message로 Already exist subscription 안내 시 프론트에서 계정전환 처리.
+*/
+
 use std::{
     env,
     time::{SystemTime, UNIX_EPOCH},
@@ -44,11 +52,6 @@ struct AppStoreServerApiClaims {
     bid: String, // Bundle ID
 }
 
-// 1. 구독은 사용자 기준으로 흘러가야 함.
-// 1-1. 즉, 기기에서 구독이 되었어도, 로그인한 사용자의 구독정보가 db에 없다면, 구독 기능을 이용할
-// 수 없음.
-// 1-2. 기기에서 구독이력이 없어도, 로그인한 사용자의 구독정보가 db에 있다면, 구독 기능을 이용할
-// 수 있음.
 pub async fn verify_subscription(
     pool: &MySqlPool,
     user_email: &str,
@@ -100,11 +103,6 @@ pub async fn verify_subscription(
     })
 }
 
-// 1. 구독은 사용자 기준으로 흘러가야 함.
-// 1-1. 즉, 기기에서 구독이 되었어도, 로그인한 사용자의 구독정보가 db에 없다면, 구독 기능을 이용할
-// 수 없음.
-// 1-2. 기기에서 구독이력이 없어도, 로그인한 사용자의 구독정보가 db에 있다면, 구독 기능을 이용할
-// 수 있음.
 pub async fn register_subscription(
     pool: &MySqlPool,
     user_email: &str,
@@ -144,7 +142,7 @@ pub async fn register_subscription(
         // 이미 있을 시 유효한 transaction id인지 검증
         omninews_subscription_warn!("[Service] Transaction id {transaction_id} is already exist.");
         omninews_subscription_info!("[Service] Validating exist transaction id is available..");
-        // expires date가 남았을 시, 다른 사용자가 사용중인 구독이므로 오류임.
+        // expires date가 남았을 시, 다른 사용자가 사용중인 구독이므로 오류.
         if update_expires_date(pool, user_email, user_id, &signed_transaction_info)
             .await
             .is_ok()
@@ -152,8 +150,8 @@ pub async fn register_subscription(
             omninews_subscription_error!(
                 "[Service] Transaction id {transaction_id} is already used other user."
             );
-            return Err(OmniNewsError::SubscriptionError(
-                "transaction already exist.".into(),
+            return Err(OmniNewsError::AlreadyExists(
+                "original_transaction_id".into(),
             ));
         };
         omninews_subscription_info!("[Service] Transaction id {transaction_id} is expired. new subscription will be registered.");

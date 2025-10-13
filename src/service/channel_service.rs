@@ -228,7 +228,7 @@ pub async fn store_channel_and_embedding(
                 "[Service] Already exist channel: {}",
                 rss_channel.channel_link.clone().unwrap()
             );
-            Err(OmniNewsError::AlreadyExists)
+            Err(OmniNewsError::AlreadyExists("Channel".into()))
         }
         Err(_) => {
             let channel_id = store_rss_channel(pool, rss_channel.clone()).await?;
