@@ -9,3 +9,5 @@ pub mod subscription_service;
 pub mod user_service;
 
 pub mod premium;
+
+pub mod apple_server_notification_service;
