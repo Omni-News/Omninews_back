@@ -21,8 +21,8 @@ pub enum OmniNewsError {
     #[error("Failed to fetch News")]
     FetchNews,
 
-    #[error("Already exists element")]
-    AlreadyExists,
+    #[error("Already exists element: {0}")]
+    AlreadyExists(String),
 
     #[error("Element not found: {0}")]
     NotFound(String),
@@ -56,9 +56,6 @@ pub enum OmniNewsError {
 
     #[error("Invalid Value: {0}")]
     InvalidValue(String),
-
-    #[error("Subscription error: {0}")]
-    SubscriptionError(String),
 }
 
 #[derive(Debug, Error)]
