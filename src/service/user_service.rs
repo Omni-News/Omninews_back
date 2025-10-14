@@ -368,6 +368,18 @@ pub async fn find_user_id_by_email(
     }
 }
 
+pub async fn find_user_email_by_id(
+    pool: &MySqlPool,
+    user_id: i32,
+) -> Result<String, OmniNewsError> {
+    match user_repository::select_user_email_by_id(pool, user_id).await {
+        Ok(res) => Ok(res),
+        Err(e) => {
+            user_error!("[Service] Failed to find user email by id: {}", e);
+            Err(OmniNewsError::Database(e))
+        }
+    }
+}
 pub async fn validate_premium_user(
     pool: &MySqlPool,
     user_email: &str,

@@ -53,6 +53,22 @@ pub async fn select_user_id_by_email(
     }
 }
 
+pub async fn select_user_email_by_id(
+    pool: &MySqlPool,
+    user_id: i32,
+) -> Result<String, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!("SELECT user_email FROM user WHERE user_id = ?", user_id)
+        .fetch_one(&mut *conn)
+        .await;
+
+    match result {
+        Ok(res) => Ok(res.user_email),
+        Err(e) => Err(e),
+    }
+}
+
 pub async fn select_user_email_by_social_provider_id(
     pool: &MySqlPool,
     user_social_provider_id: String,
