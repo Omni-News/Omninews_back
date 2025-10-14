@@ -1,5 +1,5 @@
 use okapi::openapi3::OpenApi;
-use rocket::{http::Status, serde::json::Json, State};
+use rocket::{serde::json::Json, State};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use sqlx::MySqlPool;
 

@@ -143,16 +143,26 @@ pub async fn register_subscription(
         omninews_subscription_warn!("[Service] Transaction id {transaction_id} is already exist.");
         omninews_subscription_info!("[Service] Validating exist transaction id is available..");
         // expires date가 남았을 시, 다른 사용자가 사용중인 구독이므로 오류.
-        if update_expires_date(pool, user_email, user_id, &signed_transaction_info)
+        // 기존 존재하는 사용자의 db update
+        let exist_user_id = omninews_subscription_repository::select_user_id_by_transaction_id(
+            pool,
+            &transaction_id,
+        )
+        .await?;
+        if update_expires_date(pool, user_email, exist_user_id, &signed_transaction_info)
             .await
             .is_ok()
         {
             omninews_subscription_error!(
                 "[Service] Transaction id {transaction_id} is already used other user."
             );
-            return Err(OmniNewsError::AlreadyExists(
-                "original_transaction_id".into(),
-            ));
+
+            let exist_user_email = user_service::find_user_email_by_id(pool, user_id).await?;
+
+            omninews_subscription_info!("[Service] Existing user: {exist_user_email}");
+            return Err(OmniNewsError::AlreadyExists(format!(
+                "existing user: {exist_user_email}"
+            )));
         };
         omninews_subscription_info!("[Service] Transaction id {transaction_id} is expired. new subscription will be registered.");
     }
@@ -452,13 +462,10 @@ async fn update_expires_date(
             // update status, auto_renew as 0 to db
             match omninews_subscription_repository::expired_subscription(pool, user_id).await {
                 Ok(_) => omninews_subscription_info!(
-                    "[Service] Expired subscription status updated for user {}",
-                    user_email
+                    "[Service] Expired subscription status updated for user {user_id}"
                 ),
                 Err(e) => omninews_subscription_error!(
-                    "[Service] Failed to update expired subscription status for user {}: {}",
-                    user_email,
-                    e
+                    "[Service] Failed to update expired subscription status for user {user_id}: {e}"
                 ),
             }
             Err(e)

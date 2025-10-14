@@ -3,6 +3,24 @@ use sqlx::{query, MySqlPool};
 
 use crate::{db_util::get_db, model::omninews_subscription::NewOmniNewsSubscription};
 
+pub async fn select_user_id_by_transaction_id(
+    pool: &MySqlPool,
+    transaction_id: &str,
+) -> Result<i32, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!(
+        "SELECT o.user_id FROM omninews_subscription AS o WHERE o.omninews_subscription_transaction_id = ? AND o.omninews_subscription_status = 1",
+        transaction_id
+    ).fetch_one(&mut *conn)
+        .await;
+
+    match result {
+        Ok(res) => Ok(res.user_id.unwrap_or_default()),
+        Err(e) => Err(e),
+    }
+}
+
 pub async fn select_subscription_transaction_id(
     pool: &sqlx::MySqlPool,
     user_id: i32,
