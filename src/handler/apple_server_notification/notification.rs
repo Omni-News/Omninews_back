@@ -2,7 +2,10 @@ use okapi::openapi3::OpenApi;
 use rocket::{http::Status, serde::json::Json};
 use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 
-use crate::dto::apple_server_notification::request::AppleServerNotificationRequestDto;
+use crate::{
+    dto::apple_server_notification::request::AppleServerNotificationRequestDto,
+    service::apple_server_notification_service::decode_apple_signed_payload,
+};
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
     openapi_get_routes_spec![settings:
@@ -19,6 +22,6 @@ pub async fn apple_server_notification(
     data: Json<AppleServerNotificationRequestDto>,
 ) -> Result<Status, Status> {
     // TODO: Apple에서 signedPayload를 주면, 이를 디코딩해서 사용하면 됨.
-    info!("data: {:?}", data.into_inner());
+    let _ = decode_apple_signed_payload(data.into_inner()).await;
     Ok(Status::Ok)
 }

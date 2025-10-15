@@ -1,0 +1,137 @@
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{title}}</title>
+    <style>
+      body {
+        font-family: "Pretendard", Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h1 {
+        color: #2c3e50;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+      .info-box {
+        background-color: #f8f9fa;
+        border-left: 4px solid #e74c3c;
+        padding: 15px;
+        margin: 20px 0;
+      }
+      .data-policy {
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin: 20px 0;
+      }
+      form {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+      input[type="email"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      .checkbox-group {
+        margin: 15px 0;
+      }
+      button {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      button:hover {
+        background-color: #c0392b;
+      }
+      .footer {
+        margin-top: 30px;
+        font-size: 0.9em;
+        color: #7f8c8d;
+      }
+      .error {
+        color: #e74c3c;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>{{app_name}} 계정 삭제</h1>
+
+    <div class="info-box">
+      <p><strong>주의:</strong>
+        계정을 삭제하면 모든 개인 데이터, 설정 및 콘텐츠가 제거됩니다. 이 작업은
+        되돌릴 수 없습니다.</p>
+    </div>
+
+    <h2>계정 삭제 절차</h2>
+    <ol>
+      <li>아래 양식에 이메일 주소를 입력하고 확인란을 체크합니다.</li>
+      <li>제출 후, 해당 이메일로 확인 링크가 발송됩니다.</li>
+      <li>이메일의 확인 링크를 클릭하면 계정 삭제가 완료됩니다.</li>
+    </ol>
+
+    <div class="data-policy">
+      <h3>데이터 처리 정책</h3>
+      <ul>
+        <li><strong>즉시 삭제되는 데이터:</strong>
+          프로필 정보, 이메일 주소, 계정 설정</li>
+        <li><strong>30일 이내 삭제되는 데이터:</strong>
+          저장된 뉴스 기사, 개인화된 추천 데이터</li>
+        <li><strong>법적 요구에 따라 보관되는 데이터:</strong>
+          결제 기록(해당되는 경우)은 관련 법규에 따라 최대 5년간 보관될 수
+          있습니다.</li>
+      </ul>
+    </div>
+
+    <form action="/delete_account" method="post">
+      <div class="form-group">
+        <label for="email">이메일 주소</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          required
+          placeholder="가입된 이메일 주소를 입력하세요"
+        />
+      </div>
+
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" name="confirm" required />
+          나는 내 계정과 관련된 모든 데이터가 삭제된다는 것을 이해하며, 이
+          작업이 되돌릴 수 없다는 점을 확인합니다.
+        </label>
+      </div>
+
+      <button type="submit">계정 삭제 요청</button>
+    </form>
+
+    <div class="footer">
+      <p>추가 문의사항이 있으시면
+        <a href="mailto:kang3171611@naver.com">kang3171611@naver.com</a>으로
+        문의해 주세요.</p>
+      <p>현재 시간(UTC): {{current_time}}</p>
+    </div>
+  </body>
+</html>
