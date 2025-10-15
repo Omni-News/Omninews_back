@@ -22,7 +22,7 @@ use utils::embedding_util::EmbeddingService;
 
 use crate::{
     config::webdriver::{DriverPool, DriverPoolConfig},
-    handler::index::{app_ads, index},
+    handler::index::{ads, app_ads, delete_account, index, process_delete_account},
     utils::db_util,
 };
 
@@ -54,6 +54,9 @@ async fn rocket() -> _ {
         "/swagger-ui/".to_string(),
         // marketing
         "/app-ads.txt".to_string(),
+        "/ads.txt".to_string(),
+        // delete account
+        "/delete_account".to_string(),
         format!("/{CURRENT_VERSION}/openapi.json").to_owned(),
     ];
 
@@ -69,7 +72,10 @@ async fn rocket() -> _ {
         //config
         .mount("/", routes![options_handler])
         //marketing
-        .mount("/", routes![index, app_ads])
+        .mount(
+            "/",
+            routes![index, app_ads, ads, delete_account, process_delete_account],
+        )
         .mount("/static", FileServer::from("static"))
         .attach(Template::fairing())
         .register("/", error_catchers());
