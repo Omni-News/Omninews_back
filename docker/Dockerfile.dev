@@ -28,5 +28,11 @@ RUN mkdir src && \
 # Expose port
 EXPOSE 1027
 
+COPY src ./src
+COPY Rocket.toml ./
+
+# Build the actual application
+RUN cargo build 
+
 # Default command for development (hot reload)
 CMD ["cargo-watch", "-i", "logs/**", "-x", "run"]
