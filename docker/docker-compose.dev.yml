@@ -1,39 +1,41 @@
+# 개발 환경 - 독립 실행 가능
 services:
   omninews-backend:
     build:
       context: .
-      dockerfile: Dockerfile.dev # 개발용 Dockerfile 사용
+      dockerfile: Dockerfile.dev
     container_name: omninews_backend_dev
     ports:
       - "1027:1027"
     environment:
       - ROCKET_ENV=development
       - ROCKET_ADDRESS=0.0.0.0
-      - ROCKET_PORT=1027
+      - ROCKET_PORT=1028
       - RUST_LOG=debug
     env_file:
       - .env
       - .development.env
     volumes:
-      - ./src:/app/src:ro # 소스코드 hot-reload
+      - ./src:/app/src:ro
       - ./Cargo.toml:/app/Cargo.toml:ro
       - ./Rocket.toml:/app/Rocket.toml:ro
       - ./logs:/app/logs
       - ./static:/app/static
       - ./templates:/app/templates
       - ./omninews_firebase_sdk.json:/app/omninews_firebase_sdk.json:ro
-      - cargo_cache:/usr/local/cargo/registry
+      - dev_cargo_cache:/usr/local/cargo/registry
     networks:
-      - omninews-network
+      - omninews-dev-network
     depends_on:
       mysql:
         condition: service_healthy
-    stdin_open: true # docker run -i
-    tty: true # docker run -t
+    stdin_open: true
+    tty: true
 
   mysql:
     image: mysql:8.0
     container_name: omninews_mysql_dev
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-devpassword}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-omninews_dev}
@@ -42,10 +44,10 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - mysql_dev_data:/var/lib/mysql
+      - dev_mysql_data:/var/lib/mysql
       - ./mysql-init:/docker-entrypoint-initdb.d
     networks:
-      - omninews-network
+      - omninews-dev-network
     command: --default-authentication-plugin=mysql_native_password
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
@@ -54,7 +56,7 @@ services:
 
   selenium1:
     image: selenium/standalone-chromium:latest
-    container_name: selenium1
+    container_name: selenium1_dev
     shm_size: 2g
     restart: unless-stopped
     environment:
@@ -67,13 +69,13 @@ services:
       - "4444:4444"
       - "7901:7900"
     volumes:
-      - selenium-profile-1:/home/seluser/.config/google-chrome
+      - dev_selenium_profile_1:/home/seluser/.config/google-chrome
     networks:
-      - omninews-network
+      - omninews-dev-network
 
   selenium2:
     image: selenium/standalone-chromium:latest
-    container_name: selenium2
+    container_name: selenium2_dev
     shm_size: 2g
     restart: unless-stopped
     environment:
@@ -86,13 +88,13 @@ services:
       - "4445:4444"
       - "7902:7900"
     volumes:
-      - selenium-profile-2:/home/seluser/.config/google-chrome
+      - dev_selenium_profile_2:/home/seluser/.config/google-chrome
     networks:
-      - omninews-network
+      - omninews-dev-network
 
   selenium3:
     image: selenium/standalone-chromium:latest
-    container_name: selenium3
+    container_name: selenium3_dev
     shm_size: 2g
     restart: unless-stopped
     environment:
@@ -105,13 +107,13 @@ services:
       - "4446:4444"
       - "7903:7900"
     volumes:
-      - selenium-profile-3:/home/seluser/.config/google-chrome
+      - dev_selenium_profile_3:/home/seluser/.config/google-chrome
     networks:
-      - omninews-network
+      - omninews-dev-network
 
   scheduler_selenium1:
     image: selenium/standalone-chromium:latest
-    container_name: scheduler_selenium1
+    container_name: scheduler_selenium1_dev
     shm_size: 2g
     restart: unless-stopped
     environment:
@@ -124,13 +126,13 @@ services:
       - "4450:4444"
       - "7910:7900"
     volumes:
-      - scheduler-selenium-profile-1:/home/seluser/.config/google-chrome
+      - dev_scheduler_selenium_profile_1:/home/seluser/.config/google-chrome
     networks:
-      - omninews-network
+      - omninews-dev-network
 
   scheduler_selenium2:
     image: selenium/standalone-chromium:latest
-    container_name: scheduler_selenium2
+    container_name: scheduler_selenium2_dev
     shm_size: 2g
     restart: unless-stopped
     environment:
@@ -143,13 +145,13 @@ services:
       - "4451:4444"
       - "7911:7900"
     volumes:
-      - scheduler-selenium-profile-2:/home/seluser/.config/google-chrome
+      - dev_scheduler_selenium_profile_2:/home/seluser/.config/google-chrome
     networks:
-      - omninews-network
+      - omninews-dev-network
 
   scheduler_selenium3:
     image: selenium/standalone-chromium:latest
-    container_name: scheduler_selenium3
+    container_name: scheduler_selenium3_dev
     shm_size: 2g
     restart: unless-stopped
     environment:
@@ -162,13 +164,13 @@ services:
       - "4452:4444"
       - "7912:7900"
     volumes:
-      - scheduler-selenium-profile-3:/home/seluser/.config/google-chrome
+      - dev_scheduler_selenium_profile_3:/home/seluser/.config/google-chrome
     networks:
-      - omninews-network
+      - omninews-dev-network
 
   scheduler_selenium4:
     image: selenium/standalone-chromium:latest
-    container_name: scheduler_selenium4
+    container_name: scheduler_selenium4_dev
     shm_size: 2g
     restart: unless-stopped
     environment:
@@ -181,13 +183,13 @@ services:
       - "4453:4444"
       - "7913:7900"
     volumes:
-      - scheduler-selenium-profile-4:/home/seluser/.config/google-chrome
+      - dev_scheduler_selenium_profile_4:/home/seluser/.config/google-chrome
     networks:
-      - omninews-network
+      - omninews-dev-network
 
   scheduler_selenium5:
     image: selenium/standalone-chromium:latest
-    container_name: scheduler_selenium5
+    container_name: scheduler_selenium5_dev
     shm_size: 2g
     restart: unless-stopped
     environment:
@@ -200,23 +202,22 @@ services:
       - "4454:4444"
       - "7914:7900"
     volumes:
-      - scheduler-selenium-profile-5:/home/seluser/.config/google-chrome
+      - dev_scheduler_selenium_profile_5:/home/seluser/.config/google-chrome
     networks:
-      - omninews-network
+      - omninews-dev-network
 
 networks:
-  omninews-network:
-    external: true
+  omninews-dev-network:
+    driver: bridge
 
 volumes:
-  mysql_dev_data:
-  selenium-profile-1:
-  selenium-profile-2:
-  selenium-profile-3:
-  scheduler-selenium-profile-1:
-  scheduler-selenium-profile-2:
-  scheduler-selenium-profile-3:
-  scheduler-selenium-profile-4:
-  scheduler-selenium-profile-5:
-  cargo_cache:
-  target_cache:
+  dev_mysql_data:
+  dev_selenium_profile_1:
+  dev_selenium_profile_2:
+  dev_selenium_profile_3:
+  dev_scheduler_selenium_profile_1:
+  dev_scheduler_selenium_profile_2:
+  dev_scheduler_selenium_profile_3:
+  dev_scheduler_selenium_profile_4:
+  dev_scheduler_selenium_profile_5:
+  dev_cargo_cache:
