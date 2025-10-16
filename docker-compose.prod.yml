@@ -1,0 +1,36 @@
+services:
+  omninews-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+      # BIN_NAME 제거 - 필요 없음
+    container_name: omninews_backend_prod
+    restart: unless-stopped
+    ports:
+      - "1027:1027"
+    environment:
+      - ROCKET_ENV=production
+      - ROCKET_ADDRESS=0.0.0.0
+      - ROCKET_PORT=1027
+      - RUST_LOG=info
+    env_file:
+      - .env
+      - .production.env
+    volumes:
+      - ./logs:/app/logs
+      - ./static:/app/static
+      - ./templates:/app/templates
+      - ./omninews_firebase_sdk.json:/app/omninews_firebase_sdk.json:ro
+    networks:
+      - omninews-prod-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:1027/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    tty: true
+
+networks:
+  omninews-prod-network:
+    external: true

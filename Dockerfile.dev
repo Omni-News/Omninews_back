@@ -15,24 +15,14 @@ RUN cargo install cargo-watch
 # Set working directory
 WORKDIR /app
 
-# Copy dependency files
-COPY Cargo.toml Cargo.lock ./
+# copy data
+COPY . .
 
-
-# Pre-build dependencies for faster rebuilds
-RUN mkdir src && \
-    echo 'fn main() {println!("Hello, world!");}' > src/main.rs && \
-    cargo build && \
-    rm -rf src
+ENV SQLX_OFFLINE=1
+RUN cargo build
 
 # Expose port
-EXPOSE 1027
-
-COPY src ./src
-COPY Rocket.toml ./
-
-# Build the actual application
-RUN cargo build 
+EXPOSE 1028
 
 # Default command for development (hot reload)
 CMD ["cargo-watch", "-i", "logs/**", "-x", "run"]
