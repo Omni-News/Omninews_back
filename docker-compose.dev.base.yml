@@ -116,63 +116,6 @@ services:
     networks:
       - omninews-dev-network
 
-  scheduler_selenium3:
-    image: selenium/standalone-chromium:latest
-    container_name: scheduler_selenium3_dev
-    shm_size: 2g
-    restart: unless-stopped
-    environment:
-      SE_NODE_MAX_SESSIONS: 12
-      SE_NODE_SESSION_TIMEOUT: 14400
-      SE_SCREEN_WIDTH: 1940
-      SE_SCREEN_HEIGHT: 1120
-      SE_SCREEN_DEPTH: 24
-    ports:
-      - "4452:4444"
-      - "7912:7900"
-    volumes:
-      - dev_scheduler_selenium_profile_3:/home/seluser/.config/google-chrome
-    networks:
-      - omninews-dev-network
-
-  scheduler_selenium4:
-    image: selenium/standalone-chromium:latest
-    container_name: scheduler_selenium4_dev
-    shm_size: 2g
-    restart: unless-stopped
-    environment:
-      SE_NODE_MAX_SESSIONS: 12
-      SE_NODE_SESSION_TIMEOUT: 14400
-      SE_SCREEN_WIDTH: 1940
-      SE_SCREEN_HEIGHT: 1120
-      SE_SCREEN_DEPTH: 24
-    ports:
-      - "4453:4444"
-      - "7913:7900"
-    volumes:
-      - dev_scheduler_selenium_profile_4:/home/seluser/.config/google-chrome
-    networks:
-      - omninews-dev-network
-
-  scheduler_selenium5:
-    image: selenium/standalone-chromium:latest
-    container_name: scheduler_selenium5_dev
-    shm_size: 2g
-    restart: unless-stopped
-    environment:
-      SE_NODE_MAX_SESSIONS: 12
-      SE_NODE_SESSION_TIMEOUT: 14400
-      SE_SCREEN_WIDTH: 1940
-      SE_SCREEN_HEIGHT: 1120
-      SE_SCREEN_DEPTH: 24
-    ports:
-      - "4454:4444"
-      - "7914:7900"
-    volumes:
-      - dev_scheduler_selenium_profile_5:/home/seluser/.config/google-chrome
-    networks:
-      - omninews-dev-network
-
 networks:
   omninews-dev-network:
     external: true
@@ -184,6 +127,3 @@ volumes:
   dev_selenium_profile_3:
   dev_scheduler_selenium_profile_1:
   dev_scheduler_selenium_profile_2:
-  dev_scheduler_selenium_profile_3:
-  dev_scheduler_selenium_profile_4:
-  dev_scheduler_selenium_profile_5:
