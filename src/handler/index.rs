@@ -10,6 +10,8 @@ pub async fn index() -> Template {
             title: "OmniNews — 모든 뉴스를 한 곳에서",
             description: "뉴스와 RSS를 한 번에. 빠르고 간결한 뉴스 경험.",
             year: 2025,
+            phone: "010-9533-7464",
+            email: "kang3171611@naver.com"
         },
     )
 }
