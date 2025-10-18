@@ -1,0 +1,33 @@
+# 개발 환경 - 독립 실행 가능
+services:
+  omninews-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: omninews_backend_dev
+    ports:
+      - "1028:1028"
+    environment:
+      - ROCKET_ENV=development
+      - ROCKET_ADDRESS=0.0.0.0
+      - ROCKET_PORT=1028
+      - RUST_LOG=debug
+    env_file:
+      - .env
+      - .development.env
+    volumes:
+      - ./src:/app/src:ro
+      - ./Cargo.toml:/app/Cargo.toml:ro
+      - ./Rocket.toml:/app/Rocket.toml:ro
+      - ./logs:/app/logs
+      - ./static:/app/static
+      - ./templates:/app/templates
+      - ./omninews_firebase_sdk.json:/app/omninews_firebase_sdk.json:ro
+    networks:
+      - omninews-dev-network
+    stdin_open: true
+    tty: true
+
+networks:
+  omninews-dev-network:
+    external: true
