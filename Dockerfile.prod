@@ -1,0 +1,77 @@
+# syntax=docker/dockerfile:1
+
+# =========================
+# Stage 1: Builder (release 모드)
+# =========================
+FROM rust:1.89 as builder
+
+# 빌드 의존성 설치
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    libmariadb-dev \
+    findutils \
+    wget \
+    unzip \
+    libgomp1 \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# libtorch 다운로드 및 설치 (정확한 버전 지정)
+RUN mkdir -p /opt \
+ && cd /opt \
+ && wget -q https://download.pytorch.org/libtorch/cpu/libtorch-cxx11-abi-shared-with-deps-2.4.0%2Bcpu.zip \
+ && unzip libtorch-cxx11-abi-shared-with-deps-2.4.0+cpu.zip \
+ && rm libtorch-cxx11-abi-shared-with-deps-2.4.0+cpu.zip
+
+# rust-bert 공식 문서대로 환경변수 설정
+ENV LIBTORCH=/opt/libtorch
+ENV LD_LIBRARY_PATH=/opt/libtorch/lib:$LD_LIBRARY_PATH
+ENV LIBTORCH_BYPASS_VERSION_CHECK=1
+
+# 소스 코드 복사
+COPY . .
+
+# 릴리스 모드 빌드
+ENV SQLX_OFFLINE=1
+RUN cargo build --release
+
+# 빌드 산출물 복사
+RUN find target/release -type f -executable -not -path "*/deps/*" -not -path "*/examples/*" -not -name "*.d" | head -n 1 | xargs -I {} install -Dm755 {} /dist/omninews_back
+
+# =========================
+# Stage 2: Runtime - 빌더와 동일한 환경 사용
+# =========================
+FROM rust:1.89-slim
+
+# 기본 런타임 의존성 (최소화)
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    libssl-dev \
+    default-libmysqlclient-dev \
+    libgomp1 \
+ && rm -rf /var/lib/apt/lists/*
+
+# 비루트 유저
+RUN useradd -m -u 1000 omninews
+WORKDIR /app
+
+# libtorch 복사
+COPY --from=builder /opt/libtorch /opt/libtorch
+
+# 환경 변수 설정 (rust-bert 문서대로)
+ENV LIBTORCH=/opt/libtorch
+ENV LD_LIBRARY_PATH=/opt/libtorch/lib:$LD_LIBRARY_PATH
+
+# 빌드 산출물 복사
+COPY --from=builder /dist/omninews_back /app/omninews_back
+COPY --from=builder /app/Rocket.toml /app/Rocket.toml
+
+# 디렉터리/권한
+RUN mkdir -p /app/logs /app/static /app/templates \
+ && chown -R omninews:omninews /app
+
+USER omninews
+EXPOSE 1027
+CMD ["/app/omninews_back"]

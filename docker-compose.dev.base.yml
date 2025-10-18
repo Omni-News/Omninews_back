@@ -1,37 +1,4 @@
-# 개발 환경 - 독립 실행 가능
 services:
-  omninews-backend:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    container_name: omninews_backend_dev
-    ports:
-      - "1027:1027"
-    environment:
-      - ROCKET_ENV=development
-      - ROCKET_ADDRESS=0.0.0.0
-      - ROCKET_PORT=1028
-      - RUST_LOG=debug
-    env_file:
-      - .env
-      - .development.env
-    volumes:
-      - ./src:/app/src:ro
-      - ./Cargo.toml:/app/Cargo.toml:ro
-      - ./Rocket.toml:/app/Rocket.toml:ro
-      - ./logs:/app/logs
-      - ./static:/app/static
-      - ./templates:/app/templates
-      - ./omninews_firebase_sdk.json:/app/omninews_firebase_sdk.json:ro
-      - dev_cargo_cache:/usr/local/cargo/registry
-    networks:
-      - omninews-dev-network
-    depends_on:
-      mysql:
-        condition: service_healthy
-    stdin_open: true
-    tty: true
-
   mysql:
     image: mysql:8.0
     container_name: omninews_mysql_dev
@@ -208,7 +175,7 @@ services:
 
 networks:
   omninews-dev-network:
-    driver: bridge
+    external: true
 
 volumes:
   dev_mysql_data:
@@ -220,4 +187,3 @@ volumes:
   dev_scheduler_selenium_profile_3:
   dev_scheduler_selenium_profile_4:
   dev_scheduler_selenium_profile_5:
-  dev_cargo_cache:
