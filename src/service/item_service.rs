@@ -219,7 +219,8 @@ pub async fn get_rss_list(
     embedding_service: &EmbeddingService,
     value: SearchRequestDto,
 ) -> Result<SearchResponseDto, OmniNewsError> {
-    let load_annoy = load_rss_annoy(embedding_service, value.search_value.unwrap()).await?;
+    let search_value = value.search_value.unwrap_or_default();
+    let load_annoy = load_rss_annoy(embedding_service, search_value.clone()).await?;
     let page = value.search_page_size.unwrap_or_default();
 
     let mut item_list = vec![];
@@ -235,10 +236,26 @@ pub async fn get_rss_list(
 
     match value.search_type.clone().unwrap() {
         SearchType::Accuracy => {
-            push_rss_item(pool, &load_annoy, &mut item_list, total, offset).await;
+            push_rss_item(
+                pool,
+                &load_annoy,
+                &mut item_list,
+                total,
+                offset,
+                search_value.as_str(),
+            )
+            .await;
         }
         SearchType::Popularity => {
-            push_rss_item(pool, &load_annoy, &mut item_list, total, offset).await;
+            push_rss_item(
+                pool,
+                &load_annoy,
+                &mut item_list,
+                total,
+                offset,
+                search_value.as_str(),
+            )
+            .await;
 
             item_list.sort_by(|a, b| {
                 b.rss_rank
@@ -247,7 +264,15 @@ pub async fn get_rss_list(
             });
         }
         SearchType::Latest => {
-            push_rss_item(pool, &load_annoy, &mut item_list, total, offset).await;
+            push_rss_item(
+                pool,
+                &load_annoy,
+                &mut item_list,
+                total,
+                offset,
+                search_value.as_str(),
+            )
+            .await;
 
             item_list.sort_by(|a, b| {
                 b.rss_pub_date
@@ -271,6 +296,7 @@ async fn push_rss_item(
     item_list: &mut Vec<RssItem>,
     total: i32,
     offset: i32,
+    search_value: &str,
 ) {
     for i in 0..20 {
         if offset + i == total {
@@ -279,6 +305,7 @@ async fn push_rss_item(
 
         if let Ok(item) = rss_item_repository::select_rss_item_by_embedding_id(
             pool,
+            search_value,
             load_annoy.0[(i + offset) as usize],
         )
         .await

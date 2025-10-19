@@ -310,7 +310,8 @@ pub async fn get_channel_list(
     embedding_service: &EmbeddingService,
     value: SearchRequestDto,
 ) -> Result<SearchResponseDto, OmniNewsError> {
-    let load_annoy = load_channel_annoy(embedding_service, value.search_value.unwrap()).await?;
+    let search_value = value.search_value.clone().unwrap_or_default();
+    let load_annoy = load_channel_annoy(embedding_service, search_value.clone()).await?;
 
     let page = value.search_page_size.unwrap_or_default();
 
@@ -327,10 +328,26 @@ pub async fn get_channel_list(
 
     match value.search_type.clone().unwrap() {
         SearchType::Accuracy => {
-            push_rss_channel(pool, &load_annoy, &mut channel_list, total, offset).await;
+            push_rss_channel(
+                pool,
+                &load_annoy,
+                &mut channel_list,
+                total,
+                offset,
+                search_value.as_str(),
+            )
+            .await;
         }
         SearchType::Popularity => {
-            push_rss_channel(pool, &load_annoy, &mut channel_list, total, offset).await;
+            push_rss_channel(
+                pool,
+                &load_annoy,
+                &mut channel_list,
+                total,
+                offset,
+                search_value.as_str(),
+            )
+            .await;
 
             channel_list.sort_by(|a, b| {
                 b.channel_rank
@@ -340,7 +357,15 @@ pub async fn get_channel_list(
         }
         // 스키마에 날짜 컬럼 없어 정확순으로 대체
         SearchType::Latest => {
-            push_rss_channel(pool, &load_annoy, &mut channel_list, total, offset).await
+            push_rss_channel(
+                pool,
+                &load_annoy,
+                &mut channel_list,
+                total,
+                offset,
+                search_value.as_str(),
+            )
+            .await
         }
     };
 
@@ -359,6 +384,7 @@ async fn push_rss_channel(
     channel_list: &mut Vec<RssChannel>,
     total: i32,
     offset: i32,
+    search_value: &str,
 ) {
     for i in 0..20 {
         if offset + i == total {
@@ -367,6 +393,7 @@ async fn push_rss_channel(
 
         if let Ok(item) = rss_channel_repository::select_rss_channel_by_embedding_id(
             pool,
+            search_value,
             load_annoy.0[(i + offset) as usize],
         )
         .await

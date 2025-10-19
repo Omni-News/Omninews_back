@@ -64,17 +64,24 @@ pub async fn select_rss_channel_by_channel_link(
 
 pub async fn select_rss_channel_by_embedding_id(
     pool: &MySqlPool,
-    embedding_id: i32,
+    search_value: &str,
+    _embedding_id: i32,
 ) -> Result<RssChannel, sqlx::Error> {
     let mut conn = get_db(pool).await?;
-    let result = query_as!(
-        RssChannel,
-        "SELECT r.*
+    let _ = "SELECT r.*
         FROM rss_channel r 
         JOIN embedding e 
         ON r.channel_id = e.channel_id
-        WHERE e.embedding_id=?;",
-        embedding_id as i32,
+        WHERE e.embedding_id=?;";
+
+    let result = query_as!(
+        RssChannel,
+        "SELECT *
+        FROM rss_channel
+        WHERE channel_title LIKE CONCAT('%', ?, '%')
+        OR channel_description LIKE CONCAT('%', ?, '%');",
+        search_value,
+        search_value,
     )
     .fetch_one(&mut *conn)
     .await;
