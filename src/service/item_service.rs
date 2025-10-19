@@ -223,8 +223,13 @@ pub async fn get_rss_list(
     let load_annoy = load_rss_annoy(embedding_service, search_value.clone()).await?;
     let page = value.search_page_size.unwrap_or_default();
 
-    let mut item_list = vec![];
-    let total = load_annoy.0.len() as i32;
+    let mut _item_list: Vec<RssItem> = vec![];
+    let _total = load_annoy.0.len() as i32;
+
+    let mut searched_rss_items =
+        rss_item_repository::select_rss_item_by_embedding_id(pool, search_value.as_str(), 0)
+            .await?;
+    let total = searched_rss_items.len() as i32;
     // Provide 20 rss item each select request
     let offset = (page - 1) * 20;
     let has_next = total > offset + 20;
@@ -236,45 +241,45 @@ pub async fn get_rss_list(
 
     match value.search_type.clone().unwrap() {
         SearchType::Accuracy => {
-            push_rss_item(
-                pool,
-                &load_annoy,
-                &mut item_list,
-                total,
-                offset,
-                search_value.as_str(),
-            )
-            .await;
+            //            push_rss_item(
+            //                pool,
+            //                &load_annoy,
+            //                &mut item_list,
+            //                total,
+            //                offset,
+            //                search_value.as_str(),
+            //            )
+            //            .await;
         }
         SearchType::Popularity => {
-            push_rss_item(
-                pool,
-                &load_annoy,
-                &mut item_list,
-                total,
-                offset,
-                search_value.as_str(),
-            )
-            .await;
+            //            push_rss_item(
+            //                pool,
+            //                &load_annoy,
+            //                &mut item_list,
+            //                total,
+            //                offset,
+            //                search_value.as_str(),
+            //            )
+            //            .await;
 
-            item_list.sort_by(|a, b| {
+            searched_rss_items.sort_by(|a, b| {
                 b.rss_rank
                     .unwrap_or_default()
                     .cmp(&a.rss_rank.unwrap_or_default())
             });
         }
         SearchType::Latest => {
-            push_rss_item(
-                pool,
-                &load_annoy,
-                &mut item_list,
-                total,
-                offset,
-                search_value.as_str(),
-            )
-            .await;
+            //            push_rss_item(
+            //                pool,
+            //                &load_annoy,
+            //                &mut item_list,
+            //                total,
+            //                offset,
+            //                search_value.as_str(),
+            //            )
+            //            .await;
 
-            item_list.sort_by(|a, b| {
+            searched_rss_items.sort_by(|a, b| {
                 b.rss_pub_date
                     .unwrap_or_default()
                     .cmp(&a.rss_pub_date.unwrap_or_default())
@@ -283,17 +288,18 @@ pub async fn get_rss_list(
     };
     Ok(SearchResponseDto::new(
         vec![],
-        RssItemResponseDto::from_model_list(item_list),
+        RssItemResponseDto::from_model_list(searched_rss_items),
         total,
         page,
         has_next,
     ))
 }
 
+#[allow(unused)]
 async fn push_rss_item(
     pool: &MySqlPool,
     load_annoy: &(Vec<i32>, Vec<f32>),
-    item_list: &mut Vec<RssItem>,
+    item_list: &mut [RssItem],
     total: i32,
     offset: i32,
     search_value: &str,
@@ -310,7 +316,7 @@ async fn push_rss_item(
         )
         .await
         {
-            item_list.push(item);
+            //item_list.push(item);
         }
     }
 }

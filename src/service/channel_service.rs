@@ -315,10 +315,15 @@ pub async fn get_channel_list(
 
     let page = value.search_page_size.unwrap_or_default();
 
-    let mut channel_list = vec![];
-    let total = load_annoy.0.len() as i32;
+    let mut _channel_list: Vec<RssChannel> = vec![];
+    let _total = load_annoy.0.len() as i32;
+    let mut searched_rss_channels =
+        rss_channel_repository::select_rss_channel_by_embedding_id(pool, search_value.as_str(), 0)
+            .await?;
+    let total = searched_rss_channels.len() as i32;
     // Provide 20 rss item each select request
     let offset = (page - 1) * 20;
+
     let has_next = total > offset + 20;
 
     // too long page size
@@ -328,28 +333,28 @@ pub async fn get_channel_list(
 
     match value.search_type.clone().unwrap() {
         SearchType::Accuracy => {
-            push_rss_channel(
-                pool,
-                &load_annoy,
-                &mut channel_list,
-                total,
-                offset,
-                search_value.as_str(),
-            )
-            .await;
+            //            push_rss_channel(
+            //                pool,
+            //                &load_annoy,
+            //                &mut channel_list,
+            //                total,
+            //                offset,
+            //                search_value.as_str(),
+            //            )
+            //            .await;
         }
         SearchType::Popularity => {
-            push_rss_channel(
-                pool,
-                &load_annoy,
-                &mut channel_list,
-                total,
-                offset,
-                search_value.as_str(),
-            )
-            .await;
+            //            push_rss_channel(
+            //                pool,
+            //                &load_annoy,
+            //                &mut channel_list,
+            //                total,
+            //                offset,
+            //                search_value.as_str(),
+            //            )
+            //            .await;
 
-            channel_list.sort_by(|a, b| {
+            searched_rss_channels.sort_by(|a, b| {
                 b.channel_rank
                     .unwrap_or_default()
                     .cmp(&a.channel_rank.unwrap_or_default())
@@ -357,20 +362,20 @@ pub async fn get_channel_list(
         }
         // 스키마에 날짜 컬럼 없어 정확순으로 대체
         SearchType::Latest => {
-            push_rss_channel(
-                pool,
-                &load_annoy,
-                &mut channel_list,
-                total,
-                offset,
-                search_value.as_str(),
-            )
-            .await
+            //            push_rss_channel(
+            //                pool,
+            //                &load_annoy,
+            //                &mut channel_list,
+            //                total,
+            //                offset,
+            //                search_value.as_str(),
+            //            )
+            //            .await
         }
     };
 
     Ok(SearchResponseDto::new(
-        RssChannelResponseDto::from_model_list(channel_list),
+        RssChannelResponseDto::from_model_list(searched_rss_channels),
         vec![],
         total,
         page,
@@ -378,10 +383,11 @@ pub async fn get_channel_list(
     ))
 }
 
+#[allow(unused)]
 async fn push_rss_channel(
     pool: &MySqlPool,
     load_annoy: &(Vec<i32>, Vec<f32>),
-    channel_list: &mut Vec<RssChannel>,
+    channel_list: &mut [RssChannel],
     total: i32,
     offset: i32,
     search_value: &str,
@@ -398,7 +404,7 @@ async fn push_rss_channel(
         )
         .await
         {
-            channel_list.push(item);
+            //channel_list.push(item);
         }
     }
 }
