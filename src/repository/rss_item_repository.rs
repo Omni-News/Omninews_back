@@ -28,7 +28,7 @@ pub async fn select_rss_item_by_embedding_id(
     pool: &MySqlPool,
     search_value: &str,
     _embedding_id: i32,
-) -> Result<RssItem, sqlx::Error> {
+) -> Result<Vec<RssItem>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
     // using embedding
     let _ = "SELECT r.* 
@@ -47,7 +47,7 @@ pub async fn select_rss_item_by_embedding_id(
         search_value,
         search_value,
     )
-    .fetch_one(&mut *conn)
+    .fetch_all(&mut *conn)
     .await;
 
     match result {
