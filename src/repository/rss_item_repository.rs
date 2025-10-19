@@ -26,17 +26,26 @@ pub async fn select_item_by_link(
 
 pub async fn select_rss_item_by_embedding_id(
     pool: &MySqlPool,
-    embedding_id: i32,
+    search_value: &str,
+    _embedding_id: i32,
 ) -> Result<RssItem, sqlx::Error> {
     let mut conn = get_db(pool).await?;
-    let result = query_as!(
-        RssItem,
-        "SELECT r.* 
+    // using embedding
+    let _ = "SELECT r.* 
         FROM rss_item r 
         JOIN embedding e 
         ON r.rss_id = e.rss_id
-        WHERE e.embedding_id=?;",
-        embedding_id as i32,
+        WHERE e.embedding_id=?;";
+
+    let result = query_as!(
+        RssItem,
+        "SELECT *
+        FROM rss_item
+        WHERE rss_title LIKE CONCAT('%', ? ,'%')
+        OR rss_description LIKE CONCAT('%', ? ,'%')
+        ORDER BY rss_pub_Date DESC;",
+        search_value,
+        search_value,
     )
     .fetch_one(&mut *conn)
     .await;
