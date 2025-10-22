@@ -6,7 +6,7 @@ use crate::{
         response::{NewsApiResponseDto, NewsResponseDto},
     },
     model::error::OmniNewsError,
-    news_error,
+    news_error, news_info,
     repository::news_repository,
 };
 use chrono::NaiveDateTime;
@@ -22,8 +22,9 @@ pub async fn get_news(
     let size = 20;
     let offset = (page - 1) * size;
 
-    match news_repository::select_news_by_category(pool, &category, offset, size).await {
+    match news_repository::select_news_by_category(pool, &category, size, offset).await {
         Ok(news) => Ok(NewsResponseDto::from_model_list(news)),
+
         Err(e) => {
             news_error!("[Service] Failed to fetch news: {:?}", e);
             Err(OmniNewsError::Database(e))
