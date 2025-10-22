@@ -4,7 +4,9 @@ use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use sqlx::MySqlPool;
 
 use crate::{
-    auth_middleware::AuthenticatedUser, dto::news::response::NewsResponseDto, service::news_service,
+    auth_middleware::AuthenticatedUser,
+    dto::news::{request::NewsRequestDto, response::NewsResponseDto},
+    service::news_service,
 };
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
@@ -18,13 +20,13 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// ### `category` : 뉴스 카테고리 (예: "정치", "경제", "사회", "생활/문화", "세계", "IT/과학")
 ///
 #[openapi(tag = "뉴스 API")]
-#[get("/news?<category>")]
+#[get("/news?<value..>")]
 pub async fn get_news(
     pool: &State<MySqlPool>,
-    category: String,
+    value: NewsRequestDto,
     _auth: AuthenticatedUser,
 ) -> Result<Json<Vec<NewsResponseDto>>, Status> {
-    match news_service::get_news(pool, category).await {
+    match news_service::get_news(pool, value).await {
         Ok(res) => Ok(Json(res)),
         Err(_) => Err(Status::InternalServerError),
     }

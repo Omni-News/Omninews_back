@@ -4,14 +4,18 @@ use crate::{db_util::get_db, model::news::News};
 
 pub async fn select_news_by_category(
     pool: &MySqlPool,
-    category: String,
+    category: &str,
+    size: i32,
+    offset: i32,
 ) -> Result<Vec<News>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
 
     let result = query_as!(
         News,
-        "SELECT * from news WHERE news_category=? ORDER BY news_pub_date DESC LIMIT 100",
+        "SELECT * FROM news WHERE news_category=? ORDER BY news_pub_date DESC LIMIT ? OFFSET ?",
         category,
+        size,
+        offset
     )
     .fetch_all(&mut *conn)
     .await;

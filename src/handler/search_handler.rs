@@ -7,7 +7,7 @@ use rocket_okapi::{openapi, openapi_get_routes_spec};
 use sqlx::MySqlPool;
 
 use crate::auth_middleware::AuthenticatedUser;
-use crate::dto::news::request::NewsRequestDto;
+use crate::dto::news::request::ApiNewsRequestDto;
 use crate::dto::news::response::NewsApiResponseDto;
 use crate::dto::search::request::SearchRequestDto;
 use crate::dto::search::response::SearchResponseDto;
@@ -87,7 +87,7 @@ pub async fn get_channel_list(
 #[openapi(tag = "검색 API")]
 #[get("/search/news_api?<params..>")]
 pub async fn get_news_by_api(
-    params: NewsRequestDto,
+    params: ApiNewsRequestDto,
     _auth: AuthenticatedUser,
 ) -> Result<Json<Vec<NewsApiResponseDto>>, Status> {
     match news_service::get_news_by_api(params).await {
