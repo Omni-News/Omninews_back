@@ -2,7 +2,7 @@ use std::env;
 
 use crate::{
     dto::news::{
-        request::NewsRequestDto,
+        request::{ApiNewsRequestDto, NewsRequestDto},
         response::{NewsApiResponseDto, NewsResponseDto},
     },
     model::error::OmniNewsError,
@@ -15,9 +15,14 @@ use sqlx::MySqlPool;
 
 pub async fn get_news(
     pool: &MySqlPool,
-    category: String,
+    value: NewsRequestDto,
 ) -> Result<Vec<NewsResponseDto>, OmniNewsError> {
-    match news_repository::select_news_by_category(pool, category).await {
+    let category = value.category.unwrap_or_default();
+    let page = value.page.unwrap_or(1);
+    let size = 20;
+    let offset = (page - 1) * size;
+
+    match news_repository::select_news_by_category(pool, &category, offset, size).await {
         Ok(news) => Ok(NewsResponseDto::from_model_list(news)),
         Err(e) => {
             news_error!("[Service] Failed to fetch news: {:?}", e);
@@ -27,7 +32,7 @@ pub async fn get_news(
 }
 
 pub async fn get_news_by_api(
-    params: NewsRequestDto,
+    params: ApiNewsRequestDto,
 ) -> Result<Vec<NewsApiResponseDto>, OmniNewsError> {
     let res = request_naver_news_api(params).await?;
 
@@ -39,7 +44,7 @@ pub async fn get_news_by_api(
     get_news_items_by_xml(xml_data)
 }
 
-async fn request_naver_news_api(params: NewsRequestDto) -> Result<Response, OmniNewsError> {
+async fn request_naver_news_api(params: ApiNewsRequestDto) -> Result<Response, OmniNewsError> {
     let client = reqwest::Client::new();
 
     let mut head = HeaderMap::new();
