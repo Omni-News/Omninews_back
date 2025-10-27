@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema, FromForm)]
 pub struct RssItemRequestDto {
     #[schemars(example = "example_channel_id")]
     pub channel_id: Option<i32>,
