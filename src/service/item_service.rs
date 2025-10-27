@@ -1,6 +1,9 @@
 use crate::{
     dto::{
-        rss::{request::UpdateRssRankRequestDto, response::RssItemResponseDto},
+        rss::{
+            request::{RssItemRequestDto, UpdateRssRankRequestDto},
+            response::RssItemResponseDto,
+        },
         search::{request::SearchRequestDto, response::SearchResponseDto},
     },
     model::{
@@ -342,11 +345,21 @@ pub async fn get_recommend_item(
     }
 }
 
-pub async fn get_rss_item_by_channel_id(
+pub async fn get_rss_item_by_channel_id_pagenation(
     pool: &MySqlPool,
-    channel_id: i32,
+    data: RssItemRequestDto,
 ) -> Result<Vec<RssItemResponseDto>, OmniNewsError> {
-    match rss_item_repository::select_rss_items_by_channel_id(pool, channel_id).await {
+    let channel_id = data.channel_id.unwrap_or_default();
+    let page = data.page.unwrap_or(1);
+
+    let size = 20;
+    let offset = (page - 1) * size;
+
+    match rss_item_repository::select_rss_items_by_channel_id_pagenation(
+        pool, channel_id, size, offset,
+    )
+    .await
+    {
         Ok(res) => Ok(RssItemResponseDto::from_model_list(res)),
         Err(e) => {
             rss_error!("[Service] Failed to select items by channel id: {:?}", e);

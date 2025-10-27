@@ -74,18 +74,22 @@ pub async fn select_rss_items_order_by_rss_rank(
     }
 }
 
-pub async fn select_rss_items_by_channel_id(
+pub async fn select_rss_items_by_channel_id_pagenation(
     pool: &MySqlPool,
     channel_id: i32,
+    size: i32,
+    offset: i32,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
 
     let result = query_as!(
         RssItem,
         "SELECT * FROM rss_item r
-        WHERE r.channel_id = ?
+        WHERE r.channel_id = ? LIMIT ? OFFSET ?
         ORDER BY r.rss_pub_date DESC;",
         channel_id,
+        size,
+        offset,
     )
     .fetch_all(&mut *conn)
     .await;
