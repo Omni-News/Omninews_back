@@ -6,7 +6,7 @@ use rocket_okapi::{openapi, openapi_get_routes_spec};
 use sqlx::MySqlPool;
 
 use crate::auth_middleware::AuthenticatedUser;
-use crate::dto::rss::request::{CreateRssRequestDto, UpdateRssRankRequestDto};
+use crate::dto::rss::request::{CreateRssRequestDto, RssItemRequestDto, UpdateRssRankRequestDto};
 use crate::dto::rss::response::{RssChannelResponseDto, RssItemResponseDto};
 use crate::service::{channel_service, item_service};
 use crate::EmbeddingService;
@@ -109,15 +109,16 @@ pub async fn get_rss_channel_by_id(
 /// 특정 채널에 속한 RSS 아이템 목록을 조회합니다.
 ///
 /// ### `channel_id` : 조회할 채널 ID (예: 3)
+/// ### `page` : 조회할 page 번호 (예: 1)
 ///
 #[openapi(tag = "RSS API")]
-#[get("/rss/items?<channel_id>")]
+#[get("/rss/items?<data..>")]
 pub async fn get_rss_item_by_channel_id(
     pool: &State<MySqlPool>,
-    channel_id: i32,
+    data: RssItemRequestDto,
     _auth: AuthenticatedUser,
 ) -> Result<Json<Vec<RssItemResponseDto>>, Status> {
-    match item_service::get_rss_item_by_channel_id(pool, channel_id).await {
+    match item_service::get_rss_item_by_channel_id_pagenation(pool, data).await {
         Ok(res) => Ok(Json(res)),
         Err(_) => Err(Status::InternalServerError),
     }
