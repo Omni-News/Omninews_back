@@ -85,8 +85,9 @@ pub async fn select_rss_items_by_channel_id_pagenation(
     let result = query_as!(
         RssItem,
         "SELECT * FROM rss_item r
-        WHERE r.channel_id = ? LIMIT ? OFFSET ?
-        ORDER BY r.rss_pub_date DESC;",
+        WHERE r.channel_id = ?
+        ORDER BY r.rss_pub_date DESC
+        LIMIT ? OFFSET ?;",
         channel_id,
         size,
         offset,
