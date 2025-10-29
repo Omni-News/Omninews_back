@@ -7,7 +7,7 @@ use sqlx::MySqlPool;
 
 use crate::auth_middleware::AuthenticatedUser;
 use crate::dto::rss::response::{RssChannelResponseDto, RssItemResponseDto};
-use crate::dto::subscribe::request::SubscribeRequestDto;
+use crate::dto::subscribe::request::{SubscribeRequestDto, SubscribeRssItemRequestDto};
 use crate::service::subscription_service;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
@@ -89,20 +89,16 @@ pub async fn get_subscribe_channels(
 /// 사용자가 구독한 채널의 아이템 목록을 조회합니다.
 ///
 /// ### `channel_ids` : 구독한 채널 ID 목록 (예: "1, 2, 3")
+/// ### `page` : 검색할 페이지 번호 (예: 1)
 ///
 #[openapi(tag = "Subscription")]
-#[get("/subscription/items?<channel_ids>")]
+#[get("/subscription/items?<data..>")]
 pub async fn get_subscribe_items(
     pool: &State<MySqlPool>,
-    channel_ids: String,
+    data: SubscribeRssItemRequestDto,
     _auth: AuthenticatedUser,
 ) -> Result<Json<Vec<RssItemResponseDto>>, Status> {
-    let channel_ids: Vec<i32> = channel_ids
-        .split(',')
-        .filter_map(|s| s.trim().parse().ok())
-        .collect();
-
-    match subscription_service::get_subscription_items(pool, channel_ids).await {
+    match subscription_service::get_subscription_items(pool, data).await {
         Ok(res) => Ok(Json(res)),
         Err(_) => Err(Status::InternalServerError),
     }

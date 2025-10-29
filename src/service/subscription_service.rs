@@ -3,7 +3,7 @@ use sqlx::MySqlPool;
 use crate::{
     dto::{
         rss::response::{RssChannelResponseDto, RssItemResponseDto},
-        subscribe::request::SubscribeRequestDto,
+        subscribe::request::{SubscribeRequestDto, SubscribeRssItemRequestDto},
     },
     model::error::OmniNewsError,
     repository::subscribe_repository,
@@ -86,9 +86,20 @@ pub async fn unsubscribe_channel(
 
 pub async fn get_subscription_items(
     pool: &MySqlPool,
-    channel_ids: Vec<i32>,
+    data: SubscribeRssItemRequestDto,
 ) -> Result<Vec<RssItemResponseDto>, OmniNewsError> {
-    match subscribe_repository::select_subscription_items(pool, channel_ids).await {
+    let channel_ids: Vec<i32> = data
+        .channel_ids
+        .unwrap()
+        .split(',')
+        .filter_map(|s| s.trim().parse().ok())
+        .collect();
+
+    let size = 20;
+    let page = data.page.unwrap_or(1);
+    let offset = (page - 1) * size;
+
+    match subscribe_repository::select_subscription_items(pool, channel_ids, offset, size).await {
         Ok(res) => Ok(RssItemResponseDto::from_model_list(res)),
         Err(e) => {
             subscription_error!("Failed to select subscription items: {}", e);
