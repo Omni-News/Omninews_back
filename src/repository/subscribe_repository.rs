@@ -52,6 +52,8 @@ pub async fn select_subscription_channels(
 pub async fn select_subscription_items(
     pool: &MySqlPool,
     channels: Vec<i32>,
+    offset: i32,
+    size: i32,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
 
@@ -60,12 +62,19 @@ pub async fn select_subscription_items(
         .collect::<Vec<String>>()
         .join(",");
 
-    let query = format!("SELECT * FROM rss_item WHERE channel_id IN ({placeholder})");
+    let query = format!(
+        "SELECT * FROM rss_item 
+        WHERE channel_id IN ({placeholder})
+        ORDER BY rss_item.rss_pub_date DESC
+        LIMIT ? OFFSET ?;",
+    );
 
     let mut qurey_builder = query_as::<_, RssItem>(&query);
 
     for id in channels {
         qurey_builder = qurey_builder.bind(id);
+        qurey_builder = qurey_builder.bind(size);
+        qurey_builder = qurey_builder.bind(offset);
     }
 
     let result = qurey_builder.fetch_all(&mut *conn).await;
