@@ -73,9 +73,9 @@ pub async fn select_subscription_items(
 
     for id in channels {
         qurey_builder = qurey_builder.bind(id);
-        qurey_builder = qurey_builder.bind(size);
-        qurey_builder = qurey_builder.bind(offset);
     }
+    qurey_builder = qurey_builder.bind(size);
+    qurey_builder = qurey_builder.bind(offset);
 
     let result = qurey_builder.fetch_all(&mut *conn).await;
 
