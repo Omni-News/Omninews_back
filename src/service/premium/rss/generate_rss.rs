@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, FixedOffset, Utc};
 use reqwest::Url;
 use rss::{Channel, ChannelBuilder, Image, ItemBuilder};
 use sqlx::MySqlPool;
@@ -240,12 +240,16 @@ async fn make_items(
                     if let Ok(dt2) = DateTime::parse_from_rfc3339(&(item_pub_date_raw + "Z")) {
                         dt2.to_rfc2822()
                     } else {
-                        Utc::now().to_rfc2822()
+                        Utc::now()
+                            .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
+                            .to_rfc2822()
                     }
                 }
             }
         } else {
-            Utc::now().to_rfc2822()
+            Utc::now()
+                .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
+                .to_rfc2822()
         };
 
         let item = ItemBuilder::default()
