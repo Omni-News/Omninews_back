@@ -1,4 +1,4 @@
-use chrono::FixedOffset;
+use chrono::{FixedOffset, Utc};
 use feed_rs::parser::parse;
 use reqwest::Url;
 use rss::{Channel, ChannelBuilder, Image, Item, ItemBuilder};
@@ -169,7 +169,7 @@ fn parse_with_feed_rs(body: String) -> Result<Channel, OmniNewsError> {
                     };
                     let en_pub_date = entry
                         .published
-                        .unwrap()
+                        .unwrap_or(Utc::now())
                         .with_timezone(&FixedOffset::east_opt(9 * 3600).unwrap())
                         .to_rfc2822();
 
