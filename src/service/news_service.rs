@@ -6,7 +6,7 @@ use crate::{
         response::{NewsApiResponseDto, NewsResponseDto},
     },
     model::error::OmniNewsError,
-    news_error, news_info,
+    news_error,
     repository::news_repository,
 };
 use chrono::NaiveDateTime;
