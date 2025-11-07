@@ -79,6 +79,8 @@ pub async fn demo_login(
 ///
 /// ### `user_social_provider_id` : 소셜 로그인 제공자의 고유 ID ( 소셜 로그인 제공자에서 제공 )
 ///
+/// ### `user_platform` : 사용자의 플랫폼 (예: ios, android 등)
+///
 #[openapi(tag = "인증 API")]
 #[post("/user/login", data = "<user_data>")]
 pub async fn login(

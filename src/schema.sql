@@ -42,6 +42,7 @@ CREATE TABLE `user` (
 	`user_theme` ENUM('light', 'dark', 'blue', 'paper') DEFAULT 'paper',
 	`user_notification_push` BOOLEAN NOT NULL DEFAULT FALSE,
     `user_fcm_token` VARCHAR(255) NULL,
+    `user_platform` ENUM('ios', 'android'),
 	`user_articles_read` INT DEFAULT 0,
 	`user_last_active_at` DATETIME,
 	`user_created_at` DATETIME,

@@ -14,8 +14,8 @@ pub async fn insert_user(pool: &MySqlPool, user: NewUser) -> Result<i32, sqlx::E
             (user_email, user_display_name, user_photo_url, user_social_login_provider,
             user_social_provider_id, user_access_token, user_refresh_token, user_access_token_expires_at,
             user_refresh_token_expires_at, user_last_active_at,
-            user_created_at, user_updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )",
+            user_created_at, user_updated_at, user_platform)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )",
         user.user_email,
         user.user_display_name,
         user.user_photo_url,
@@ -28,6 +28,7 @@ pub async fn insert_user(pool: &MySqlPool, user: NewUser) -> Result<i32, sqlx::E
         user.user_last_active_at,
         user.user_created_at,
         user.user_updated_at,
+        user.user_platform
     )
     .execute(&mut *conn)
     .await;
@@ -314,19 +315,21 @@ pub async fn update_user_info(
     user_photo_url: Option<String>,
     user_social_login_provider: Option<String>,
     user_social_provider_id: Option<String>,
+    user_platform: Option<String>,
 ) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await?;
 
     let result = query!(
         "UPDATE user
             SET user_display_name = ?, user_photo_url = ?,
-                user_social_login_provider = ?, user_social_provider_id = ?
+                user_social_login_provider = ?, user_social_provider_id = ?, user_platform = ?
         WHERE user_email = ?",
         user_display_name,
         user_photo_url,
         user_social_login_provider,
         user_social_provider_id,
-        user_email
+        user_email,
+        user_platform
     )
     .execute(&mut *conn)
     .await;

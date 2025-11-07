@@ -54,6 +54,7 @@ pub async fn demo_login(
         user_photo_url: Some("https://example.com/photo.jpg".to_string()),
         user_social_login_provider: Some("apple".to_string()),
         user_social_provider_id: Some("demo_provider_id".to_string()),
+        user_platform: Some("demo".to_string()),
     };
 
     login_or_create_user(pool, login_dto).await
@@ -103,6 +104,7 @@ pub async fn login_or_create_user(
             user.user_photo_url,
             user.user_social_login_provider,
             user.user_social_provider_id,
+            user.user_platform,
         )
         .await
         {
@@ -350,6 +352,7 @@ pub async fn apple_login(
             user_photo_url: None,
             user_social_login_provider: Some("apple".to_string()),
             user_social_provider_id: apple_login.user_social_provider_id,
+            user_platform: Some("ios".to_string()),
         },
     )
     .await
