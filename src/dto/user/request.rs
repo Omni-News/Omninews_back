@@ -21,6 +21,8 @@ pub struct LoginUserRequestDto {
     pub user_social_login_provider: Option<String>,
     #[schemars(example = "example_user_social_provider_id")]
     pub user_social_provider_id: Option<String>,
+    #[schemars(example = "example_user_platform")]
+    pub user_platform: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
@@ -73,4 +75,8 @@ fn example_user_fcm_token() -> &'static str {
 
 fn example_theme() -> &'static str {
     "paper"
+}
+
+fn example_user_platform() -> &'static str {
+    "ios"
 }

@@ -158,3 +158,17 @@ pub async fn is_exist_transaction_id(
         Err(e) => Err(e),
     }
 }
+
+pub async fn is_google_platform(pool: &MySqlPool, user_email: &str) -> Result<bool, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!(
+        "SELECT u.user_platform FROM user AS u WHERE u.user_email = ? AND u.user_platform = 'android'",
+        user_email
+    ).fetch_one(&mut *conn).await;
+
+    match result {
+        Ok(_) => Ok(true),
+        Err(e) => Err(e),
+    }
+}

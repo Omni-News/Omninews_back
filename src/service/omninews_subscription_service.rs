@@ -56,6 +56,20 @@ pub async fn verify_subscription(
     pool: &MySqlPool,
     user_email: &str,
 ) -> Result<OmninewsSubscriptionResponseDto, OmniNewsError> {
+    // google은 구독중으로 판단.
+    if omninews_subscription_repository::is_google_platform(pool, user_email)
+        .await
+        .is_ok()
+    {
+        // 구글은 기본이 구독중.
+        return Ok(OmninewsSubscriptionResponseDto {
+            is_active: true,
+            product_id: "google_subscription".into(),
+            // 무한 구독으로 처리.
+            expires_date: DateTime::from_timestamp(4102444800, 0).unwrap().naive_utc(),
+        });
+    }
+
     let user_id = user_service::find_user_id_by_email(pool, user_email.into()).await?;
     let transaction_id = get_transaction_id_from_db(pool, user_id).await?;
 
