@@ -50,7 +50,8 @@ quick-xml = { version = "*", features = ["serialize"] }
 rand = "0.9.0"
 
 # Sentence embedding
-rust-bert = "*"
+rust-bert = "0.23.0"
+protobuf = "3.7.2"
 
 # annoy(Approximate Nearest Neighbors Oh Yeah)
 rannoy = { git = "https://github.com/uzushino/rs-annoy" }
