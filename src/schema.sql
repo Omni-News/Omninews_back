@@ -1,4 +1,3 @@
-
 --CASCADE가 적용된 관계:
 --
 --    rss_item.channel_id → rss_channel.channel_id
