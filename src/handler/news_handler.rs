@@ -4,7 +4,6 @@ use rocket_okapi::{openapi, openapi_get_routes_spec, settings::OpenApiSettings};
 use sqlx::MySqlPool;
 
 use crate::{
-    auth_middleware::AuthenticatedUser,
     dto::news::{request::NewsRequestDto, response::NewsResponseDto},
     service::news_service,
 };
@@ -24,7 +23,6 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 pub async fn get_news(
     pool: &State<MySqlPool>,
     value: NewsRequestDto,
-    _auth: AuthenticatedUser,
 ) -> Result<Json<Vec<NewsResponseDto>>, Status> {
     match news_service::get_news(pool, value).await {
         Ok(res) => Ok(Json(res)),
