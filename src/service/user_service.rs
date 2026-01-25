@@ -404,11 +404,21 @@ pub async fn update_user_notification_setting(
     user_email: String,
     notification_data: UserNotificationRequestDto,
 ) -> Result<(), OmniNewsError> {
+    let fcm_token = notification_data.user_fcm_token.unwrap_or_default();
+
+    // 이미 다른 user에게 적용된 fcm의 경우 기존 user의 fcm삭제
+    if let Ok(delete_user_ids) = user_repository::select_users_by_fcm_token(pool, &fcm_token).await
+    {
+        for id in delete_user_ids {
+            let _ = user_repository::delete_user_fcm_token_by_id(pool, id).await?;
+        }
+    }
+
     match user_repository::update_user_notification_setting(
         pool,
         user_email,
         notification_data.user_notification_push.unwrap_or_default(),
-        notification_data.user_fcm_token.unwrap_or_default(),
+        fcm_token,
     )
     .await
     {
