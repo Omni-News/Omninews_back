@@ -243,6 +243,22 @@ pub async fn update_uesr_tokens(
     }
 }
 
+pub async fn select_users_by_fcm_token(
+    pool: &MySqlPool,
+    fcm_token: &str,
+) -> Result<Vec<i32>, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!("SELECT user_id from user where user_fcm_token=?", fcm_token)
+        .fetch_all(&mut *conn)
+        .await;
+
+    match result {
+        Ok(res) => Ok(res.iter().map(|x| x.user_id).collect()),
+        Err(e) => Err(e),
+    }
+}
+
 pub async fn update_user_notification_setting(
     pool: &MySqlPool,
     user_email: String,
@@ -258,6 +274,25 @@ pub async fn update_user_notification_setting(
         notification_push,
         user_fcm_token,
         user_email
+    )
+    .execute(&mut *conn)
+    .await;
+
+    match result {
+        Ok(res) => Ok(res.rows_affected() as i32),
+        Err(e) => Err(e),
+    }
+}
+
+pub async fn delete_user_fcm_token_by_id(
+    pool: &MySqlPool,
+    user_id: i32,
+) -> Result<i32, sqlx::Error> {
+    let mut conn = get_db(pool).await?;
+
+    let result = query!(
+        "UPDATE user SET user_fcm_token=null where user_id=?",
+        user_id
     )
     .execute(&mut *conn)
     .await;
