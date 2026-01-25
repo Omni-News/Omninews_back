@@ -1,0 +1,45 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - master # master 브랜치에 push될 때 실행
+  workflow_dispatch: # 수동 실행도 가능
+
+jobs:
+  deploy:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          envs: DATABASE_URL
+          script: |
+            cd /home/kdh/Omninews/Omninews_back
+
+            # Git pull (선택사항)
+            git pull origin master
+
+            # Base 컨테이너 생성
+            docker-compose -f docker-compose.prod.base.yml -p omninews_prod up --build -d
+
+            # sqlx prepare 실행
+            export DATABASE_URL="${DATABASE_URL}"
+            cargo sqlx prepare -- --bin OmniNews
+
+            # 프로덕션 컨테이너 빌드 및 실행
+            docker-compose -f docker-compose.prod.yml -p omninews_prod up --build -d
+
+            # 컨테이너 상태 확인
+            docker ps | grep omninews_prod
