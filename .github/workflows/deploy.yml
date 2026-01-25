@@ -15,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy via SSH
+      - name: Pull code, build base container, and prepare SQLx
         uses: appleboy/ssh-action@v1.0.3
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -27,19 +27,29 @@ jobs:
           envs: DATABASE_URL
           script: |
             cd /home/kdh/Omninews/Omninews_back
-
-            # Git pull (선택사항)
             git pull origin master
-
-            # Base 컨테이너 생성
             docker-compose -f docker-compose.prod.base.yml -p omninews_prod up --build -d
 
-            # sqlx prepare 실행
-            export DATABASE_URL="${DATABASE_URL}"
+            # Wait for MySQL to be ready
+            echo "Waiting for MySQL to be ready..."
+            until docker exec omninews_mysql_prod mysqladmin ping -h localhost --silent; do
+              echo "MySQL is unavailable - sleeping"
+              sleep 2
+            done
+            echo "MySQL is up - executing sqlx prepare"
+
+            # Prepare SQLx with localhost connection
+            export DATABASE_URL=$(echo "${DATABASE_URL}" | sed 's/@mysql:/@localhost:/g')
             cargo sqlx prepare -- --bin OmniNews
 
-            # 프로덕션 컨테이너 빌드 및 실행
+      - name: Build and deploy production container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            cd /home/kdh/Omninews/Omninews_back
             docker-compose -f docker-compose.prod.yml -p omninews_prod up --build -d
-
-            # 컨테이너 상태 확인
             docker ps | grep omninews_prod
