@@ -6,7 +6,7 @@ use crate::{
     model::{auth::JwtToken, user::NewUser},
 };
 
-pub async fn insert_user(pool: &MySqlPool, user: NewUser) -> Result<i32, sqlx::Error> {
+pub async fn insert_user(pool: &MySqlPool, user: &NewUser) -> Result<i32, sqlx::Error> {
     let mut conn = get_db(pool).await?;
 
     let result = query!(

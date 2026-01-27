@@ -164,7 +164,7 @@ async fn create_user(
         ),
         ktc_now,
     );
-    match user_repository::insert_user(pool, new_user).await {
+    match user_repository::insert_user(pool, &new_user).await {
         Ok(_) => Ok(JwtToken::new(
             access_token,
             refresh_token,
@@ -173,7 +173,12 @@ async fn create_user(
         )),
 
         Err(e) => {
-            user_error!("[Service] Failed to create user: {}", e);
+            user_error!(
+                "[Service] Failed to create user: {}, user_info: {:?}",
+                e,
+                &new_user
+            );
+
             Err(OmniNewsError::Database(e))
         }
     }
