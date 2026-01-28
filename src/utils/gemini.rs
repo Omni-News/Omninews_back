@@ -78,7 +78,7 @@ pub async fn gemini_summarize(summarize_num: i32, phrase: &str) -> String {
     let client = Client::new();
     let key = env::var("GEMINI_API_KEY").expect("GEMINI_API_KEY not set");
     let response = client
-        .post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent")
+        .post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent")
         .header("Content-Type", "application/json")
         .header("X-goog-api-key", key)
         .json(&request_body)
