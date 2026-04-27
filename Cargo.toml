@@ -57,7 +57,7 @@ rannoy = { git = "https://github.com/uzushino/rs-annoy" }
 regex = "1.11.0"
 
 # JWT
-jsonwebtoken = "9"
+jsonwebtoken = { version = "10", default-features = false, features = ["use_pem", "aws_lc_rs"] }
 jwt-rustcrypto = "0.1.0"
 
 uuid = "1.16.0"
