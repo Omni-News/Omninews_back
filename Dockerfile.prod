@@ -38,7 +38,7 @@ ENV SQLX_OFFLINE=1
 RUN cargo build --release
 
 # 빌드 산출물 복사
-RUN find target/release -type f -executable -not -path "*/deps/*" -not -path "*/examples/*" -not -name "*.d" | head -n 1 | xargs -I {} install -Dm755 {} /dist/omninews_back
+RUN install -Dm755 target/release/OmniNews /dist/omninews_back
 
 # =========================
 # Stage 2: Runtime - 빌더와 동일한 환경 사용
