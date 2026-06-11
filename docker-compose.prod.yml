@@ -7,7 +7,7 @@ services:
     container_name: omninews_backend_prod
     restart: unless-stopped
     ports:
-      - "1027:1027"
+      - "127.0.0.1:1027:1027"
     environment:
       - ROCKET_ENV=production
       - ROCKET_ADDRESS=0.0.0.0
@@ -24,7 +24,7 @@ services:
     networks:
       - omninews-prod-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:1027/health"]
+      test: ["CMD-SHELL", "bash -lc ': </dev/tcp/127.0.0.1/1027'"]
       interval: 30s
       timeout: 10s
       retries: 3
