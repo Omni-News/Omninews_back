@@ -15,15 +15,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 공인망 SSH 노출 대신 tailnet에 잠깐 합류해서 홈서버로 직접 접속
+      - name: Connect Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
       - name: Pull code, build base container, and prepare SQLx
         uses: appleboy/ssh-action@v1.0.3
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         with:
-          host: ${{ secrets.SSH_HOST }}
+          host: 100.81.204.65
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
+          port: 22
           envs: DATABASE_URL
           script: |
             cd /home/kdh/Omninews/Omninews_back
@@ -45,10 +53,10 @@ jobs:
       - name: Build and deploy production container
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SSH_HOST }}
+          host: 100.81.204.65
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
+          port: 22
           script: |
             cd /home/kdh/Omninews/Omninews_back
             docker-compose -f docker-compose.prod.yml -p omninews_prod up --build -d
