@@ -1,0 +1,24 @@
+{
+  "db_name": "MySQL",
+  "query": "SELECT user_email FROM user WHERE user_social_provider_id = ?",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "user_email",
+        "type_info": {
+          "type": "VarString",
+          "flags": "NOT_NULL | UNIQUE_KEY | NO_DEFAULT_VALUE",
+          "max_size": 1020
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "939a5ebe571ad4093114c49f80396e159d0fa2efc19913611e91eb01851bc2d5"
+}

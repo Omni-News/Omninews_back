@@ -1,0 +1,24 @@
+{
+  "db_name": "MySQL",
+  "query": "SELECT user_theme FROM user WHERE user_email = ?",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "user_theme",
+        "type_info": {
+          "type": "String",
+          "flags": "ENUM",
+          "max_size": 20
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true
+    ]
+  },
+  "hash": "adb7dd9ed86c3f98364357d5b848e477cb9d04d704189b1f4b5e5857687e4855"
+}

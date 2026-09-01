@@ -1,0 +1,24 @@
+{
+  "db_name": "MySQL",
+  "query": "SELECT user_email FROM user\n        WHERE user_email = ? AND user_refresh_token IS NOT NULL AND user_refresh_token_expires_at > NOW()",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "user_email",
+        "type_info": {
+          "type": "VarString",
+          "flags": "NOT_NULL | UNIQUE_KEY | NO_DEFAULT_VALUE",
+          "max_size": 1020
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "81d6b3e4af84da52e8c53fdc3ad07b8afec0ab8fc670c6ec83b99e1cc7ad1909"
+}

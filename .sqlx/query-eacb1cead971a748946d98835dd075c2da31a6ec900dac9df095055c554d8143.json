@@ -1,0 +1,24 @@
+{
+  "db_name": "MySQL",
+  "query": "SELECT o.user_id FROM omninews_subscription AS o WHERE o.omninews_subscription_transaction_id = ? AND o.omninews_subscription_status = 1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "user_id",
+        "type_info": {
+          "type": "Long",
+          "flags": "MULTIPLE_KEY",
+          "max_size": 11
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true
+    ]
+  },
+  "hash": "eacb1cead971a748946d98835dd075c2da31a6ec900dac9df095055c554d8143"
+}

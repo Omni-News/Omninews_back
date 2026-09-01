@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "INSERT INTO user_subscription_channel(user_id, channel_id) VALUES (?, ?);",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "6dc88339c34434dca1c79310e4bba73b7efebd05092e1ba23c009c0e98442ff5"
+}

@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "INSERT INTO user \n            (user_email, user_display_name, user_photo_url, user_social_login_provider,\n            user_social_provider_id, user_access_token, user_refresh_token, user_access_token_expires_at,\n            user_refresh_token_expires_at, user_last_active_at,\n            user_created_at, user_updated_at, user_platform)\n        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 13
+    },
+    "nullable": []
+  },
+  "hash": "cf1bd39b7a8439eafd24e2149bead562e5413e8c7ae3ee584e0367d2f3a0f5f8"
+}

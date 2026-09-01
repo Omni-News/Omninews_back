@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "UPDATE user\n            SET user_notification_push = ?, user_fcm_token = ?\n        WHERE user_email = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 3
+    },
+    "nullable": []
+  },
+  "hash": "e142b8c5a69bac87c56f3a8ef83c3c6a315c6b004c3f6032212cacdb11a2780b"
+}

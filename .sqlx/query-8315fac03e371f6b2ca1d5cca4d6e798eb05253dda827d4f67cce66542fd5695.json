@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "UPDATE rss_item\n        SET rss_rank = rss_rank + ?\n        WHERE rss_id = ?;\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "8315fac03e371f6b2ca1d5cca4d6e798eb05253dda827d4f67cce66542fd5695"
+}

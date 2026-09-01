@@ -1,0 +1,24 @@
+{
+  "db_name": "MySQL",
+  "query": "SELECT u.user_platform FROM user AS u WHERE u.user_email = ? AND u.user_platform = 'android'",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "user_platform",
+        "type_info": {
+          "type": "String",
+          "flags": "ENUM",
+          "max_size": 28
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true
+    ]
+  },
+  "hash": "68be1c73dcd4920aa2cd76dc61411518da21e5e2917d11752c8947cc27e222b2"
+}

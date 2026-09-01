@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "INSERT INTO \n            omninews_subscription (user_id, omninews_subscription_transaction_id, omninews_subscription_status, omninews_subscription_product_id, omninews_subscription_auto_renew, omninews_subscription_platform, omninews_subscription_device_id, omninews_subscription_device_model, omninews_subscription_start_date, omninews_subscription_renew_date, omninews_subscription_end_date, omninews_subscription_is_sandbox)\n        VALUES (\n            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?\n        )",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 12
+    },
+    "nullable": []
+  },
+  "hash": "d5a5e40262928c413e49164f11af87f1de3f011f60fc53e0eaad7659f75770f2"
+}

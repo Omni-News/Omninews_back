@@ -1,0 +1,24 @@
+{
+  "db_name": "MySQL",
+  "query": "SELECT user_id FROM user WHERE user_email = ?",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "user_id",
+        "type_info": {
+          "type": "Long",
+          "flags": "NOT_NULL | PRIMARY_KEY | AUTO_INCREMENT",
+          "max_size": 11
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "7159f9b11044779f335237d9a976ac5643fc585279a61f7b9784fde5dc42f760"
+}

@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "UPDATE user SET user_fcm_token=null where user_id=?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": []
+  },
+  "hash": "d2461af6f9bdb6d8920c64d2b7c215b7469cd732a357ff109c35400ec8c1a4af"
+}

@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "UPDATE rss_channel\n        SET channel_rank = channel_rank + ?\n        WHERE channel_id = ?;\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "0d3554b697757a5ea2829bc1645fe3e5cf97dd20ade1150466581ca138410b82"
+}

@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "UPDATE user\n            SET user_access_token = ?, user_refresh_token = ?,\n                user_access_token_expires_at = ?, user_refresh_token_expires_at = ?\n        WHERE user_email = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 5
+    },
+    "nullable": []
+  },
+  "hash": "2afa9091779fb3ec4b727823d8ce402a908f2ab6221ca42758ffbcc4877d070c"
+}
