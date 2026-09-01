@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "UPDATE omninews_subscription\n     SET omninews_subscription_status = false, omninews_subscription_auto_renew = false\n     WHERE user_id = ? AND omninews_subscription_status = true",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": []
+  },
+  "hash": "6ef9b65ef4cd698a5372e69dbca2b164c1781f3422e48155e05045ac650504fc"
+}

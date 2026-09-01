@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "DELETE FROM channels_in_folder WHERE folder_id = ? AND channel_id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "165885d24c8d4daffaffc42fc0aec4b8c50bea168f8900413f007b200fd9a7f4"
+}

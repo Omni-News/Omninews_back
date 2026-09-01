@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "DELETE FROM rss_folder WHERE folder_id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": []
+  },
+  "hash": "fc60ed5cd7797794369a069e4bbc0829eb2ba52914b9efbb62e857cd53ba6ac5"
+}

@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "INSERT INTO rss_folder (user_id, folder_name) VALUES (?, ?)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "9fb5a1132947e178cea6cea2a4d0e9987e490eccb9d1e9e74d0ea312db8a49c1"
+}

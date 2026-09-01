@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "UPDATE user\n            SET user_display_name = ?, user_photo_url = ?,\n                user_social_login_provider = ?, user_social_provider_id = ?, user_platform = ?\n        WHERE user_email = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 6
+    },
+    "nullable": []
+  },
+  "hash": "e60a0fb111625c5000c6b80900926f467db92af68bdc9a0f370aab941ae7e342"
+}

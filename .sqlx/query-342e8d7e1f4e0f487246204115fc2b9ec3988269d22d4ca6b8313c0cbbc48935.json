@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "UPDATE rss_folder SET folder_name = ? WHERE folder_id = ?",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "342e8d7e1f4e0f487246204115fc2b9ec3988269d22d4ca6b8313c0cbbc48935"
+}

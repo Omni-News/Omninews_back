@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "INSERT INTO channels_in_folder (folder_id, channel_id) VALUES (?, ?)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "68d62a40825ae830961c1206e70250e721bf2e37ab8ce3bb213b94ac8db9adb0"
+}

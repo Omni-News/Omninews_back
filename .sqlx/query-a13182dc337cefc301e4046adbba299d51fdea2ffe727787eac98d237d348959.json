@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "INSERT INTO rss_channel \n            (channel_title, channel_description, channel_link, channel_image_url, channel_language, rss_generator, channel_rank, channel_rss_link)\n            VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 8
+    },
+    "nullable": []
+  },
+  "hash": "a13182dc337cefc301e4046adbba299d51fdea2ffe727787eac98d237d348959"
+}

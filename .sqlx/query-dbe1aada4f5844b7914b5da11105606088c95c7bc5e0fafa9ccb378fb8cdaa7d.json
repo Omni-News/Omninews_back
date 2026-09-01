@@ -1,0 +1,24 @@
+{
+  "db_name": "MySQL",
+  "query": "SELECT omninews_subscription_status FROM omninews_subscription WHERE user_id = ? AND omninews_subscription_status = true",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "omninews_subscription_status",
+        "type_info": {
+          "type": "Tiny",
+          "flags": "",
+          "max_size": 1
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      true
+    ]
+  },
+  "hash": "dbe1aada4f5844b7914b5da11105606088c95c7bc5e0fafa9ccb378fb8cdaa7d"
+}
