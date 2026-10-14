@@ -16,7 +16,6 @@ use log4rs::{
 use std::env;
 
 const RSS_SCHEDULER: &str = "rss_scheduler";
-const EMBEDDING_SCHEDULER: &str = "embedding_scheduler";
 const FOLDER_SCHEDULER: &str = "folder_scheduler";
 const NEWS_SCHEDULER: &str = "news_scheduler";
 const OMNINEWS_SUBSCRIPTION_SCHEDULER: &str = "omninews_subscription_scheduler";
@@ -53,7 +52,6 @@ pub fn load_logger() {
     };
 
     let rss_appender = create_file_appender(RSS_SCHEDULER);
-    let embedding_appender = create_file_appender(EMBEDDING_SCHEDULER);
     let folder_appender = create_file_appender(FOLDER_SCHEDULER);
     let news_appender = create_file_appender(NEWS_SCHEDULER);
     let omninews_subscription_appender = create_file_appender(OMNINEWS_SUBSCRIPTION_SCHEDULER);
@@ -66,7 +64,6 @@ pub fn load_logger() {
         .appender(Appender::builder().build("stdout", Box::new(stdout)))
         .appender(Appender::builder().build("server_file", Box::new(server_appender)))
         .appender(Appender::builder().build("rss_file", Box::new(rss_appender)))
-        .appender(Appender::builder().build("embedding_file", Box::new(embedding_appender)))
         .appender(Appender::builder().build("folder_file", Box::new(folder_appender)))
         .appender(Appender::builder().build("news_file", Box::new(news_appender)))
         .appender(Appender::builder().build(
@@ -81,11 +78,6 @@ pub fn load_logger() {
             Logger::builder()
                 .appender("rss_file")
                 .build(RSS_SCHEDULER, LevelFilter::Info),
-        )
-        .logger(
-            Logger::builder()
-                .appender("embedding_file")
-                .build(EMBEDDING_SCHEDULER, LevelFilter::Info),
         )
         .logger(
             Logger::builder()
@@ -164,27 +156,6 @@ macro_rules! rss_warn {
 macro_rules! rss_error {
     ($($arg:tt)+) => {
         log::error!(target: "rss_scheduler", $($arg)+)
-    };
-}
-
-#[macro_export]
-macro_rules! embedding_info {
-    ($($arg:tt)+) => {
-        log::info!(target: "embedding_scheduler", $($arg)+)
-    };
-}
-
-#[macro_export]
-macro_rules! embedding_warn {
-    ($($arg:tt)+) => {
-        log::warn!(target: "embedding_scheduler", $($arg)+)
-    };
-}
-
-#[macro_export]
-macro_rules! embedding_error {
-    ($($arg:tt)+) => {
-        log::error!(target: "embedding_scheduler", $($arg)+)
     };
 }
 
