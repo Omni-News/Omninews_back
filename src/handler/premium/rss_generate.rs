@@ -11,7 +11,6 @@ use crate::{
         response::RssGenerateResponseDto,
     },
     service::{premium::rss::generate_rss, user_service},
-    utils::embedding_util::EmbeddingService,
 };
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
@@ -28,7 +27,6 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// ### `kind`: 사이트 종류 (예: "Instagram", "Medium", "Naver" 등)
 pub async fn rss_generate(
     pool: &State<MySqlPool>,
-    embedding_service: &State<EmbeddingService>,
     driver_pool: &State<DriverPool>,
     data: Json<RssGenerateRequestDto>,
     user: AuthenticatedUser,
@@ -40,7 +38,7 @@ pub async fn rss_generate(
         }
     }
 
-    match generate_rss::generate(pool, embedding_service, driver_pool, data.into_inner()).await {
+    match generate_rss::generate(pool, driver_pool, data.into_inner()).await {
         Ok(res) => Ok(Json(res)),
         Err(_) => Err(Status::InternalServerError),
     }
@@ -67,7 +65,6 @@ pub async fn rss_generate(
 /// ### `item_image_css`: 아이템 이미지의 CSS 선택자
 pub async fn rss_generate_by_css(
     pool: &State<MySqlPool>,
-    embedding_service: &State<EmbeddingService>,
     driver_pool: &State<DriverPool>,
     data: Json<RssGenerateByCssReqeustDto>,
     user: AuthenticatedUser,
@@ -79,7 +76,7 @@ pub async fn rss_generate_by_css(
         }
     }
 
-    match generate_rss::rss_by_css(pool, embedding_service, driver_pool, data.into_inner()).await {
+    match generate_rss::rss_by_css(pool, driver_pool, data.into_inner()).await {
         Ok(res) => Ok(Json(res)),
         Err(_) => Err(Status::InternalServerError),
     }

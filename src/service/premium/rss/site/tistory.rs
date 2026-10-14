@@ -1,21 +1,14 @@
 use sqlx::MySqlPool;
 
-use crate::{
-    model::error::OmniNewsError, service::channel_service, utils::embedding_util::EmbeddingService,
-};
+use crate::{model::error::OmniNewsError, service::channel_service};
 
 // channel : https://kang1027.tistory.com/
 // rss : https://kang1027.tistory.com/rss
-pub async fn generate_rss(
-    pool: &MySqlPool,
-    embedding_service: &EmbeddingService,
-    link: &str,
-) -> Result<i32, OmniNewsError> {
+pub async fn generate_rss(pool: &MySqlPool, link: &str) -> Result<i32, OmniNewsError> {
     let user = extract_user_by_link(link)?;
     let tistory_rss_link = format!("https://{user}.tistory.com/rss");
 
-    match channel_service::create_rss_and_embedding(pool, embedding_service, tistory_rss_link).await
-    {
+    match channel_service::create_rss_and_embedding(pool, tistory_rss_link).await {
         Ok(channel_id) => Ok(channel_id),
         Err(e) => {
             error!(

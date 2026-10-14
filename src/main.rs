@@ -18,7 +18,6 @@ use handler::{config_handler::options_handler, error_handler::error_catchers};
 use rocket::fs::FileServer;
 use rocket_dyn_templates::Template;
 use rocket_okapi::mount_endpoints_and_merged_docs;
-use utils::embedding_util::EmbeddingService;
 
 use crate::{
     config::webdriver::{DriverPool, DriverPoolConfig},
@@ -40,8 +39,6 @@ async fn rocket() -> _ {
     let pool = db_util::create_pool().await;
     let pool_middleware = pool.clone();
 
-    let embedding_service = EmbeddingService::new();
-
     let exempt_paths = vec![
         // omninews
         "/v1/api/user/login".to_string(),
@@ -62,7 +59,6 @@ async fn rocket() -> _ {
 
     let mut rocket = rocket::build()
         .manage(pool)
-        .manage(embedding_service)
         .manage(AuthCache::new())
         .manage(driver_pool)
         .attach(CORS)

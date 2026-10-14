@@ -7,13 +7,10 @@ use sqlx::MySqlPool;
 use thirtyfour::{error::WebDriverResult, WebDriver};
 
 use crate::config::webdriver::{AcquireStrategy, DriverPool};
-use crate::{
-    model::error::OmniNewsError, service::channel_service, utils::embedding_util::EmbeddingService,
-};
+use crate::{model::error::OmniNewsError, service::channel_service};
 
 pub async fn generate_rss(
     pool: &MySqlPool,
-    embedding_service: &EmbeddingService,
     driver_pool: &DriverPool,
     link: &str,
 ) -> Result<i32, OmniNewsError> {
@@ -39,13 +36,8 @@ pub async fn generate_rss(
             rss_link = feeds.first().unwrap_or(&"".to_string()).to_string();
         }
 
-        return channel_service::create_rss_and_embedding_with_web_driver(
-            pool,
-            embedding_service,
-            rss_link,
-            driver,
-        )
-        .await;
+        return channel_service::create_rss_and_embedding_with_web_driver(pool, rss_link, driver)
+            .await;
     }
 
     error!(

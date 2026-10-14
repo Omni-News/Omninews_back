@@ -17,14 +17,12 @@ use crate::{
     },
     model::{error::OmniNewsError, premium::rss_generate::SiteType, rss::ChannelCssElement},
     service::{channel_css_service, channel_service, item_service},
-    utils::embedding_util::EmbeddingService,
 };
 
 use super::site::{default, instagram, medium, naver, tistory};
 
 pub async fn generate(
     pool: &MySqlPool,
-    embedding_service: &EmbeddingService,
     driver_pool: &DriverPool,
     data: RssGenerateRequestDto,
 ) -> Result<RssGenerateResponseDto, OmniNewsError> {
@@ -39,16 +37,12 @@ pub async fn generate(
     };
 
     let channel_id = match data.kind {
-        SiteType::Naver => naver::generate_rss(pool, embedding_service, &link).await?,
-        SiteType::Tistory => tistory::generate_rss(pool, embedding_service, &link).await?,
+        SiteType::Naver => naver::generate_rss(pool, &link).await?,
+        SiteType::Tistory => tistory::generate_rss(pool, &link).await?,
         //SiteType::Instagram => todo!(),
-        SiteType::Medium => medium::generate_rss(pool, embedding_service, &link).await?,
-        SiteType::Instagram => {
-            instagram::generate_rss(pool, embedding_service, driver_pool, &link).await?
-        }
-        SiteType::Default => {
-            default::generate_rss(pool, embedding_service, driver_pool, &link).await?
-        }
+        SiteType::Medium => medium::generate_rss(pool, &link).await?,
+        SiteType::Instagram => instagram::generate_rss(pool, driver_pool, &link).await?,
+        SiteType::Default => default::generate_rss(pool, driver_pool, &link).await?,
     };
 
     let channel = channel_service::find_rss_channel_by_id(pool, channel_id).await?;
@@ -60,7 +54,6 @@ pub async fn generate(
 
 pub async fn rss_by_css(
     pool: &MySqlPool,
-    embedding_service: &EmbeddingService,
     driver_pool: &DriverPool,
     data: RssGenerateByCssReqeustDto,
 ) -> Result<RssGenerateResponseDto, OmniNewsError> {
@@ -86,25 +79,20 @@ pub async fn rss_by_css(
         .await
         .map_err(OmniNewsError::WebDriverError)?;
 
-    let (channel_id, mut rss_channel) = make_channel(pool, embedding_service, &data).await?;
+    let (channel_id, mut rss_channel) = make_channel(pool, &data).await?;
     let items = make_items(&data, driver).await?;
 
     rss_channel.set_items(items.0);
-    let _ = item_service::create_rss_items_and_embedding(
-        pool,
-        embedding_service,
-        rss_channel,
-        Some(items.1),
-        channel_id,
-    )
-    .await
-    .map_err(|e| {
-        error!(
-            "[Service-Rss_By_Css] Failed to create rss item and embedding: {:?}",
-            e
-        );
-        e
-    });
+    let _ =
+        item_service::create_rss_items_and_embedding(pool, rss_channel, Some(items.1), channel_id)
+            .await
+            .map_err(|e| {
+                error!(
+                    "[Service-Rss_By_Css] Failed to create rss item and embedding: {:?}",
+                    e
+                );
+                e
+            });
 
     let channel_css_el = ChannelCssElement {
         channel_id: Some(channel_id),
@@ -129,7 +117,6 @@ pub async fn rss_by_css(
 
 async fn make_channel(
     pool: &sqlx::Pool<sqlx::MySql>,
-    embedding_service: &EmbeddingService,
     data: &RssGenerateByCssReqeustDto,
 ) -> Result<(i32, Channel), OmniNewsError> {
     let channel_image_link = &data.channel_image_link;
@@ -153,7 +140,7 @@ async fn make_channel(
         true,
     );
     Ok((
-        channel_service::store_channel_and_embedding(pool, embedding_service, channel).await?,
+        channel_service::store_channel_and_embedding(pool, channel).await?,
         rss_channel,
     ))
 }

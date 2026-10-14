@@ -1,6 +1,5 @@
 pub mod channel_css_service;
 pub mod channel_service;
-pub mod embedding_service;
 pub mod folder_service;
 pub mod item_service;
 pub mod news_service;

@@ -9,7 +9,6 @@ use crate::auth_middleware::AuthenticatedUser;
 use crate::dto::rss::request::{CreateRssRequestDto, RssItemRequestDto, UpdateRssRankRequestDto};
 use crate::dto::rss::response::{RssChannelResponseDto, RssItemResponseDto};
 use crate::service::{channel_service, item_service};
-use crate::EmbeddingService;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
     openapi_get_routes_spec![settings: get_channel_id_by_rss_link,
@@ -28,7 +27,6 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 #[post("/rss/channel", data = "<link>")]
 pub async fn create_channel(
     pool: &State<MySqlPool>,
-    model: &State<EmbeddingService>,
     link: Json<CreateRssRequestDto>,
     _auth: AuthenticatedUser,
 ) -> Result<Json<i32>, Status> {
@@ -36,7 +34,7 @@ pub async fn create_channel(
         return Err(Status::BadRequest);
     }
 
-    match channel_service::create_rss_and_embedding(pool, model, link.into_inner().rss_link).await {
+    match channel_service::create_rss_and_embedding(pool, link.into_inner().rss_link).await {
         Ok(channel_id) => Ok(Json(channel_id)),
         Err(_) => Err(Status::InternalServerError),
     }
@@ -52,7 +50,6 @@ pub async fn create_channel(
 #[post("/rss/all", data = "<links>")]
 pub async fn create_rss_all(
     pool: &State<MySqlPool>,
-    model: &State<EmbeddingService>,
     links: Json<Vec<CreateRssRequestDto>>,
     _auth: AuthenticatedUser,
 ) -> Result<Json<bool>, Status> {
@@ -60,7 +57,7 @@ pub async fn create_rss_all(
         return Err(Status::BadRequest);
     }
 
-    match channel_service::create_rss_all(pool, model, links.into_inner()).await {
+    match channel_service::create_rss_all(pool, links.into_inner()).await {
         Ok(result) => Ok(Json(result)),
         Err(_) => Err(Status::InternalServerError),
     }
