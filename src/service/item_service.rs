@@ -15,7 +15,7 @@ use rss::{Channel, Item};
 use scraper::{Html, Selector};
 use sqlx::MySqlPool;
 
-pub async fn create_rss_items_and_embedding(
+pub async fn create_rss_items(
     pool: &MySqlPool,
     mut channel: Channel,
     item_image_links: Option<Vec<String>>,
@@ -26,7 +26,7 @@ pub async fn create_rss_items_and_embedding(
         .map_or(String::new(), |image| image.url().to_string()); // TODO rss cateogory 미구현 상태.
 
     for (i, rss_item) in channel.items_mut().iter_mut().enumerate() {
-        create_rss_item_and_embedding(
+        create_rss_item(
             pool,
             channel_id,
             channel_image_url.clone(),
@@ -41,7 +41,7 @@ pub async fn create_rss_items_and_embedding(
     }
     Ok(())
 }
-pub async fn create_rss_item_and_embedding(
+pub async fn create_rss_item(
     pool: &MySqlPool,
     channel_id: i32,
     channel_image_url: String,
@@ -199,8 +199,7 @@ pub async fn get_rss_list(
     let page = value.search_page_size.unwrap_or_default();
 
     let mut searched_rss_items =
-        rss_item_repository::select_rss_item_by_embedding_id(pool, search_value.as_str(), 0)
-            .await?;
+        rss_item_repository::select_rss_items_by_search_value(pool, search_value.as_str()).await?;
     let total = searched_rss_items.len() as i32;
     // Provide 20 rss item each select request
     let offset = (page - 1) * 20;

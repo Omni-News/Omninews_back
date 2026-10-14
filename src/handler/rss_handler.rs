@@ -34,7 +34,7 @@ pub async fn create_channel(
         return Err(Status::BadRequest);
     }
 
-    match channel_service::create_rss_and_embedding(pool, link.into_inner().rss_link).await {
+    match channel_service::create_rss(pool, link.into_inner().rss_link).await {
         Ok(channel_id) => Ok(Json(channel_id)),
         Err(_) => Err(Status::InternalServerError),
     }

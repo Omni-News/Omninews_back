@@ -83,16 +83,12 @@ pub async fn rss_by_css(
     let items = make_items(&data, driver).await?;
 
     rss_channel.set_items(items.0);
-    let _ =
-        item_service::create_rss_items_and_embedding(pool, rss_channel, Some(items.1), channel_id)
-            .await
-            .map_err(|e| {
-                error!(
-                    "[Service-Rss_By_Css] Failed to create rss item and embedding: {:?}",
-                    e
-                );
-                e
-            });
+    let _ = item_service::create_rss_items(pool, rss_channel, Some(items.1), channel_id)
+        .await
+        .map_err(|e| {
+            error!("[Service-Rss_By_Css] Failed to create rss item: {:?}", e);
+            e
+        });
 
     let channel_css_el = ChannelCssElement {
         channel_id: Some(channel_id),
@@ -140,7 +136,7 @@ async fn make_channel(
         true,
     );
     Ok((
-        channel_service::store_channel_and_embedding(pool, channel).await?,
+        channel_service::store_channel(pool, channel).await?,
         rss_channel,
     ))
 }

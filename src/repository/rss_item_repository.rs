@@ -24,18 +24,11 @@ pub async fn select_item_by_link(
     }
 }
 
-pub async fn select_rss_item_by_embedding_id(
+pub async fn select_rss_items_by_search_value(
     pool: &MySqlPool,
     search_value: &str,
-    _embedding_id: i32,
 ) -> Result<Vec<RssItem>, sqlx::Error> {
     let mut conn = get_db(pool).await?;
-    // using embedding
-    let _ = "SELECT r.* 
-        FROM rss_item r 
-        JOIN embedding e 
-        ON r.rss_id = e.rss_id
-        WHERE e.embedding_id=?;";
 
     let result = query_as!(
         RssItem,

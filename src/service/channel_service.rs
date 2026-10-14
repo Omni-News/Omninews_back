@@ -28,17 +28,12 @@ pub async fn create_rss_all(
 ) -> Result<bool, OmniNewsError> {
     for link in links {
         rss_info!("[Service] Add : {}", link.rss_link);
-        let _ = create_rss_and_embedding(pool, link.rss_link)
-            .await
-            .unwrap_or_default();
+        let _ = create_rss(pool, link.rss_link).await.unwrap_or_default();
     }
     Ok(true)
 }
 
-pub async fn create_rss_and_embedding(
-    pool: &MySqlPool,
-    link: String,
-) -> Result<i32, OmniNewsError> {
+pub async fn create_rss(pool: &MySqlPool, link: String) -> Result<i32, OmniNewsError> {
     let rss_channel = parse_rss_link_to_channel(&link).await?;
     if &rss_channel.title == "Not Found" || rss_channel.title.is_empty() {
         error!(
@@ -50,10 +45,10 @@ pub async fn create_rss_and_embedding(
         ));
     }
 
-    create_rss_and_embedding_by_channel(pool, rss_channel, link, false).await
+    create_rss_by_channel(pool, rss_channel, link, false).await
 }
 
-pub async fn create_rss_and_embedding_with_web_driver(
+pub async fn create_rss_with_web_driver(
     pool: &MySqlPool,
     link: String,
     driver: &WebDriver,
@@ -69,22 +64,22 @@ pub async fn create_rss_and_embedding_with_web_driver(
             "Failed to parse RSS link".to_string(),
         ));
     }
-    create_rss_and_embedding_by_channel(pool, rss_channel, link, true).await
+    create_rss_by_channel(pool, rss_channel, link, true).await
 }
 
-pub async fn create_rss_and_embedding_by_channel(
+pub async fn create_rss_by_channel(
     pool: &MySqlPool,
     rss_channel: Channel,
     rss_link: String,
     is_generated_channel: bool,
 ) -> Result<i32, OmniNewsError> {
     let channel = make_rss_channel(&rss_channel, rss_link, is_generated_channel);
-    let channel_id = store_channel_and_embedding(pool, channel).await?;
+    let channel_id = store_channel(pool, channel).await?;
 
-    let _ = item_service::create_rss_items_and_embedding(pool, rss_channel, None, channel_id)
+    let _ = item_service::create_rss_items(pool, rss_channel, None, channel_id)
         .await
         .map_err(|e| {
-            rss_error!("[Service] Failed to create rss item and embedding: {:?}", e);
+            rss_error!("[Service] Failed to create rss item: {:?}", e);
             e
         });
 
@@ -287,7 +282,7 @@ pub fn make_rss_channel(
     )
 }
 
-pub async fn store_channel_and_embedding(
+pub async fn store_channel(
     pool: &MySqlPool,
     rss_channel: NewRssChannel,
 ) -> Result<i32, OmniNewsError> {
@@ -369,7 +364,7 @@ pub async fn get_channel_list(
     let page = value.search_page_size.unwrap_or_default();
 
     let mut searched_rss_channels =
-        rss_channel_repository::select_rss_channel_by_embedding_id(pool, search_value.as_str(), 0)
+        rss_channel_repository::select_rss_channels_by_search_value(pool, search_value.as_str())
             .await?;
     let total = searched_rss_channels.len() as i32;
     // Provide 20 rss item each select request

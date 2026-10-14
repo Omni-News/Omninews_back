@@ -36,8 +36,7 @@ pub async fn generate_rss(
             rss_link = feeds.first().unwrap_or(&"".to_string()).to_string();
         }
 
-        return channel_service::create_rss_and_embedding_with_web_driver(pool, rss_link, driver)
-            .await;
+        return channel_service::create_rss_with_web_driver(pool, rss_link, driver).await;
     }
 
     error!(
