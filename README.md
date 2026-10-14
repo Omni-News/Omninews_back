@@ -4,7 +4,7 @@ Rust + Rocket 기반의 RSS 뉴스 구독 및 관리 백엔드 API 서버입니�
 
 ## About
 
-Omninews는 다양한 RSS 피드를 한 곳에서 관리하고, AI 기반 검색 및 추천 기능을 제공하는 뉴스 서비스입니다.
+Omninews는 다양한 RSS 피드를 한 곳에서 관리하고, 키워드 검색 및 추천 기능을 제공하는 뉴스 서비스입니다.
 
 - **Web**: <https://kang1027.com/omninews>
 - **iOS App**: <https://apps.apple.com/kr/app/omninews/id6746567181?l=en-GB>
@@ -14,7 +14,6 @@ Omninews는 다양한 RSS 피드를 한 곳에서 관리하고, AI 기반 검색
 - **Language**: Rust (Edition 2021)
 - **Framework**: Rocket 0.5
 - **Database**: MySQL (SQLx)
-- **Embedding**: rust-bert, Annoy (Approximate Nearest Neighbors)
 - **Crawling**: scraper, thirtyfour (Selenium WebDriver)
 - **Authentication**: JWT, Social Login (Google, Kakao, Apple)
 - **API Documentation**: Swagger UI, RapiDoc
@@ -25,7 +24,7 @@ Omninews는 다양한 RSS 피드를 한 곳에서 관리하고, AI 기반 검색
 - RSS 채널 구독 및 실시간 피드 수집
 - 폴더 기반 채널 관리
 - 소셜 로그인 (Google, Kakao, Apple)
-- AI 기반 뉴스 검색 및 추천 (Sentence Embedding)
+- RSS 채널/아이템 키워드 검색 및 랭크 기반 추천
 - Apple In-App Purchase 구독 관리
 - Apple Server Notification 처리
 - 프리미엄 RSS 생성 (Instagram 등 크롤링)
@@ -156,7 +155,7 @@ mysql -u user -p -h 127.0.0.1 -P 3307 omninews_dev < src/schema.sql
 - `user`: 사용자 정보 (소셜 로그인)
 - `rss_channel`: RSS 채널 정보
 - `rss_item`: RSS 뉴스 아이템
-- `embedding`: 뉴스 임베딩 벡터 (검색용)
+- `embedding`: 과거 검색용 임베딩 벡터 (현재 사용하지 않음, 스키마에만 남아 있음)
 - `omninews_subscription`: 구독 정보
 - `rss_folder`: 채널 폴더
 - `user_subscription_channel`: 사용자 채널 구독
@@ -173,7 +172,7 @@ mysql -u user -p -h 127.0.0.1 -P 3307 omninews_dev < src/schema.sql
 - `/v1/api/user/*`: 사용자 관리 (로그인, 회원가입, Apple 로그인)
 - `/v1/api/rss/*`: RSS 채널 및 아이템 관리
 - `/v1/api/news/*`: 뉴스 조회
-- `/v1/api/search/*`: 뉴스 검색 (임베딩 기반)
+- `/v1/api/search/*`: RSS 아이템/채널 및 외부 뉴스 검색 (키워드 기반)
 - `/v1/api/folder/*`: 폴더 관리
 - `/v1/api/subscription/*`: 채널 구독 관리
 - `/v1/api/omninews-subscription/*`: Omninews 프리미엄 구독
@@ -209,7 +208,7 @@ Omninews_back/
 │   ├── model/               # 도메인 모델
 │   ├── repository/          # DB 레포지토리
 │   ├── service/             # 비즈니스 로직
-│   ├── utils/               # 유틸리티 (DB, Embedding)
+│   ├── utils/               # 유틸리티 (DB, Gemini)
 │   └── schema.sql           # DB 스키마
 ├── docker-compose.*.yml     # Docker Compose 설정
 ├── Dockerfile.dev           # 개발용 Dockerfile
